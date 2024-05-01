@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mythril.laser.ethereum.state package &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mythril.laser.ethereum.strategy package" href="mythril.laser.ethereum.strategy.html" />
+    <link rel="prev" title="mythril.laser.ethereum.function_managers package" href="mythril.laser.ethereum.function_managers.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mythril-laser-ethereum-state-package">
+<h1>mythril.laser.ethereum.state package<a class="headerlink" href="#mythril-laser-ethereum-state-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-mythril.laser.ethereum.state.account">
+<span id="mythril-laser-ethereum-state-account-module"></span><h2>mythril.laser.ethereum.state.account module<a class="headerlink" href="#module-mythril.laser.ethereum.state.account" title="Link to this heading">¶</a></h2>
+<p>This module contains account-related functionality.</p>
+<p>This includes classes representing accounts and their storage.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.account.Account">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.account.</span></span><span class="sig-name descname"><span class="pre">Account</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">balances</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.array.Array" title="mythril.laser.smt.array.Array"><span class="pre">Array</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concrete_storage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynamic_loader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/account.html#Account"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.account.Account" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Account class representing ethereum accounts.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.account.Account.add_balance">
+<span class="sig-name descname"><span class="pre">add_balance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">balance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/account.html#Account.add_balance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.account.Account.add_balance" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>balance</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.account.Account.as_dict">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#mythril.laser.ethereum.state.account.Account.as_dict" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.account.Account.serialised_code">
+<span class="sig-name descname"><span class="pre">serialised_code</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/account.html#Account.serialised_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.account.Account.serialised_code" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.account.Account.set_balance">
+<span class="sig-name descname"><span class="pre">set_balance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">balance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/account.html#Account.set_balance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.account.Account.set_balance" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>balance</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.account.Account.set_storage">
+<span class="sig-name descname"><span class="pre">set_storage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">storage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/account.html#Account.set_storage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.account.Account.set_storage" title="Link to this definition">¶</a></dt>
+<dd><p>Sets concrete storage</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.account.Storage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.account.</span></span><span class="sig-name descname"><span class="pre">Storage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concrete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynamic_loader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/account.html#Storage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.account.Storage" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Storage class represents the storage of an Account.</p>
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.ethereum.state.annotation">
+<span id="mythril-laser-ethereum-state-annotation-module"></span><h2>mythril.laser.ethereum.state.annotation module<a class="headerlink" href="#module-mythril.laser.ethereum.state.annotation" title="Link to this heading">¶</a></h2>
+<p>This module includes classes used for annotating trace information.</p>
+<p>This includes the base StateAnnotation class, as well as an adaption,
+which will not be copied on every new state.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.annotation.MergeableStateAnnotation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.annotation.</span></span><span class="sig-name descname"><span class="pre">MergeableStateAnnotation</span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/annotation.html#MergeableStateAnnotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.annotation.MergeableStateAnnotation" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.laser.ethereum.state.annotation.StateAnnotation" title="mythril.laser.ethereum.state.annotation.StateAnnotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">StateAnnotation</span></code></a></p>
+<p>This class allows a base annotation class for annotations that
+can be merged.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.annotation.MergeableStateAnnotation.check_merge_annotation">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_merge_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/annotation.html#MergeableStateAnnotation.check_merge_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.annotation.MergeableStateAnnotation.check_merge_annotation" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.annotation.MergeableStateAnnotation.merge_annotation">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">merge_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/annotation.html#MergeableStateAnnotation.merge_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.annotation.MergeableStateAnnotation.merge_annotation" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.annotation.NoCopyAnnotation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.annotation.</span></span><span class="sig-name descname"><span class="pre">NoCopyAnnotation</span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/annotation.html#NoCopyAnnotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.annotation.NoCopyAnnotation" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.laser.ethereum.state.annotation.StateAnnotation" title="mythril.laser.ethereum.state.annotation.StateAnnotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">StateAnnotation</span></code></a></p>
+<p>This class provides a base annotation class for annotations that
+shouldn’t be copied on every new state.</p>
+<p>Rather the same object should be propagated. This is very useful if
+you are looking to analyze a property over multiple substates</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.annotation.StateAnnotation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.annotation.</span></span><span class="sig-name descname"><span class="pre">StateAnnotation</span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/annotation.html#StateAnnotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.annotation.StateAnnotation" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The StateAnnotation class is used to persist information over traces.</p>
+<p>This allows modules to reason about traces without the need to
+traverse the state space themselves.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.annotation.StateAnnotation.persist_over_calls">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">persist_over_calls</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#mythril.laser.ethereum.state.annotation.StateAnnotation.persist_over_calls" title="Link to this definition">¶</a></dt>
+<dd><p>If this function returns true then laser will propagate the annotation between calls</p>
+<p>The default is set to False</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.annotation.StateAnnotation.persist_to_world_state">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">persist_to_world_state</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#mythril.laser.ethereum.state.annotation.StateAnnotation.persist_to_world_state" title="Link to this definition">¶</a></dt>
+<dd><p>If this function returns true then laser will also annotate the
+world state.</p>
+<p>If you want annotations to persist through different user initiated message call transactions
+then this should be enabled.</p>
+<p>The default is set to False</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.annotation.StateAnnotation.search_importance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search_importance</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#mythril.laser.ethereum.state.annotation.StateAnnotation.search_importance" title="Link to this definition">¶</a></dt>
+<dd><p>Used in estimating the priority of a state annotated with the corresponding annotation.
+Default is 1</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.ethereum.state.calldata">
+<span id="mythril-laser-ethereum-state-calldata-module"></span><h2>mythril.laser.ethereum.state.calldata module<a class="headerlink" href="#module-mythril.laser.ethereum.state.calldata" title="Link to this heading">¶</a></h2>
+<p>This module declares classes to represent call data.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.BaseCalldata">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.calldata.</span></span><span class="sig-name descname"><span class="pre">BaseCalldata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tx_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/calldata.html#BaseCalldata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.BaseCalldata" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base calldata class This represents the calldata provided when sending a
+transaction to a contract.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.BaseCalldata.calldatasize">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calldatasize</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></em><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.BaseCalldata.calldatasize" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Calldata size for this calldata object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.BaseCalldata.concrete">
+<span class="sig-name descname"><span class="pre">concrete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/calldata.html#BaseCalldata.concrete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.BaseCalldata.concrete" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a concrete version of the calldata using the provided model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.BaseCalldata.get_word_at">
+<span class="sig-name descname"><span class="pre">get_word_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.expression.Expression" title="mythril.laser.smt.expression.Expression"><span class="pre">Expression</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/calldata.html#BaseCalldata.get_word_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.BaseCalldata.get_word_at" title="Link to this definition">¶</a></dt>
+<dd><p>Gets word at offset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>offset</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.BaseCalldata.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.BaseCalldata.size" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the exact size of this calldata, this is not normalized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>unnormalized call data size</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.BasicConcreteCalldata">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.calldata.</span></span><span class="sig-name descname"><span class="pre">BasicConcreteCalldata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tx_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calldata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/calldata.html#BasicConcreteCalldata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.BasicConcreteCalldata" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.laser.ethereum.state.calldata.BaseCalldata" title="mythril.laser.ethereum.state.calldata.BaseCalldata"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCalldata</span></code></a></p>
+<p>A base class to represent concrete call data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.BasicConcreteCalldata.concrete">
+<span class="sig-name descname"><span class="pre">concrete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/calldata.html#BasicConcreteCalldata.concrete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.BasicConcreteCalldata.concrete" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.BasicConcreteCalldata.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.BasicConcreteCalldata.size" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.BasicSymbolicCalldata">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.calldata.</span></span><span class="sig-name descname"><span class="pre">BasicSymbolicCalldata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tx_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/calldata.html#BasicSymbolicCalldata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.BasicSymbolicCalldata" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.laser.ethereum.state.calldata.BaseCalldata" title="mythril.laser.ethereum.state.calldata.BaseCalldata"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCalldata</span></code></a></p>
+<p>A basic class representing symbolic call data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.BasicSymbolicCalldata.concrete">
+<span class="sig-name descname"><span class="pre">concrete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/calldata.html#BasicSymbolicCalldata.concrete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.BasicSymbolicCalldata.concrete" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.BasicSymbolicCalldata.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></em><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.BasicSymbolicCalldata.size" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.ConcreteCalldata">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.calldata.</span></span><span class="sig-name descname"><span class="pre">ConcreteCalldata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tx_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calldata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/calldata.html#ConcreteCalldata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.ConcreteCalldata" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.laser.ethereum.state.calldata.BaseCalldata" title="mythril.laser.ethereum.state.calldata.BaseCalldata"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCalldata</span></code></a></p>
+<p>A concrete call data representation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.ConcreteCalldata.concrete">
+<span class="sig-name descname"><span class="pre">concrete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/calldata.html#ConcreteCalldata.concrete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.ConcreteCalldata.concrete" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.ConcreteCalldata.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.ConcreteCalldata.size" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.SymbolicCalldata">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.calldata.</span></span><span class="sig-name descname"><span class="pre">SymbolicCalldata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tx_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/calldata.html#SymbolicCalldata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.SymbolicCalldata" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.laser.ethereum.state.calldata.BaseCalldata" title="mythril.laser.ethereum.state.calldata.BaseCalldata"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCalldata</span></code></a></p>
+<p>A class for representing symbolic call data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.SymbolicCalldata.concrete">
+<span class="sig-name descname"><span class="pre">concrete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/calldata.html#SymbolicCalldata.concrete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.SymbolicCalldata.concrete" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.calldata.SymbolicCalldata.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></em><a class="headerlink" href="#mythril.laser.ethereum.state.calldata.SymbolicCalldata.size" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.ethereum.state.constraints">
+<span id="mythril-laser-ethereum-state-constraints-module"></span><h2>mythril.laser.ethereum.state.constraints module<a class="headerlink" href="#module-mythril.laser.ethereum.state.constraints" title="Link to this heading">¶</a></h2>
+<p>This module contains the class used to represent state-change constraints in
+the call graph.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.constraints.Constraints">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.constraints.</span></span><span class="sig-name descname"><span class="pre">Constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constraint_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/constraints.html#Constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.constraints.Constraints" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></p>
+<p>This class should maintain a solver and it’s constraints, This class
+tries to make the Constraints() object as a simple list of constraints with
+some background processing.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.constraints.Constraints.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constraint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/constraints.html#Constraints.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.constraints.Constraints.append" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>constraint</strong> – The constraint to be appended</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.constraints.Constraints.as_list">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_list</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#mythril.laser.ethereum.state.constraints.Constraints.as_list" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>returns the list of constraints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.constraints.Constraints.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.ethereum.state.constraints.Constraints" title="mythril.laser.ethereum.state.constraints.Constraints"><span class="pre">Constraints</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/constraints.html#Constraints.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.constraints.Constraints.copy" title="Link to this definition">¶</a></dt>
+<dd><p>Return a shallow copy of the list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.constraints.Constraints.get_all_constraints">
+<span class="sig-name descname"><span class="pre">get_all_constraints</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/constraints.html#Constraints.get_all_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.constraints.Constraints.get_all_constraints" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.constraints.Constraints.get_model">
+<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/constraints.html#Constraints.get_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.constraints.Constraints.get_model" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>solver_timeout</strong> – The default timeout uses analysis timeout from args.solver_timeout</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True/False based on the existence of solution of constraints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.constraints.Constraints.is_possible">
+<span class="sig-name descname"><span class="pre">is_possible</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/constraints.html#Constraints.is_possible"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.constraints.Constraints.is_possible" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>solver_timeout</strong> – The default timeout uses analysis timeout from args.solver_timeout</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True/False based on the existence of solution of constraints</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.ethereum.state.environment">
+<span id="mythril-laser-ethereum-state-environment-module"></span><h2>mythril.laser.ethereum.state.environment module<a class="headerlink" href="#module-mythril.laser.ethereum.state.environment" title="Link to this heading">¶</a></h2>
+<p>This module contains the representation for an execution state’s
+environment.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.environment.Environment">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.environment.</span></span><span class="sig-name descname"><span class="pre">Environment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active_account</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.ethereum.state.account.Account" title="mythril.laser.ethereum.state.account.Account"><span class="pre">Account</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sender</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ExprRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calldata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.ethereum.state.calldata.BaseCalldata" title="mythril.laser.ethereum.state.calldata.BaseCalldata"><span class="pre">BaseCalldata</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gasprice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ExprRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callvalue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ExprRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ExprRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basefee</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ExprRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/environment.html#Environment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.environment.Environment" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The environment class represents the current execution environment for
+the symbolic executor.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.environment.Environment.as_dict">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#mythril.laser.ethereum.state.environment.Environment.as_dict" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.ethereum.state.global_state">
+<span id="mythril-laser-ethereum-state-global-state-module"></span><h2>mythril.laser.ethereum.state.global_state module<a class="headerlink" href="#module-mythril.laser.ethereum.state.global_state" title="Link to this heading">¶</a></h2>
+<p>This module contains a representation of the global execution state.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.global_state.GlobalState">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.global_state.</span></span><span class="sig-name descname"><span class="pre">GlobalState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.ethereum.state.world_state.WorldState" title="mythril.laser.ethereum.state.world_state.WorldState"><span class="pre">WorldState</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">environment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.ethereum.state.environment.Environment" title="mythril.laser.ethereum.state.environment.Environment"><span class="pre">Environment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.cfg.Node" title="mythril.laser.ethereum.cfg.Node"><span class="pre">Node</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">machine_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transaction_stack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_return_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/global_state.html#GlobalState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.global_state.GlobalState" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>GlobalState represents the current globalstate.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.global_state.GlobalState.accounts">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">accounts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#mythril.laser.ethereum.state.global_state.GlobalState.accounts" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.global_state.GlobalState.add_annotations">
+<span class="sig-name descname"><span class="pre">add_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#mythril.laser.ethereum.state.annotation.StateAnnotation" title="mythril.laser.ethereum.state.annotation.StateAnnotation"><span class="pre">StateAnnotation</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/global_state.html#GlobalState.add_annotations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.global_state.GlobalState.add_annotations" title="Link to this definition">¶</a></dt>
+<dd><p>Function used to add annotations to global state
+:param annotations:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.global_state.GlobalState.annotate">
+<span class="sig-name descname"><span class="pre">annotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.ethereum.state.annotation.StateAnnotation" title="mythril.laser.ethereum.state.annotation.StateAnnotation"><span class="pre">StateAnnotation</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/global_state.html#GlobalState.annotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.global_state.GlobalState.annotate" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>annotation</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.global_state.GlobalState.annotations">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">annotations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#mythril.laser.ethereum.state.annotation.StateAnnotation" title="mythril.laser.ethereum.state.annotation.StateAnnotation"><span class="pre">StateAnnotation</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#mythril.laser.ethereum.state.global_state.GlobalState.annotations" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.global_state.GlobalState.current_transaction">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_transaction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.ethereum.transaction.html#mythril.laser.ethereum.transaction.transaction_models.MessageCallTransaction" title="mythril.laser.ethereum.transaction.transaction_models.MessageCallTransaction"><span class="pre">MessageCallTransaction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.ethereum.transaction.html#mythril.laser.ethereum.transaction.transaction_models.ContractCreationTransaction" title="mythril.laser.ethereum.transaction.transaction_models.ContractCreationTransaction"><span class="pre">ContractCreationTransaction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#mythril.laser.ethereum.state.global_state.GlobalState.current_transaction" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.global_state.GlobalState.get_annotations">
+<span class="sig-name descname"><span class="pre">get_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#mythril.laser.ethereum.state.annotation.StateAnnotation" title="mythril.laser.ethereum.state.annotation.StateAnnotation"><span class="pre">StateAnnotation</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/global_state.html#GlobalState.get_annotations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.global_state.GlobalState.get_annotations" title="Link to this definition">¶</a></dt>
+<dd><p>Filters annotations for the queried annotation type. Designed
+particularly for modules with annotations:
+globalstate.get_annotations(MySpecificModuleAnnotation)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>annotation_type</strong> – The type to filter annotations for</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>filter of matching annotations</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.global_state.GlobalState.get_current_instruction">
+<span class="sig-name descname"><span class="pre">get_current_instruction</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/global_state.html#GlobalState.get_current_instruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.global_state.GlobalState.get_current_instruction" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the current instruction for this GlobalState.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.global_state.GlobalState.instruction">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">instruction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#mythril.laser.ethereum.state.global_state.GlobalState.instruction" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.global_state.GlobalState.new_bitvec">
+<span class="sig-name descname"><span class="pre">new_bitvec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">BitVec</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/global_state.html#GlobalState.new_bitvec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.global_state.GlobalState.new_bitvec" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong></p></li>
+<li><p><strong>size</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.ethereum.state.machine_state">
+<span id="mythril-laser-ethereum-state-machine-state-module"></span><h2>mythril.laser.ethereum.state.machine_state module<a class="headerlink" href="#module-mythril.laser.ethereum.state.machine_state" title="Link to this heading">¶</a></h2>
+<p>This module contains a representation of the EVM’s machine state and its
+stack.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.machine_state.MachineStack">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.machine_state.</span></span><span class="sig-name descname"><span class="pre">MachineStack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/machine_state.html#MachineStack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.machine_state.MachineStack" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></p>
+<p>Defines EVM stack, overrides the default list to handle overflows.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.machine_state.MachineStack.STACK_LIMIT">
+<span class="sig-name descname"><span class="pre">STACK_LIMIT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1024</span></em><a class="headerlink" href="#mythril.laser.ethereum.state.machine_state.MachineStack.STACK_LIMIT" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.machine_state.MachineStack.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.expression.Expression" title="mythril.laser.smt.expression.Expression"><span class="pre">Expression</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/machine_state.html#MachineStack.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.machine_state.MachineStack.append" title="Link to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>This function ensures the following properties when appending to a list:</dt><dd><ul class="simple">
+<li><p>Element appended to this list should be a BitVec</p></li>
+<li><p>Ensures stack overflow bound</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>element</strong> – element to be appended to the list</p>
+</dd>
+<dt class="field-even">Function<span class="colon">:</span></dt>
+<dd class="field-even"><p>appends the element to list if the size is less than STACK_LIMIT, else throws an error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.machine_state.MachineStack.pop">
+<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.expression.Expression" title="mythril.laser.smt.expression.Expression"><span class="pre">Expression</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/machine_state.html#MachineStack.pop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.machine_state.MachineStack.pop" title="Link to this definition">¶</a></dt>
+<dd><p>This function ensures stack underflow bound
+:param index:index to be popped, same as the list() class.
+:returns popped value
+:function: same as list() class but throws StackUnderflowException for popping from an empty list</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.machine_state.MachineState">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.machine_state.</span></span><span class="sig-name descname"><span class="pre">MachineState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gas_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subroutine_stack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.ethereum.state.memory.Memory" title="mythril.laser.ethereum.state.memory.Memory"><span class="pre">Memory</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_gas_used</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_gas_used</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/machine_state.html#MachineState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.machine_state.MachineState" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>MachineState represents current machine state also referenced to as mu.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.machine_state.MachineState.as_dict">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#mythril.laser.ethereum.state.machine_state.MachineState.as_dict" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.machine_state.MachineState.calculate_extension_size">
+<span class="sig-name descname"><span class="pre">calculate_extension_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/machine_state.html#MachineState.calculate_extension_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.machine_state.MachineState.calculate_extension_size" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong></p></li>
+<li><p><strong>size</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.machine_state.MachineState.calculate_memory_gas">
+<span class="sig-name descname"><span class="pre">calculate_memory_gas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/machine_state.html#MachineState.calculate_memory_gas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.machine_state.MachineState.calculate_memory_gas" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong></p></li>
+<li><p><strong>size</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.machine_state.MachineState.check_gas">
+<span class="sig-name descname"><span class="pre">check_gas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/machine_state.html#MachineState.check_gas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.machine_state.MachineState.check_gas" title="Link to this definition">¶</a></dt>
+<dd><p>Check whether the machine is out of gas.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.machine_state.MachineState.mem_extend">
+<span class="sig-name descname"><span class="pre">mem_extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/machine_state.html#MachineState.mem_extend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.machine_state.MachineState.mem_extend" title="Link to this definition">¶</a></dt>
+<dd><p>Extends the memory of this machine state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> – Start of memory extension</p></li>
+<li><p><strong>size</strong> – Size of memory extension</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.machine_state.MachineState.memory_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">memory_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#mythril.laser.ethereum.state.machine_state.MachineState.memory_size" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.machine_state.MachineState.memory_write">
+<span class="sig-name descname"><span class="pre">memory_write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/machine_state.html#MachineState.memory_write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.machine_state.MachineState.memory_write" title="Link to this definition">¶</a></dt>
+<dd><p>Writes data to memory starting at offset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>offset</strong></p></li>
+<li><p><strong>data</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.machine_state.MachineState.pop">
+<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/machine_state.html#MachineState.pop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.machine_state.MachineState.pop" title="Link to this definition">¶</a></dt>
+<dd><p>Pops amount elements from the stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>amount</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.ethereum.state.memory">
+<span id="mythril-laser-ethereum-state-memory-module"></span><h2>mythril.laser.ethereum.state.memory module<a class="headerlink" href="#module-mythril.laser.ethereum.state.memory" title="Link to this heading">¶</a></h2>
+<p>This module contains a representation of a smart contract’s memory.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.memory.Memory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.memory.</span></span><span class="sig-name descname"><span class="pre">Memory</span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/memory.html#Memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.memory.Memory" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class representing contract memory with random access.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.memory.Memory.extend">
+<span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/memory.html#Memory.extend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.memory.Memory.extend" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>size</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.memory.Memory.get_word_at">
+<span class="sig-name descname"><span class="pre">get_word_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/memory.html#Memory.get_word_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.memory.Memory.get_word_at" title="Link to this definition">¶</a></dt>
+<dd><p>Access a word from a specified memory index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> – integer representing the index to access</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>32 byte word at the specified index</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.memory.Memory.write_word_at">
+<span class="sig-name descname"><span class="pre">write_word_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/memory.html#Memory.write_word_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.memory.Memory.write_word_at" title="Link to this definition">¶</a></dt>
+<dd><p>Writes a 32 byte word to memory at the specified index`</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> – index to write to</p></li>
+<li><p><strong>value</strong> – the value to write to memory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.memory.convert_bv">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.memory.</span></span><span class="sig-name descname"><span class="pre">convert_bv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/memory.html#convert_bv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.memory.convert_bv" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-mythril.laser.ethereum.state.return_data">
+<span id="mythril-laser-ethereum-state-return-data-module"></span><h2>mythril.laser.ethereum.state.return_data module<a class="headerlink" href="#module-mythril.laser.ethereum.state.return_data" title="Link to this heading">¶</a></h2>
+<p>This module declares classes to represent call data.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.return_data.ReturnData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.return_data.</span></span><span class="sig-name descname"><span class="pre">ReturnData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_data_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/return_data.html#ReturnData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.return_data.ReturnData" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base returndata class.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.return_data.ReturnData.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></em><a class="headerlink" href="#mythril.laser.ethereum.state.return_data.ReturnData.size" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Calldata size for this calldata object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.ethereum.state.world_state">
+<span id="mythril-laser-ethereum-state-world-state-module"></span><h2>mythril.laser.ethereum.state.world_state module<a class="headerlink" href="#module-mythril.laser.ethereum.state.world_state" title="Link to this heading">¶</a></h2>
+<p>This module contains a representation of the EVM’s world state.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.world_state.WorldState">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.state.world_state.</span></span><span class="sig-name descname"><span class="pre">WorldState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transaction_sequence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#mythril.laser.ethereum.state.annotation.StateAnnotation" title="mythril.laser.ethereum.state.annotation.StateAnnotation"><span class="pre">StateAnnotation</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.ethereum.state.constraints.Constraints" title="mythril.laser.ethereum.state.constraints.Constraints"><span class="pre">Constraints</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/world_state.html#WorldState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.world_state.WorldState" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The WorldState class represents the world state as described in the
+yellow paper.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.world_state.WorldState.accounts">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">accounts</span></span><a class="headerlink" href="#mythril.laser.ethereum.state.world_state.WorldState.accounts" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.world_state.WorldState.accounts_exist_or_load">
+<span class="sig-name descname"><span class="pre">accounts_exist_or_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">addr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynamic_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.support.html#mythril.support.loader.DynLoader" title="mythril.support.loader.DynLoader"><span class="pre">DynLoader</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.ethereum.state.account.Account" title="mythril.laser.ethereum.state.account.Account"><span class="pre">Account</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/world_state.html#WorldState.accounts_exist_or_load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.world_state.WorldState.accounts_exist_or_load" title="Link to this definition">¶</a></dt>
+<dd><p>returns account if it exists, else it loads from the dynamic loader
+:param addr: address
+:param dynamic_loader: Dynamic Loader
+:return: The code</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.world_state.WorldState.annotate">
+<span class="sig-name descname"><span class="pre">annotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.ethereum.state.annotation.StateAnnotation" title="mythril.laser.ethereum.state.annotation.StateAnnotation"><span class="pre">StateAnnotation</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/world_state.html#WorldState.annotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.world_state.WorldState.annotate" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>annotation</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.world_state.WorldState.annotations">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">annotations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#mythril.laser.ethereum.state.annotation.StateAnnotation" title="mythril.laser.ethereum.state.annotation.StateAnnotation"><span class="pre">StateAnnotation</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#mythril.laser.ethereum.state.world_state.WorldState.annotations" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.world_state.WorldState.create_account">
+<span class="sig-name descname"><span class="pre">create_account</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">balance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concrete_storage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynamic_loader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">creator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.ethereum.state.account.Account" title="mythril.laser.ethereum.state.account.Account"><span class="pre">Account</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/world_state.html#WorldState.create_account"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.world_state.WorldState.create_account" title="Link to this definition">¶</a></dt>
+<dd><p>Create non-contract account.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>address</strong> – The account’s address</p></li>
+<li><p><strong>balance</strong> – Initial balance for the account</p></li>
+<li><p><strong>concrete_storage</strong> – Interpret account storage as concrete</p></li>
+<li><p><strong>dynamic_loader</strong> – used for dynamically loading storage from the block chain</p></li>
+<li><p><strong>creator</strong> – The address of the creator of the contract if it’s a contract</p></li>
+<li><p><strong>code</strong> – The code of the contract, if it’s a contract</p></li>
+<li><p><strong>nonce</strong> – Nonce of the account</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The new account</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.world_state.WorldState.create_initialized_contract_account">
+<span class="sig-name descname"><span class="pre">create_initialized_contract_account</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/world_state.html#WorldState.create_initialized_contract_account"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.world_state.WorldState.create_initialized_contract_account" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a new contract account, based on the contract code and
+storage provided The contract code only includes the runtime contract
+bytecode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contract_code</strong> – Runtime bytecode for the contract</p></li>
+<li><p><strong>storage</strong> – Initial storage for the contract</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The new account</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.world_state.WorldState.get_annotations">
+<span class="sig-name descname"><span class="pre">get_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#mythril.laser.ethereum.state.annotation.StateAnnotation" title="mythril.laser.ethereum.state.annotation.StateAnnotation"><span class="pre">StateAnnotation</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/world_state.html#WorldState.get_annotations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.world_state.WorldState.get_annotations" title="Link to this definition">¶</a></dt>
+<dd><p>Filters annotations for the queried annotation type. Designed
+particularly for modules with annotations:
+worldstate.get_annotations(MySpecificModuleAnnotation)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>annotation_type</strong> – The type to filter annotations for</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>filter of matching annotations</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.state.world_state.WorldState.put_account">
+<span class="sig-name descname"><span class="pre">put_account</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">account</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.ethereum.state.account.Account" title="mythril.laser.ethereum.state.account.Account"><span class="pre">Account</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/state/world_state.html#WorldState.put_account"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.state.world_state.WorldState.put_account" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>account</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.ethereum.state">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mythril.laser.ethereum.state" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="mythril.html">mythril package</a><ul>
+  <li><a href="mythril.laser.html">mythril.laser package</a><ul>
+  <li><a href="mythril.laser.ethereum.html">mythril.laser.ethereum package</a><ul>
+      <li>Previous: <a href="mythril.laser.ethereum.function_managers.html" title="previous chapter">mythril.laser.ethereum.function_managers package</a></li>
+      <li>Next: <a href="mythril.laser.ethereum.strategy.html" title="next chapter">mythril.laser.ethereum.strategy package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/mythril.laser.ethereum.state.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mythril.laser.smt.bitvec &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../../../about.html" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for mythril.laser.smt.bitvec</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module provides classes for an SMT abstraction of bit vectors.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">lshift</span><span class="p">,</span> <span class="n">rshift</span><span class="p">,</span> <span class="n">ne</span><span class="p">,</span> <span class="n">eq</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span>
+
+<span class="kn">import</span> <span class="nn">z3</span>
+
+<span class="kn">from</span> <span class="nn">mythril.laser.smt.bool</span> <span class="kn">import</span> <span class="n">Bool</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.smt.expression</span> <span class="kn">import</span> <span class="n">Expression</span>
+
+<span class="n">Annotations</span> <span class="o">=</span> <span class="n">Set</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
+
+<span class="c1"># fmt: off</span>
+
+
+<span class="k">def</span> <span class="nf">_padded_operation</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">z3</span><span class="o">.</span><span class="n">BitVec</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">z3</span><span class="o">.</span><span class="n">BitVec</span><span class="p">,</span> <span class="n">operator</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n">b</span><span class="o">.</span><span class="n">size</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">operator</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">b</span><span class="o">.</span><span class="n">size</span><span class="p">():</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">z3</span><span class="o">.</span><span class="n">Concat</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="n">b</span><span class="o">.</span><span class="n">size</span><span class="p">()),</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">operator</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BitVec">
+<a class="viewcode-back" href="../../../../mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec">[docs]</a>
+<span class="k">class</span> <span class="nc">BitVec</span><span class="p">(</span><span class="n">Expression</span><span class="p">[</span><span class="n">z3</span><span class="o">.</span><span class="n">BitVecRef</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A bit vector symbol.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="n">z3</span><span class="o">.</span><span class="n">BitVecRef</span><span class="p">,</span> <span class="n">annotations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotations</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param raw:</span>
+<span class="sd">        :param annotations:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">annotations</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BitVec.size">
+<a class="viewcode-back" href="../../../../mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec.size">[docs]</a>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TODO: documentation</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="o">.</span><span class="n">size</span><span class="p">()</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">symbolic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns whether this symbol doesn&#39;t have a concrete value.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># self.simplify()</span>
+
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="o">.</span><span class="n">decl</span><span class="p">())</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="s1">&#39;Select&#39;</span><span class="p">):</span> <span class="c1"># in case of a value read from storage</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span> <span class="c1"># do not simplify in the preprocessing</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">simplify_yes</span><span class="p">()</span> <span class="c1"># always simplify</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">z3</span><span class="o">.</span><span class="n">BitVecNumRef</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the value of this symbol if concrete, otherwise None.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbolic</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">z3</span><span class="o">.</span><span class="n">BitVecNumRef</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="o">.</span><span class="n">as_long</span><span class="p">()</span>
+
+    <span class="c1"># def __add__(self, other: Union[int, &quot;BitVec&quot;]) -&gt; &quot;BitVec&quot;:</span>
+    <span class="c1">#     &quot;&quot;&quot;Create an addition expression.</span>
+    <span class="c1">#</span>
+    <span class="c1">#     :param other:</span>
+    <span class="c1">#     :return:</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     if isinstance(other, int):</span>
+    <span class="c1">#         return BitVec(self.raw + other, annotations=self.annotations)</span>
+    <span class="c1">#</span>
+    <span class="c1">#     union = self.annotations.union(other.annotations)</span>
+    <span class="c1">#     return BitVec(self.raw + other.raw, annotations=union)</span>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an addition expression.</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">BitVec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">+</span> <span class="n">other</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+
+        <span class="n">union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BitVec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">union</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a subtraction expression.</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">BitVec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">-</span> <span class="n">other</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+
+        <span class="n">union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BitVec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">union</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a multiplication expression.</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BitVec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">union</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a signed division expression.</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BitVec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">/</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">union</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__and__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an and expression.</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">BitVec</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()))</span>
+        <span class="n">union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BitVec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">&amp;</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">union</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an or expression.</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">BitVec</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()))</span>
+        <span class="n">union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BitVec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">|</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">union</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__xor__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a xor expression.</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">BitVec</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()))</span>
+        <span class="n">union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BitVec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">^</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">union</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a signed less than expression.</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">BitVec</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()))</span>
+        <span class="n">union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">union</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a signed greater than expression.</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">BitVec</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()))</span>
+        <span class="n">union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">union</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a signed less than expression.</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">BitVec</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()))</span>
+        <span class="n">union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">union</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a signed greater than expression.</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">BitVec</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()))</span>
+        <span class="n">union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">&gt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">union</span><span class="p">)</span>
+
+    <span class="c1"># MYPY: fix complains about overriding __eq__</span>
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Bool</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an equality expression.</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Bool</span><span class="p">(</span>
+                <span class="n">cast</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">BoolRef</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">==</span> <span class="n">other</span><span class="p">),</span> <span class="n">annotations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotations</span>
+            <span class="p">)</span>
+
+        <span class="n">union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="c1"># Some of the BitVecs can be 512 bit due to sha3()</span>
+        <span class="n">eq_check</span> <span class="o">=</span> <span class="n">_padded_operation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">eq</span><span class="p">)</span>
+        <span class="c1"># MYPY: fix complaints due to z3 overriding __eq__</span>
+        <span class="k">return</span> <span class="n">Bool</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">BoolRef</span><span class="p">,</span> <span class="n">eq_check</span><span class="p">),</span> <span class="n">annotations</span><span class="o">=</span><span class="n">union</span><span class="p">)</span>
+
+    <span class="c1"># MYPY: fix complains about overriding __ne__</span>
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Bool</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an inequality expression.</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Bool</span><span class="p">(</span>
+                <span class="n">cast</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">BoolRef</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">!=</span> <span class="n">other</span><span class="p">),</span> <span class="n">annotations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotations</span>
+            <span class="p">)</span>
+
+        <span class="n">union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="c1"># Some of the BitVecs can be 512 bit due to sha3()</span>
+        <span class="n">neq_check</span> <span class="o">=</span> <span class="n">_padded_operation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">ne</span><span class="p">)</span>
+        <span class="c1"># MYPY: fix complaints due to z3 overriding __eq__</span>
+        <span class="k">return</span> <span class="n">Bool</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">BoolRef</span><span class="p">,</span> <span class="n">neq_check</span><span class="p">),</span> <span class="n">annotations</span><span class="o">=</span><span class="n">union</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_handle_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">],</span> <span class="n">operator</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handles shift</span>
+<span class="sd">        :param other: The other BitVector</span>
+<span class="sd">        :param operator: The shift operator</span>
+<span class="sd">        :return: the resulting output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">BitVec</span><span class="p">(</span>
+                <span class="n">operator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">other</span><span class="p">),</span> <span class="n">annotations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotations</span>
+            <span class="p">)</span>
+        <span class="n">union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BitVec</span><span class="p">(</span><span class="n">operator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">),</span> <span class="n">annotations</span><span class="o">=</span><span class="n">union</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__lshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_shift</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">lshift</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__rshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;BitVec&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_shift</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">rshift</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  <li><a href="../smt.html">mythril.laser.smt</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mythril.analysis.module package &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mythril.analysis.module.modules package" href="mythril.analysis.module.modules.html" />
+    <link rel="prev" title="mythril.analysis package" href="mythril.analysis.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mythril-analysis-module-package">
+<h1>mythril.analysis.module package<a class="headerlink" href="#mythril-analysis-module-package" title="Link to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mythril.analysis.module.modules.html">mythril.analysis.module.modules package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.arbitrary_jump">mythril.analysis.module.modules.arbitrary_jump module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_jump.ArbitraryJump"><code class="docutils literal notranslate"><span class="pre">ArbitraryJump</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_jump.ArbitraryJump.description"><code class="docutils literal notranslate"><span class="pre">ArbitraryJump.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_jump.ArbitraryJump.entry_point"><code class="docutils literal notranslate"><span class="pre">ArbitraryJump.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_jump.ArbitraryJump.name"><code class="docutils literal notranslate"><span class="pre">ArbitraryJump.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_jump.ArbitraryJump.pre_hooks"><code class="docutils literal notranslate"><span class="pre">ArbitraryJump.pre_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_jump.ArbitraryJump.reset_module"><code class="docutils literal notranslate"><span class="pre">ArbitraryJump.reset_module()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_jump.ArbitraryJump.swc_id"><code class="docutils literal notranslate"><span class="pre">ArbitraryJump.swc_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_jump.is_unique_jumpdest"><code class="docutils literal notranslate"><span class="pre">is_unique_jumpdest()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.arbitrary_write">mythril.analysis.module.modules.arbitrary_write module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_write.ArbitraryStorage"><code class="docutils literal notranslate"><span class="pre">ArbitraryStorage</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_write.ArbitraryStorage.description"><code class="docutils literal notranslate"><span class="pre">ArbitraryStorage.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_write.ArbitraryStorage.entry_point"><code class="docutils literal notranslate"><span class="pre">ArbitraryStorage.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_write.ArbitraryStorage.name"><code class="docutils literal notranslate"><span class="pre">ArbitraryStorage.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_write.ArbitraryStorage.pre_hooks"><code class="docutils literal notranslate"><span class="pre">ArbitraryStorage.pre_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_write.ArbitraryStorage.reset_module"><code class="docutils literal notranslate"><span class="pre">ArbitraryStorage.reset_module()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.arbitrary_write.ArbitraryStorage.swc_id"><code class="docutils literal notranslate"><span class="pre">ArbitraryStorage.swc_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.delegatecall">mythril.analysis.module.modules.delegatecall module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.delegatecall.ArbitraryDelegateCall"><code class="docutils literal notranslate"><span class="pre">ArbitraryDelegateCall</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.delegatecall.ArbitraryDelegateCall.description"><code class="docutils literal notranslate"><span class="pre">ArbitraryDelegateCall.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.delegatecall.ArbitraryDelegateCall.entry_point"><code class="docutils literal notranslate"><span class="pre">ArbitraryDelegateCall.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.delegatecall.ArbitraryDelegateCall.name"><code class="docutils literal notranslate"><span class="pre">ArbitraryDelegateCall.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.delegatecall.ArbitraryDelegateCall.pre_hooks"><code class="docutils literal notranslate"><span class="pre">ArbitraryDelegateCall.pre_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.delegatecall.ArbitraryDelegateCall.swc_id"><code class="docutils literal notranslate"><span class="pre">ArbitraryDelegateCall.swc_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.dependence_on_origin">mythril.analysis.module.modules.dependence_on_origin module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_origin.TxOrigin"><code class="docutils literal notranslate"><span class="pre">TxOrigin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_origin.TxOrigin.description"><code class="docutils literal notranslate"><span class="pre">TxOrigin.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_origin.TxOrigin.entry_point"><code class="docutils literal notranslate"><span class="pre">TxOrigin.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_origin.TxOrigin.name"><code class="docutils literal notranslate"><span class="pre">TxOrigin.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_origin.TxOrigin.post_hooks"><code class="docutils literal notranslate"><span class="pre">TxOrigin.post_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_origin.TxOrigin.pre_hooks"><code class="docutils literal notranslate"><span class="pre">TxOrigin.pre_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_origin.TxOrigin.swc_id"><code class="docutils literal notranslate"><span class="pre">TxOrigin.swc_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_origin.TxOriginAnnotation"><code class="docutils literal notranslate"><span class="pre">TxOriginAnnotation</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.dependence_on_predictable_vars">mythril.analysis.module.modules.dependence_on_predictable_vars module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_predictable_vars.OldBlockNumberUsedAnnotation"><code class="docutils literal notranslate"><span class="pre">OldBlockNumberUsedAnnotation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_predictable_vars.PredictableValueAnnotation"><code class="docutils literal notranslate"><span class="pre">PredictableValueAnnotation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_predictable_vars.PredictableVariables"><code class="docutils literal notranslate"><span class="pre">PredictableVariables</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_predictable_vars.PredictableVariables.description"><code class="docutils literal notranslate"><span class="pre">PredictableVariables.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_predictable_vars.PredictableVariables.entry_point"><code class="docutils literal notranslate"><span class="pre">PredictableVariables.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_predictable_vars.PredictableVariables.name"><code class="docutils literal notranslate"><span class="pre">PredictableVariables.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_predictable_vars.PredictableVariables.post_hooks"><code class="docutils literal notranslate"><span class="pre">PredictableVariables.post_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_predictable_vars.PredictableVariables.pre_hooks"><code class="docutils literal notranslate"><span class="pre">PredictableVariables.pre_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.dependence_on_predictable_vars.PredictableVariables.swc_id"><code class="docutils literal notranslate"><span class="pre">PredictableVariables.swc_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.ether_thief">mythril.analysis.module.modules.ether_thief module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.ether_thief.EtherThief"><code class="docutils literal notranslate"><span class="pre">EtherThief</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.ether_thief.EtherThief.description"><code class="docutils literal notranslate"><span class="pre">EtherThief.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.ether_thief.EtherThief.entry_point"><code class="docutils literal notranslate"><span class="pre">EtherThief.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.ether_thief.EtherThief.name"><code class="docutils literal notranslate"><span class="pre">EtherThief.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.ether_thief.EtherThief.post_hooks"><code class="docutils literal notranslate"><span class="pre">EtherThief.post_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.ether_thief.EtherThief.reset_module"><code class="docutils literal notranslate"><span class="pre">EtherThief.reset_module()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.ether_thief.EtherThief.swc_id"><code class="docutils literal notranslate"><span class="pre">EtherThief.swc_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.exceptions">mythril.analysis.module.modules.exceptions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.exceptions.Exceptions"><code class="docutils literal notranslate"><span class="pre">Exceptions</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.exceptions.Exceptions.description"><code class="docutils literal notranslate"><span class="pre">Exceptions.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.exceptions.Exceptions.entry_point"><code class="docutils literal notranslate"><span class="pre">Exceptions.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.exceptions.Exceptions.name"><code class="docutils literal notranslate"><span class="pre">Exceptions.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.exceptions.Exceptions.pre_hooks"><code class="docutils literal notranslate"><span class="pre">Exceptions.pre_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.exceptions.Exceptions.swc_id"><code class="docutils literal notranslate"><span class="pre">Exceptions.swc_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.exceptions.LastJumpAnnotation"><code class="docutils literal notranslate"><span class="pre">LastJumpAnnotation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.exceptions.is_assertion_failure"><code class="docutils literal notranslate"><span class="pre">is_assertion_failure()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.external_calls">mythril.analysis.module.modules.external_calls module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.external_calls.ExternalCalls"><code class="docutils literal notranslate"><span class="pre">ExternalCalls</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.external_calls.ExternalCalls.description"><code class="docutils literal notranslate"><span class="pre">ExternalCalls.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.external_calls.ExternalCalls.entry_point"><code class="docutils literal notranslate"><span class="pre">ExternalCalls.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.external_calls.ExternalCalls.name"><code class="docutils literal notranslate"><span class="pre">ExternalCalls.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.external_calls.ExternalCalls.pre_hooks"><code class="docutils literal notranslate"><span class="pre">ExternalCalls.pre_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.external_calls.ExternalCalls.swc_id"><code class="docutils literal notranslate"><span class="pre">ExternalCalls.swc_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.integer">mythril.analysis.module.modules.integer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.integer.IntegerArithmetics"><code class="docutils literal notranslate"><span class="pre">IntegerArithmetics</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.integer.IntegerArithmetics.description"><code class="docutils literal notranslate"><span class="pre">IntegerArithmetics.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.integer.IntegerArithmetics.entry_point"><code class="docutils literal notranslate"><span class="pre">IntegerArithmetics.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.integer.IntegerArithmetics.name"><code class="docutils literal notranslate"><span class="pre">IntegerArithmetics.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.integer.IntegerArithmetics.pre_hooks"><code class="docutils literal notranslate"><span class="pre">IntegerArithmetics.pre_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.integer.IntegerArithmetics.reset_module"><code class="docutils literal notranslate"><span class="pre">IntegerArithmetics.reset_module()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.integer.IntegerArithmetics.swc_id"><code class="docutils literal notranslate"><span class="pre">IntegerArithmetics.swc_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.integer.OverUnderflowAnnotation"><code class="docutils literal notranslate"><span class="pre">OverUnderflowAnnotation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.integer.OverUnderflowStateAnnotation"><code class="docutils literal notranslate"><span class="pre">OverUnderflowStateAnnotation</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.multiple_sends">mythril.analysis.module.modules.multiple_sends module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.multiple_sends.MultipleSends"><code class="docutils literal notranslate"><span class="pre">MultipleSends</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.multiple_sends.MultipleSends.description"><code class="docutils literal notranslate"><span class="pre">MultipleSends.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.multiple_sends.MultipleSends.entry_point"><code class="docutils literal notranslate"><span class="pre">MultipleSends.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.multiple_sends.MultipleSends.name"><code class="docutils literal notranslate"><span class="pre">MultipleSends.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.multiple_sends.MultipleSends.pre_hooks"><code class="docutils literal notranslate"><span class="pre">MultipleSends.pre_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.multiple_sends.MultipleSends.swc_id"><code class="docutils literal notranslate"><span class="pre">MultipleSends.swc_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.multiple_sends.MultipleSendsAnnotation"><code class="docutils literal notranslate"><span class="pre">MultipleSendsAnnotation</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.state_change_external_calls">mythril.analysis.module.modules.state_change_external_calls module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.state_change_external_calls.StateChangeAfterCall"><code class="docutils literal notranslate"><span class="pre">StateChangeAfterCall</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.state_change_external_calls.StateChangeAfterCall.description"><code class="docutils literal notranslate"><span class="pre">StateChangeAfterCall.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.state_change_external_calls.StateChangeAfterCall.entry_point"><code class="docutils literal notranslate"><span class="pre">StateChangeAfterCall.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.state_change_external_calls.StateChangeAfterCall.name"><code class="docutils literal notranslate"><span class="pre">StateChangeAfterCall.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.state_change_external_calls.StateChangeAfterCall.pre_hooks"><code class="docutils literal notranslate"><span class="pre">StateChangeAfterCall.pre_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.state_change_external_calls.StateChangeAfterCall.swc_id"><code class="docutils literal notranslate"><span class="pre">StateChangeAfterCall.swc_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.state_change_external_calls.StateChangeCallsAnnotation"><code class="docutils literal notranslate"><span class="pre">StateChangeCallsAnnotation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.state_change_external_calls.StateChangeCallsAnnotation.get_issue"><code class="docutils literal notranslate"><span class="pre">StateChangeCallsAnnotation.get_issue()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.suicide">mythril.analysis.module.modules.suicide module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.suicide.AccidentallyKillable"><code class="docutils literal notranslate"><span class="pre">AccidentallyKillable</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.suicide.AccidentallyKillable.description"><code class="docutils literal notranslate"><span class="pre">AccidentallyKillable.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.suicide.AccidentallyKillable.entry_point"><code class="docutils literal notranslate"><span class="pre">AccidentallyKillable.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.suicide.AccidentallyKillable.name"><code class="docutils literal notranslate"><span class="pre">AccidentallyKillable.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.suicide.AccidentallyKillable.pre_hooks"><code class="docutils literal notranslate"><span class="pre">AccidentallyKillable.pre_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.suicide.AccidentallyKillable.reset_module"><code class="docutils literal notranslate"><span class="pre">AccidentallyKillable.reset_module()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.suicide.AccidentallyKillable.swc_id"><code class="docutils literal notranslate"><span class="pre">AccidentallyKillable.swc_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.unchecked_retval">mythril.analysis.module.modules.unchecked_retval module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.unchecked_retval.RetVal"><code class="docutils literal notranslate"><span class="pre">RetVal</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.unchecked_retval.RetVal.address"><code class="docutils literal notranslate"><span class="pre">RetVal.address</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.unchecked_retval.RetVal.retval"><code class="docutils literal notranslate"><span class="pre">RetVal.retval</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.unchecked_retval.UncheckedRetval"><code class="docutils literal notranslate"><span class="pre">UncheckedRetval</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.unchecked_retval.UncheckedRetval.description"><code class="docutils literal notranslate"><span class="pre">UncheckedRetval.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.unchecked_retval.UncheckedRetval.entry_point"><code class="docutils literal notranslate"><span class="pre">UncheckedRetval.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.unchecked_retval.UncheckedRetval.name"><code class="docutils literal notranslate"><span class="pre">UncheckedRetval.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.unchecked_retval.UncheckedRetval.post_hooks"><code class="docutils literal notranslate"><span class="pre">UncheckedRetval.post_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.unchecked_retval.UncheckedRetval.pre_hooks"><code class="docutils literal notranslate"><span class="pre">UncheckedRetval.pre_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.unchecked_retval.UncheckedRetval.swc_id"><code class="docutils literal notranslate"><span class="pre">UncheckedRetval.swc_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.unchecked_retval.UncheckedRetvalAnnotation"><code class="docutils literal notranslate"><span class="pre">UncheckedRetvalAnnotation</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.user_assertions">mythril.analysis.module.modules.user_assertions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.user_assertions.UserAssertions"><code class="docutils literal notranslate"><span class="pre">UserAssertions</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.user_assertions.UserAssertions.description"><code class="docutils literal notranslate"><span class="pre">UserAssertions.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.user_assertions.UserAssertions.entry_point"><code class="docutils literal notranslate"><span class="pre">UserAssertions.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.user_assertions.UserAssertions.name"><code class="docutils literal notranslate"><span class="pre">UserAssertions.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.user_assertions.UserAssertions.pre_hooks"><code class="docutils literal notranslate"><span class="pre">UserAssertions.pre_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#mythril.analysis.module.modules.user_assertions.UserAssertions.swc_id"><code class="docutils literal notranslate"><span class="pre">UserAssertions.swc_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-mythril.analysis.module.base">
+<span id="mythril-analysis-module-base-module"></span><h2>mythril.analysis.module.base module<a class="headerlink" href="#module-mythril.analysis.module.base" title="Link to this heading">¶</a></h2>
+<p>Mythril Detection Modules</p>
+<p>This module includes an definition of the DetectionModule interface.
+DetectionModules implement different analysis rules to find weaknesses and vulnerabilities.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.analysis.module.base.DetectionModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.analysis.module.base.</span></span><span class="sig-name descname"><span class="pre">DetectionModule</span></span><a class="reference internal" href="_modules/mythril/analysis/module/base.html#DetectionModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.module.base.DetectionModule" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>The base detection module.</p>
+<p>All custom-built detection modules must inherit from this class.</p>
+<p>There are several class properties that expose information about the detection modules</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the detection module</p></li>
+<li><p><strong>swc_id</strong> – The SWC ID associated with the weakness that the module detects</p></li>
+<li><p><strong>description</strong> – A description of the detection module, and what it detects</p></li>
+<li><p><strong>entry_point</strong> – Mythril can run callback style detection modules, or modules that search the statespace.
+[IMPORTANT] POST entry points severely slow down the analysis, try to always use callback style modules</p></li>
+<li><p><strong>pre_hooks</strong> – A list of instructions to hook the laser vm for (pre execution of the instruction)</p></li>
+<li><p><strong>post_hooks</strong> – A list of instructions to hook the laser vm for (post execution of the instruction)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.analysis.module.base.DetectionModule.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Detection</span> <span class="pre">module</span> <span class="pre">description'</span></em><a class="headerlink" href="#mythril.analysis.module.base.DetectionModule.description" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.analysis.module.base.DetectionModule.entry_point">
+<span class="sig-name descname"><span class="pre">entry_point</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#mythril.analysis.module.base.EntryPoint" title="mythril.analysis.module.base.EntryPoint"><span class="pre">EntryPoint</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#mythril.analysis.module.base.DetectionModule.entry_point" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.module.base.DetectionModule.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mythril.analysis.html#mythril.analysis.report.Issue" title="mythril.analysis.report.Issue"><span class="pre">Issue</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/analysis/module/base.html#DetectionModule.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.module.base.DetectionModule.execute" title="Link to this definition">¶</a></dt>
+<dd><p>The entry point for execution, which is being called by Mythril.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target</strong> – The target of the analysis, either a global state (callback) or the entire statespace (post)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of encountered issues</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.analysis.module.base.DetectionModule.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Detection</span> <span class="pre">Module</span> <span class="pre">Name</span> <span class="pre">/</span> <span class="pre">Title'</span></em><a class="headerlink" href="#mythril.analysis.module.base.DetectionModule.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.analysis.module.base.DetectionModule.post_hooks">
+<span class="sig-name descname"><span class="pre">post_hooks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#mythril.analysis.module.base.DetectionModule.post_hooks" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.analysis.module.base.DetectionModule.pre_hooks">
+<span class="sig-name descname"><span class="pre">pre_hooks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#mythril.analysis.module.base.DetectionModule.pre_hooks" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.module.base.DetectionModule.reset_module">
+<span class="sig-name descname"><span class="pre">reset_module</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/module/base.html#DetectionModule.reset_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.module.base.DetectionModule.reset_module" title="Link to this definition">¶</a></dt>
+<dd><p>Resets the storage of this module</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.analysis.module.base.DetectionModule.swc_id">
+<span class="sig-name descname"><span class="pre">swc_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SWC-000'</span></em><a class="headerlink" href="#mythril.analysis.module.base.DetectionModule.swc_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.module.base.DetectionModule.update_cache">
+<span class="sig-name descname"><span class="pre">update_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">issues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/module/base.html#DetectionModule.update_cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.module.base.DetectionModule.update_cache" title="Link to this definition">¶</a></dt>
+<dd><p>Updates cache with param issues, updates against self.issues, if the param is None
+:param issues: The issues used to update the cache</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.analysis.module.base.EntryPoint">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.analysis.module.base.</span></span><span class="sig-name descname"><span class="pre">EntryPoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/module/base.html#EntryPoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.module.base.EntryPoint" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>EntryPoint Enum</p>
+<p>This enum is used to signify the entry_point of detection modules.
+See also the class documentation of DetectionModule</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.analysis.module.base.EntryPoint.CALLBACK">
+<span class="sig-name descname"><span class="pre">CALLBACK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#mythril.analysis.module.base.EntryPoint.CALLBACK" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.analysis.module.base.EntryPoint.POST">
+<span class="sig-name descname"><span class="pre">POST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#mythril.analysis.module.base.EntryPoint.POST" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.analysis.module.loader">
+<span id="mythril-analysis-module-loader-module"></span><h2>mythril.analysis.module.loader module<a class="headerlink" href="#module-mythril.analysis.module.loader" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.analysis.module.loader.ModuleLoader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.analysis.module.loader.</span></span><span class="sig-name descname"><span class="pre">ModuleLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/module/loader.html#ModuleLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.module.loader.ModuleLoader" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The module loader class implements a singleton loader for detection modules.</p>
+<p>By default it will load the detection modules in the mythril package.
+Additional detection modules can be loaded using the register_module function call implemented by the ModuleLoader</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.module.loader.ModuleLoader.get_detection_modules">
+<span class="sig-name descname"><span class="pre">get_detection_modules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.analysis.module.base.EntryPoint" title="mythril.analysis.module.base.EntryPoint"><span class="pre">EntryPoint</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">white_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#mythril.analysis.module.base.DetectionModule" title="mythril.analysis.module.base.DetectionModule"><span class="pre">DetectionModule</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/analysis/module/loader.html#ModuleLoader.get_detection_modules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.module.loader.ModuleLoader.get_detection_modules" title="Link to this definition">¶</a></dt>
+<dd><p>Gets registered detection modules</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entry_point</strong> – If specified: only return detection modules with this entry point</p></li>
+<li><p><strong>white_list</strong> – If specified: only return whitelisted detection modules</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The selected detection modules</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.module.loader.ModuleLoader.register_module">
+<span class="sig-name descname"><span class="pre">register_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detection_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.analysis.module.base.DetectionModule" title="mythril.analysis.module.base.DetectionModule"><span class="pre">DetectionModule</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/module/loader.html#ModuleLoader.register_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.module.loader.ModuleLoader.register_module" title="Link to this definition">¶</a></dt>
+<dd><p>Registers a detection module with the module loader</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.analysis.module.module_helpers">
+<span id="mythril-analysis-module-module-helpers-module"></span><h2>mythril.analysis.module.module_helpers module<a class="headerlink" href="#module-mythril.analysis.module.module_helpers" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.module.module_helpers.is_prehook">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.module.module_helpers.</span></span><span class="sig-name descname"><span class="pre">is_prehook</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/mythril/analysis/module/module_helpers.html#is_prehook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.module.module_helpers.is_prehook" title="Link to this definition">¶</a></dt>
+<dd><p>Check if we are in prehook.  One of Bernhard’s trademark hacks!
+Let’s leave it to this for now, unless we need to check prehook for
+a lot more modules.</p>
+</dd></dl>
+
+</section>
+<section id="module-mythril.analysis.module.util">
+<span id="mythril-analysis-module-util-module"></span><h2>mythril.analysis.module.util module<a class="headerlink" href="#module-mythril.analysis.module.util" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.module.util.get_detection_module_hooks">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.module.util.</span></span><span class="sig-name descname"><span class="pre">get_detection_module_hooks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#mythril.analysis.module.base.DetectionModule" title="mythril.analysis.module.base.DetectionModule"><span class="pre">DetectionModule</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pre'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/analysis/module/util.html#get_detection_module_hooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.module.util.get_detection_module_hooks" title="Link to this definition">¶</a></dt>
+<dd><p>Gets a dictionary with the hooks for the passed detection modules</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modules</strong> – The modules for which to retrieve hooks</p></li>
+<li><p><strong>hook_type</strong> – The type  of hooks to retrieve (default: “pre”)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary with discovered hooks</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.module.util.reset_callback_modules">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.module.util.</span></span><span class="sig-name descname"><span class="pre">reset_callback_modules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/module/util.html#reset_callback_modules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.module.util.reset_callback_modules" title="Link to this definition">¶</a></dt>
+<dd><p>Clean the issue records of every callback-based module.</p>
+</dd></dl>
+
+</section>
+<section id="module-mythril.analysis.module">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mythril.analysis.module" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="mythril.html">mythril package</a><ul>
+  <li><a href="mythril.analysis.html">mythril.analysis package</a><ul>
+      <li>Previous: <a href="mythril.analysis.html" title="previous chapter">mythril.analysis package</a></li>
+      <li>Next: <a href="mythril.analysis.module.modules.html" title="next chapter">mythril.analysis.module.modules package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/mythril.analysis.module.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

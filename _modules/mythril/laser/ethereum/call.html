@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mythril.laser.ethereum.call &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../../../about.html" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for mythril.laser.ethereum.call</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module contains the business logic used by Instruction in</span>
+<span class="sd">instructions.py to get the necessary elements from the stack and determine the</span>
+<span class="sd">parameters for the new global state.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">eth.constants</span> <span class="kn">import</span> <span class="n">GAS_CALLSTIPEND</span>
+
+<span class="kn">import</span> <span class="nn">mythril.laser.ethereum.util</span> <span class="k">as</span> <span class="nn">util</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.util</span> <span class="kn">import</span> <span class="n">insert_ret_val</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum</span> <span class="kn">import</span> <span class="n">natives</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.cheat_code</span> <span class="kn">import</span> <span class="n">handle_cheat_codes</span><span class="p">,</span> <span class="n">hevm_cheat_code</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.instruction_data</span> <span class="kn">import</span> <span class="n">calculate_native_gas</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.state.account</span> <span class="kn">import</span> <span class="n">Account</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.natives</span> <span class="kn">import</span> <span class="n">PRECOMPILE_COUNT</span><span class="p">,</span> <span class="n">PRECOMPILE_FUNCTIONS</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.state.calldata</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BaseCalldata</span><span class="p">,</span>
+    <span class="n">SymbolicCalldata</span><span class="p">,</span>
+    <span class="n">ConcreteCalldata</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.state.global_state</span> <span class="kn">import</span> <span class="n">GlobalState</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.smt</span> <span class="kn">import</span> <span class="n">BitVec</span><span class="p">,</span> <span class="n">If</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.smt</span> <span class="kn">import</span> <span class="n">simplify</span><span class="p">,</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">symbol_factory</span>
+<span class="kn">from</span> <span class="nn">mythril.support.loader</span> <span class="kn">import</span> <span class="n">DynLoader</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains the business logic used by Instruction in instructions.py</span>
+<span class="sd">to get the necessary elements from the stack and determine the parameters for the new global state.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">SYMBOLIC_CALLDATA_SIZE</span> <span class="o">=</span> <span class="mi">320</span>  <span class="c1"># Used when copying symbolic calldata</span>
+
+
+<div class="viewcode-block" id="get_call_parameters">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.call.get_call_parameters">[docs]</a>
+<span class="k">def</span> <span class="nf">get_call_parameters</span><span class="p">(</span>
+    <span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">,</span> <span class="n">dynamic_loader</span><span class="p">:</span> <span class="n">DynLoader</span><span class="p">,</span> <span class="n">with_value</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets call parameters from global state Pops the values from the stack</span>
+<span class="sd">    and determines output parameters.</span>
+
+
+<span class="sd">    :param global_state: state to look in</span>
+<span class="sd">    :param dynamic_loader: dynamic loader to use</span>
+<span class="sd">    :param with_value: whether to pop the value argument from the stack</span>
+<span class="sd">    :return: callee_account, call_data, value, call_data_type, gas</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gas</span><span class="p">,</span> <span class="n">to</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span> <span class="k">if</span> <span class="n">with_value</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="p">(</span>
+        <span class="n">memory_input_offset</span><span class="p">,</span>
+        <span class="n">memory_input_size</span><span class="p">,</span>
+        <span class="n">memory_out_offset</span><span class="p">,</span>
+        <span class="n">memory_out_size</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">callee_address</span> <span class="o">=</span> <span class="n">get_callee_address</span><span class="p">(</span><span class="n">global_state</span><span class="p">,</span> <span class="n">dynamic_loader</span><span class="p">,</span> <span class="n">to</span><span class="p">)</span>
+
+    <span class="n">callee_account</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">call_data</span> <span class="o">=</span> <span class="n">get_call_data</span><span class="p">(</span><span class="n">global_state</span><span class="p">,</span> <span class="n">memory_input_offset</span><span class="p">,</span> <span class="n">memory_input_size</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callee_address</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">callee_address</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">callee_address</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">PRECOMPILE_COUNT</span> <span class="ow">or</span> <span class="nb">int</span><span class="p">(</span><span class="n">callee_address</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="n">callee_account</span> <span class="o">=</span> <span class="n">get_callee_account</span><span class="p">(</span>
+            <span class="n">global_state</span><span class="p">,</span> <span class="n">callee_address</span><span class="p">,</span> <span class="n">dynamic_loader</span>
+        <span class="p">)</span>
+
+    <span class="n">gas</span> <span class="o">=</span> <span class="n">gas</span> <span class="o">+</span> <span class="n">If</span><span class="p">(</span><span class="n">value</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">GAS_CALLSTIPEND</span><span class="p">,</span> <span class="n">gas</span><span class="o">.</span><span class="n">size</span><span class="p">()),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">callee_address</span><span class="p">,</span>
+        <span class="n">callee_account</span><span class="p">,</span>
+        <span class="n">call_data</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">,</span>
+        <span class="n">gas</span><span class="p">,</span>
+        <span class="n">memory_out_offset</span><span class="p">,</span>
+        <span class="n">memory_out_size</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_get_padded_hex_address</span><span class="p">(</span><span class="n">address</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">hex_address</span> <span class="o">=</span> <span class="nb">hex</span><span class="p">(</span><span class="n">address</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="s2">&quot;0x</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;0&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">40</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">hex_address</span><span class="p">)),</span> <span class="n">hex_address</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_callee_address">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.call.get_callee_address">[docs]</a>
+<span class="k">def</span> <span class="nf">get_callee_address</span><span class="p">(</span>
+    <span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">,</span>
+    <span class="n">dynamic_loader</span><span class="p">:</span> <span class="n">DynLoader</span><span class="p">,</span>
+    <span class="n">symbolic_to_address</span><span class="p">:</span> <span class="n">Expression</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets the address of the callee.</span>
+
+<span class="sd">    :param global_state: state to look in</span>
+<span class="sd">    :param dynamic_loader:  dynamic loader to use</span>
+<span class="sd">    :param symbolic_to_address: The (symbolic) callee address</span>
+<span class="sd">    :return: Address of the callee</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">environment</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">environment</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">callee_address</span> <span class="o">=</span> <span class="n">_get_padded_hex_address</span><span class="p">(</span>
+            <span class="n">util</span><span class="o">.</span><span class="n">get_concrete_int</span><span class="p">(</span><span class="n">symbolic_to_address</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Symbolic call encountered&quot;</span><span class="p">)</span>
+
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Storage\[(\d+)\]&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">simplify</span><span class="p">(</span><span class="n">symbolic_to_address</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">dynamic_loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">symbolic_to_address</span>
+
+        <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Dynamic contract address at storage index </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+
+        <span class="c1"># attempt to read the contract address from instance storage</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">callee_address</span> <span class="o">=</span> <span class="n">dynamic_loader</span><span class="o">.</span><span class="n">read_storage</span><span class="p">(</span>
+                <span class="s2">&quot;0x</span><span class="si">{:040X}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">environment</span><span class="o">.</span><span class="n">active_account</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="n">index</span>
+            <span class="p">)</span>
+        <span class="c1"># TODO: verify whether this happens or not</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">symbolic_to_address</span>
+
+        <span class="c1"># testrpc simply returns the address, geth response is more elaborate.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^0x[0-9a-f]</span><span class="si">{40}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="n">callee_address</span><span class="p">):</span>
+            <span class="n">callee_address</span> <span class="o">=</span> <span class="s2">&quot;0x&quot;</span> <span class="o">+</span> <span class="n">callee_address</span><span class="p">[</span><span class="mi">26</span><span class="p">:]</span>
+
+    <span class="k">return</span> <span class="n">callee_address</span></div>
+
+
+
+<div class="viewcode-block" id="get_callee_account">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.call.get_callee_account">[docs]</a>
+<span class="k">def</span> <span class="nf">get_callee_account</span><span class="p">(</span>
+    <span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">,</span>
+    <span class="n">callee_address</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">],</span>
+    <span class="n">dynamic_loader</span><span class="p">:</span> <span class="n">DynLoader</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets the callees account from the global_state.</span>
+
+<span class="sd">    :param global_state: state to look in</span>
+<span class="sd">    :param callee_address: address of the callee</span>
+<span class="sd">    :param dynamic_loader: dynamic loader to use</span>
+<span class="sd">    :return: Account belonging to callee</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callee_address</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">callee_address</span><span class="o">.</span><span class="n">symbolic</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Account</span><span class="p">(</span><span class="n">callee_address</span><span class="p">,</span> <span class="n">balances</span><span class="o">=</span><span class="n">global_state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">balances</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">callee_address</span> <span class="o">=</span> <span class="nb">hex</span><span class="p">(</span><span class="n">callee_address</span><span class="o">.</span><span class="n">value</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span>
+
+    <span class="k">return</span> <span class="n">global_state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">accounts_exist_or_load</span><span class="p">(</span>
+        <span class="n">callee_address</span><span class="p">,</span> <span class="n">dynamic_loader</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_call_data">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.call.get_call_data">[docs]</a>
+<span class="k">def</span> <span class="nf">get_call_data</span><span class="p">(</span>
+    <span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">,</span>
+    <span class="n">memory_start</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">],</span>
+    <span class="n">memory_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">],</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets call_data from the global_state.</span>
+
+<span class="sd">    :param global_state: state to look in</span>
+<span class="sd">    :param memory_start: Start index</span>
+<span class="sd">    :param memory_size: Size</span>
+<span class="sd">    :return: Tuple containing: call_data array from memory or empty array if symbolic, type found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span>
+    <span class="n">transaction_id</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_internalcall&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">global_state</span><span class="o">.</span><span class="n">current_transaction</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="n">memory_start</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+        <span class="n">BitVec</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">memory_start</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memory_start</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="k">else</span> <span class="n">memory_start</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">memory_size</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+        <span class="n">BitVec</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">memory_size</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memory_size</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="k">else</span> <span class="n">memory_size</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">memory_size</span><span class="o">.</span><span class="n">symbolic</span><span class="p">:</span>
+        <span class="n">memory_size</span> <span class="o">=</span> <span class="n">SYMBOLIC_CALLDATA_SIZE</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">calldata_from_mem</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">memory</span><span class="p">[</span>
+            <span class="n">util</span><span class="o">.</span><span class="n">get_concrete_int</span><span class="p">(</span><span class="n">memory_start</span><span class="p">)</span> <span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">get_concrete_int</span><span class="p">(</span>
+                <span class="n">memory_start</span> <span class="o">+</span> <span class="n">memory_size</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">ConcreteCalldata</span><span class="p">(</span><span class="n">transaction_id</span><span class="p">,</span> <span class="n">calldata_from_mem</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Unsupported symbolic memory offset and size&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">SymbolicCalldata</span><span class="p">(</span><span class="n">transaction_id</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="native_call">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.call.native_call">[docs]</a>
+<span class="k">def</span> <span class="nf">native_call</span><span class="p">(</span>
+    <span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">,</span>
+    <span class="n">callee_address</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">],</span>
+    <span class="n">call_data</span><span class="p">:</span> <span class="n">BaseCalldata</span><span class="p">,</span>
+    <span class="n">memory_out_offset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+    <span class="n">memory_out_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">GlobalState</span><span class="p">]]:</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callee_address</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="p">(</span>
+        <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">callee_address</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">PRECOMPILE_COUNT</span>
+        <span class="ow">or</span> <span class="n">hevm_cheat_code</span><span class="o">.</span><span class="n">is_cheat_address</span><span class="p">(</span><span class="n">callee_address</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">hevm_cheat_code</span><span class="o">.</span><span class="n">is_cheat_address</span><span class="p">(</span><span class="n">callee_address</span><span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;HEVM cheat code address triggered&quot;</span><span class="p">)</span>
+        <span class="n">handle_cheat_codes</span><span class="p">(</span>
+            <span class="n">global_state</span><span class="p">,</span> <span class="n">callee_address</span><span class="p">,</span> <span class="n">call_data</span><span class="p">,</span> <span class="n">memory_out_offset</span><span class="p">,</span> <span class="n">memory_out_size</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">global_state</span><span class="p">]</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Native contract called: &quot;</span> <span class="o">+</span> <span class="n">callee_address</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">mem_out_start</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">get_concrete_int</span><span class="p">(</span><span class="n">memory_out_offset</span><span class="p">)</span>
+        <span class="n">mem_out_sz</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">get_concrete_int</span><span class="p">(</span><span class="n">memory_out_size</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">insert_ret_val</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;CALL with symbolic start or offset not supported&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">global_state</span><span class="p">]</span>
+
+    <span class="n">call_address_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">callee_address</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="n">native_gas_min</span><span class="p">,</span> <span class="n">native_gas_max</span> <span class="o">=</span> <span class="n">calculate_native_gas</span><span class="p">(</span>
+        <span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">calculate_extension_size</span><span class="p">(</span><span class="n">mem_out_start</span><span class="p">,</span> <span class="n">mem_out_sz</span><span class="p">),</span>
+        <span class="n">PRECOMPILE_FUNCTIONS</span><span class="p">[</span><span class="n">call_address_int</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">min_gas_used</span> <span class="o">+=</span> <span class="n">native_gas_min</span>
+    <span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">max_gas_used</span> <span class="o">+=</span> <span class="n">native_gas_max</span>
+    <span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">mem_extend</span><span class="p">(</span><span class="n">mem_out_start</span><span class="p">,</span> <span class="n">mem_out_sz</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">natives</span><span class="o">.</span><span class="n">native_contracts</span><span class="p">(</span><span class="n">call_address_int</span><span class="p">,</span> <span class="n">call_data</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">natives</span><span class="o">.</span><span class="n">NativeContractException</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mem_out_sz</span><span class="p">):</span>
+            <span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">memory</span><span class="p">[</span><span class="n">mem_out_start</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">new_bitvec</span><span class="p">(</span>
+                <span class="n">PRECOMPILE_FUNCTIONS</span><span class="p">[</span><span class="n">call_address_int</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span>
+                <span class="o">+</span> <span class="s2">&quot;(&quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">call_data</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span>
+                <span class="mi">8</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">insert_ret_val</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">global_state</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
+        <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">mem_out_sz</span><span class="p">)</span>
+    <span class="p">):</span>  <span class="c1"># If more data is used then it&#39;s chopped off</span>
+        <span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">memory</span><span class="p">[</span><span class="n">mem_out_start</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="n">insert_ret_val</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">global_state</span><span class="p">]</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

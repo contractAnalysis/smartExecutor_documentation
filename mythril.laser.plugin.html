@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mythril.laser.plugin package &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mythril.laser.plugin.plugins package" href="mythril.laser.plugin.plugins.html" />
+    <link rel="prev" title="mythril.laser.ethereum.transaction package" href="mythril.laser.ethereum.transaction.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mythril-laser-plugin-package">
+<h1>mythril.laser.plugin package<a class="headerlink" href="#mythril-laser-plugin-package" title="Link to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mythril.laser.plugin.plugins.html">mythril.laser.plugin.plugins package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.plugins.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.coverage.html">mythril.laser.plugin.plugins.coverage package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.coverage.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.coverage.html#module-mythril.laser.plugin.plugins.coverage.coverage_plugin">mythril.laser.plugin.plugins.coverage.coverage_plugin module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.coverage.html#module-mythril.laser.plugin.plugins.coverage.coverage_strategy">mythril.laser.plugin.plugins.coverage.coverage_strategy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.coverage.html#module-mythril.laser.plugin.plugins.coverage">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.summary_backup.html">mythril.laser.plugin.plugins.summary_backup package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.summary_backup.html#module-mythril.laser.plugin.plugins.summary_backup">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.plugins.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.plugins.html#module-mythril.laser.plugin.plugins.benchmark">mythril.laser.plugin.plugins.benchmark module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.benchmark.BenchmarkPlugin"><code class="docutils literal notranslate"><span class="pre">BenchmarkPlugin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.benchmark.BenchmarkPlugin.initialize"><code class="docutils literal notranslate"><span class="pre">BenchmarkPlugin.initialize()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.benchmark.BenchmarkPluginBuilder"><code class="docutils literal notranslate"><span class="pre">BenchmarkPluginBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.benchmark.BenchmarkPluginBuilder.name"><code class="docutils literal notranslate"><span class="pre">BenchmarkPluginBuilder.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.plugins.html#module-mythril.laser.plugin.plugins.call_depth_limiter">mythril.laser.plugin.plugins.call_depth_limiter module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.call_depth_limiter.CallDepthLimit"><code class="docutils literal notranslate"><span class="pre">CallDepthLimit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.call_depth_limiter.CallDepthLimit.initialize"><code class="docutils literal notranslate"><span class="pre">CallDepthLimit.initialize()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.call_depth_limiter.CallDepthLimitBuilder"><code class="docutils literal notranslate"><span class="pre">CallDepthLimitBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.call_depth_limiter.CallDepthLimitBuilder.name"><code class="docutils literal notranslate"><span class="pre">CallDepthLimitBuilder.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.plugins.html#module-mythril.laser.plugin.plugins.dependency_pruner">mythril.laser.plugin.plugins.dependency_pruner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.dependency_pruner.DependencyPruner"><code class="docutils literal notranslate"><span class="pre">DependencyPruner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.dependency_pruner.DependencyPruner.initialize"><code class="docutils literal notranslate"><span class="pre">DependencyPruner.initialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.dependency_pruner.DependencyPruner.update_calls"><code class="docutils literal notranslate"><span class="pre">DependencyPruner.update_calls()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.dependency_pruner.DependencyPruner.update_sloads"><code class="docutils literal notranslate"><span class="pre">DependencyPruner.update_sloads()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.dependency_pruner.DependencyPruner.update_sstores"><code class="docutils literal notranslate"><span class="pre">DependencyPruner.update_sstores()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.dependency_pruner.DependencyPruner.wanna_execute"><code class="docutils literal notranslate"><span class="pre">DependencyPruner.wanna_execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.dependency_pruner.DependencyPrunerBuilder"><code class="docutils literal notranslate"><span class="pre">DependencyPrunerBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.dependency_pruner.DependencyPrunerBuilder.name"><code class="docutils literal notranslate"><span class="pre">DependencyPrunerBuilder.name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.dependency_pruner.get_dependency_annotation"><code class="docutils literal notranslate"><span class="pre">get_dependency_annotation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.dependency_pruner.get_ftn_seq_annotation_from_ws"><code class="docutils literal notranslate"><span class="pre">get_ftn_seq_annotation_from_ws()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.dependency_pruner.get_writes_annotation_from_ws"><code class="docutils literal notranslate"><span class="pre">get_writes_annotation_from_ws()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.dependency_pruner.get_ws_dependency_annotation"><code class="docutils literal notranslate"><span class="pre">get_ws_dependency_annotation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.plugins.html#module-mythril.laser.plugin.plugins.instruction_profiler">mythril.laser.plugin.plugins.instruction_profiler module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.instruction_profiler.InstructionProfiler"><code class="docutils literal notranslate"><span class="pre">InstructionProfiler</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.instruction_profiler.InstructionProfiler.initialize"><code class="docutils literal notranslate"><span class="pre">InstructionProfiler.initialize()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.instruction_profiler.InstructionProfilerBuilder"><code class="docutils literal notranslate"><span class="pre">InstructionProfilerBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.instruction_profiler.InstructionProfilerBuilder.name"><code class="docutils literal notranslate"><span class="pre">InstructionProfilerBuilder.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.plugins.html#module-mythril.laser.plugin.plugins.mutation_pruner">mythril.laser.plugin.plugins.mutation_pruner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.mutation_pruner.MutationPruner"><code class="docutils literal notranslate"><span class="pre">MutationPruner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.mutation_pruner.MutationPruner.initialize"><code class="docutils literal notranslate"><span class="pre">MutationPruner.initialize()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.mutation_pruner.MutationPrunerBuilder"><code class="docutils literal notranslate"><span class="pre">MutationPrunerBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.mutation_pruner.MutationPrunerBuilder.name"><code class="docutils literal notranslate"><span class="pre">MutationPrunerBuilder.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.plugins.html#module-mythril.laser.plugin.plugins.plugin_annotations">mythril.laser.plugin.plugins.plugin_annotations module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.plugin_annotations.DependencyAnnotation"><code class="docutils literal notranslate"><span class="pre">DependencyAnnotation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.plugin_annotations.DependencyAnnotation.check_merge_annotation"><code class="docutils literal notranslate"><span class="pre">DependencyAnnotation.check_merge_annotation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.plugin_annotations.DependencyAnnotation.extend_storage_write_cache"><code class="docutils literal notranslate"><span class="pre">DependencyAnnotation.extend_storage_write_cache()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.plugin_annotations.DependencyAnnotation.get_storage_write_cache"><code class="docutils literal notranslate"><span class="pre">DependencyAnnotation.get_storage_write_cache()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.plugin_annotations.DependencyAnnotation.merge_annotation"><code class="docutils literal notranslate"><span class="pre">DependencyAnnotation.merge_annotation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.plugin_annotations.MutationAnnotation"><code class="docutils literal notranslate"><span class="pre">MutationAnnotation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.plugin_annotations.MutationAnnotation.persist_over_calls"><code class="docutils literal notranslate"><span class="pre">MutationAnnotation.persist_over_calls</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.plugin_annotations.WSDependencyAnnotation"><code class="docutils literal notranslate"><span class="pre">WSDependencyAnnotation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.plugin_annotations.WSDependencyAnnotation.check_merge_annotation"><code class="docutils literal notranslate"><span class="pre">WSDependencyAnnotation.check_merge_annotation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.plugin_annotations.WSDependencyAnnotation.merge_annotation"><code class="docutils literal notranslate"><span class="pre">WSDependencyAnnotation.merge_annotation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.plugins.html#module-mythril.laser.plugin.plugins">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-mythril.laser.plugin.builder">
+<span id="mythril-laser-plugin-builder-module"></span><h2>mythril.laser.plugin.builder module<a class="headerlink" href="#module-mythril.laser.plugin.builder" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.plugin.builder.PluginBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.plugin.builder.</span></span><span class="sig-name descname"><span class="pre">PluginBuilder</span></span><a class="reference internal" href="_modules/mythril/laser/plugin/builder.html#PluginBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.plugin.builder.PluginBuilder" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>The plugin builder interface enables construction of Laser plugins</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.laser.plugin.builder.PluginBuilder.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Default</span> <span class="pre">Plugin</span> <span class="pre">Name'</span></em><a class="headerlink" href="#mythril.laser.plugin.builder.PluginBuilder.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.plugin.interface">
+<span id="mythril-laser-plugin-interface-module"></span><h2>mythril.laser.plugin.interface module<a class="headerlink" href="#module-mythril.laser.plugin.interface" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.plugin.interface.LaserPlugin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.plugin.interface.</span></span><span class="sig-name descname"><span class="pre">LaserPlugin</span></span><a class="reference internal" href="_modules/mythril/laser/plugin/interface.html#LaserPlugin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.plugin.interface.LaserPlugin" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for laser plugins</p>
+<p>Functionality in laser that the symbolic execution process does not need to depend on
+can be implemented in the form of a laser plugin.</p>
+<p>Laser plugins implement the function initialize(symbolic_vm) which is called with the laser virtual machine
+when they are loaded.
+Regularly a plugin will introduce several hooks into laser in this function</p>
+<p>Plugins can direct actions by raising Signals defined in mythril.laser.ethereum.plugins.signals
+For example, a pruning plugin might raise the PluginSkipWorldState signal.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.plugin.interface.LaserPlugin.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbolic_vm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM" title="mythril.laser.ethereum.svm.LaserEVM"><span class="pre">LaserEVM</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/plugin/interface.html#LaserPlugin.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.plugin.interface.LaserPlugin.initialize" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes this plugin on the symbolic virtual machine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>symbolic_vm</strong> – symbolic virtual machine to initialize the laser plugin on</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.plugin.loader">
+<span id="mythril-laser-plugin-loader-module"></span><h2>mythril.laser.plugin.loader module<a class="headerlink" href="#module-mythril.laser.plugin.loader" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.plugin.loader.LaserPluginLoader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.plugin.loader.</span></span><span class="sig-name descname"><span class="pre">LaserPluginLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/plugin/loader.html#LaserPluginLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.plugin.loader.LaserPluginLoader" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The LaserPluginLoader is used to abstract the logic relating to plugins.
+Components outside of laser thus don’t have to be aware of the interface that plugins provide</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.plugin.loader.LaserPluginLoader.add_args">
+<span class="sig-name descname"><span class="pre">add_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plugin_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/plugin/loader.html#LaserPluginLoader.add_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.plugin.loader.LaserPluginLoader.add_args" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.plugin.loader.LaserPluginLoader.enable">
+<span class="sig-name descname"><span class="pre">enable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plugin_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/plugin/loader.html#LaserPluginLoader.enable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.plugin.loader.LaserPluginLoader.enable" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.plugin.loader.LaserPluginLoader.instrument_virtual_machine">
+<span class="sig-name descname"><span class="pre">instrument_virtual_machine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbolic_vm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM" title="mythril.laser.ethereum.svm.LaserEVM"><span class="pre">LaserEVM</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_plugins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/plugin/loader.html#LaserPluginLoader.instrument_virtual_machine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.plugin.loader.LaserPluginLoader.instrument_virtual_machine" title="Link to this definition">¶</a></dt>
+<dd><p>Load enabled plugins into the passed symbolic virtual machine
+:param symbolic_vm: The virtual machine to instrument the plugins with
+:param with_plugins: Override the globally enabled/disabled builders and load all plugins in the list</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.plugin.loader.LaserPluginLoader.is_enabled">
+<span class="sig-name descname"><span class="pre">is_enabled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plugin_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/mythril/laser/plugin/loader.html#LaserPluginLoader.is_enabled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.plugin.loader.LaserPluginLoader.is_enabled" title="Link to this definition">¶</a></dt>
+<dd><p>Returns whether the plugin is loaded in the symbolic_vm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>plugin_name</strong> – Name of the plugin to check</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.plugin.loader.LaserPluginLoader.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plugin_builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.plugin.builder.PluginBuilder" title="mythril.laser.plugin.builder.PluginBuilder"><span class="pre">PluginBuilder</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/plugin/loader.html#LaserPluginLoader.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.plugin.loader.LaserPluginLoader.load" title="Link to this definition">¶</a></dt>
+<dd><p>Enables a Laser Plugin</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>plugin_builder</strong> – Builder that constructs the plugin</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.plugin.signals">
+<span id="mythril-laser-plugin-signals-module"></span><h2>mythril.laser.plugin.signals module<a class="headerlink" href="#module-mythril.laser.plugin.signals" title="Link to this heading">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="mythril.laser.plugin.signals.PluginSignal">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.plugin.signals.</span></span><span class="sig-name descname"><span class="pre">PluginSignal</span></span><a class="reference internal" href="_modules/mythril/laser/plugin/signals.html#PluginSignal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.plugin.signals.PluginSignal" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Base plugin signal</p>
+<p>These signals are used by the laser plugins to create intent for certain actions in the symbolic virtual machine</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mythril.laser.plugin.signals.PluginSkipState">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.plugin.signals.</span></span><span class="sig-name descname"><span class="pre">PluginSkipState</span></span><a class="reference internal" href="_modules/mythril/laser/plugin/signals.html#PluginSkipState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.plugin.signals.PluginSkipState" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.laser.plugin.signals.PluginSignal" title="mythril.laser.plugin.signals.PluginSignal"><code class="xref py py-class docutils literal notranslate"><span class="pre">PluginSignal</span></code></a></p>
+<p>Plugin to skip world state</p>
+<p>Plugins that raise this signal while the add_world_state hook is being executed
+will force laser to abandon that world state.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mythril.laser.plugin.signals.PluginSkipWorldState">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.plugin.signals.</span></span><span class="sig-name descname"><span class="pre">PluginSkipWorldState</span></span><a class="reference internal" href="_modules/mythril/laser/plugin/signals.html#PluginSkipWorldState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.plugin.signals.PluginSkipWorldState" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.laser.plugin.signals.PluginSignal" title="mythril.laser.plugin.signals.PluginSignal"><code class="xref py py-class docutils literal notranslate"><span class="pre">PluginSignal</span></code></a></p>
+<p>Plugin to skip world state</p>
+<p>Plugins that raise this signal while the add_world_state hook is being executed
+will force laser to abandon that world state.</p>
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.plugin">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mythril.laser.plugin" title="Link to this heading">¶</a></h2>
+<p>Laser plugins</p>
+<p>This module contains everything to do with laser plugins</p>
+<p>Laser plugins are a way of extending laser’s functionality without complicating the core business logic.
+Different features that have been implemented in the form of plugins are:
+- benchmarking
+- path pruning</p>
+<p>Plugins also provide a way to implement optimisations outside of the mythril code base and to inject them.
+The api that laser currently provides is still unstable and will probably change to suit our needs
+as more plugins get developed.</p>
+<p>For the implementation of plugins the following modules are of interest:
+- laser.plugins.plugin
+- laser.plugins.signals
+- laser.svm</p>
+<p>Which show the basic interfaces with which plugins are able to interact</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="mythril.html">mythril package</a><ul>
+  <li><a href="mythril.laser.html">mythril.laser package</a><ul>
+      <li>Previous: <a href="mythril.laser.ethereum.transaction.html" title="previous chapter">mythril.laser.ethereum.transaction package</a></li>
+      <li>Next: <a href="mythril.laser.plugin.plugins.html" title="next chapter">mythril.laser.plugin.plugins package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/mythril.laser.plugin.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

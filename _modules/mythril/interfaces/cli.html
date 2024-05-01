@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mythril.interfaces.cli &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for mythril.interfaces.cli</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;mythril.py: Bug hunting on the Ethereum blockchain</span>
+
+<span class="sd">   http://www.github.com/ConsenSys/mythril</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">coloredlogs</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">literal_eval</span>
+
+<span class="kn">import</span> <span class="nn">fdg.global_config</span>
+<span class="kn">import</span> <span class="nn">mythril.support.signatures</span> <span class="k">as</span> <span class="nn">sigs</span>
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">,</span> <span class="n">RawTextHelpFormatter</span>
+<span class="kn">from</span> <span class="nn">mythril.concolic</span> <span class="kn">import</span> <span class="n">concolic_execution</span>
+<span class="kn">from</span> <span class="nn">mythril.exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DetectorNotFoundError</span><span class="p">,</span>
+    <span class="n">CriticalError</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.transaction.symbolic</span> <span class="kn">import</span> <span class="n">ACTORS</span>
+<span class="kn">from</span> <span class="nn">mythril.plugin.discovery</span> <span class="kn">import</span> <span class="n">PluginDiscovery</span>
+<span class="kn">from</span> <span class="nn">mythril.plugin.loader</span> <span class="kn">import</span> <span class="n">MythrilPluginLoader</span>
+
+<span class="kn">from</span> <span class="nn">mythril.mythril</span> <span class="kn">import</span> <span class="n">MythrilAnalyzer</span><span class="p">,</span> <span class="n">MythrilDisassembler</span><span class="p">,</span> <span class="n">MythrilConfig</span>
+
+<span class="kn">from</span> <span class="nn">mythril.analysis.module</span> <span class="kn">import</span> <span class="n">ModuleLoader</span>
+<span class="kn">from</span> <span class="nn">mythril.analysis.report</span> <span class="kn">import</span> <span class="n">Report</span>
+
+<span class="kn">from</span> <span class="nn">mythril.__version__</span> <span class="kn">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">VERSION</span>
+
+<span class="c1"># Initialise core Mythril Component</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">MythrilPluginLoader</span><span class="p">()</span>
+
+<span class="n">ANALYZE_LIST</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;analyze&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+<span class="n">DISASSEMBLE_LIST</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;disassemble&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">)</span>
+<span class="n">FOUNDRY_LIST</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;foundry&quot;</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">)</span>
+
+<span class="n">CONCOLIC_LIST</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;concolic&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">)</span>
+<span class="n">SAFE_FUNCTIONS_COMMAND</span> <span class="o">=</span> <span class="s2">&quot;safe-functions&quot;</span>
+<span class="n">READ_STORAGE_COMNAND</span> <span class="o">=</span> <span class="s2">&quot;read-storage&quot;</span>
+<span class="n">FUNCTION_TO_HASH_COMMAND</span> <span class="o">=</span> <span class="s2">&quot;function-to-hash&quot;</span>
+<span class="n">HASH_TO_ADDRESS_COMMAND</span> <span class="o">=</span> <span class="s2">&quot;hash-to-address&quot;</span>
+<span class="n">LIST_DETECTORS_COMMAND</span> <span class="o">=</span> <span class="s2">&quot;list-detectors&quot;</span>
+<span class="n">VERSION_COMMAND</span> <span class="o">=</span> <span class="s2">&quot;version&quot;</span>
+<span class="n">HELP_COMMAND</span> <span class="o">=</span> <span class="s2">&quot;help&quot;</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">COMMAND_LIST</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">ANALYZE_LIST</span>
+    <span class="o">+</span> <span class="n">DISASSEMBLE_LIST</span>
+    <span class="o">+</span> <span class="n">FOUNDRY_LIST</span>
+    <span class="o">+</span> <span class="n">CONCOLIC_LIST</span>
+    <span class="o">+</span> <span class="p">(</span>
+        <span class="n">READ_STORAGE_COMNAND</span><span class="p">,</span>
+        <span class="n">SAFE_FUNCTIONS_COMMAND</span><span class="p">,</span>
+        <span class="n">FUNCTION_TO_HASH_COMMAND</span><span class="p">,</span>
+        <span class="n">HASH_TO_ADDRESS_COMMAND</span><span class="p">,</span>
+        <span class="n">LIST_DETECTORS_COMMAND</span><span class="p">,</span>
+        <span class="n">VERSION_COMMAND</span><span class="p">,</span>
+        <span class="n">HELP_COMMAND</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="exit_with_error">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.exit_with_error">[docs]</a>
+<span class="k">def</span> <span class="nf">exit_with_error</span><span class="p">(</span><span class="n">format_</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exits with error</span>
+<span class="sd">    :param format_: The format of the message</span>
+<span class="sd">    :param message: message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">format_</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span> <span class="ow">or</span> <span class="n">format_</span> <span class="o">==</span> <span class="s2">&quot;markdown&quot;</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">format_</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">),</span> <span class="s2">&quot;issues&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;issues&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;sourceType&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;sourceFormat&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;sourceList&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;meta&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;logs&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;hidden&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">}]},</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="get_runtime_input_parser">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.get_runtime_input_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">get_runtime_input_parser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns Parser which handles input</span>
+<span class="sd">    :return: Parser which handles input</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-a&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--address&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;pull contract from the blockchain&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;CONTRACT_ADDRESS&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--bin-runtime&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Only when -c or -f is used. Consider the input bytecode as binary runtime code, default being the contract creation bytecode.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+
+<div class="viewcode-block" id="get_creation_input_parser">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.get_creation_input_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">get_creation_input_parser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns Parser which handles input</span>
+<span class="sd">    :return: Parser which handles input</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-c&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--code&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;hex-encoded bytecode string (&quot;6060604052...&quot;)&#39;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;BYTECODE&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--codefile&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;file containing hex-encoded bytecode string&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;BYTECODEFILE&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+
+<div class="viewcode-block" id="get_safe_functions_parser">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.get_safe_functions_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">get_safe_functions_parser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns Parser which handles checking for safe functions</span>
+<span class="sd">    :return: Parser which handles checking for safe functions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-c&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--code&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;hex-encoded bytecode string (&quot;6060604052...&quot;)&#39;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;BYTECODE&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--codefile&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;file containing hex-encoded bytecode string&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;BYTECODEFILE&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+
+<div class="viewcode-block" id="get_output_parser">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.get_output_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">get_output_parser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get parser which handles output</span>
+<span class="sd">    :return: Parser which handles output</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--outform&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;markdown&quot;</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="s2">&quot;jsonv2&quot;</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;report output format&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;text/markdown/json/jsonv2&gt;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+
+<div class="viewcode-block" id="get_rpc_parser">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.get_rpc_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">get_rpc_parser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get parser which handles RPC flags</span>
+<span class="sd">    :return: Parser which handles rpc inputs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--rpc&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;custom RPC settings&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;HOST:PORT / ganache / infura-[network_name]&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;infura-mainnet&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--rpctls&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;RPC connection over TLS&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--infura-id&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;set infura id for onchain analysis&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+
+<div class="viewcode-block" id="get_utilities_parser">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.get_utilities_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">get_utilities_parser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get parser which handles utilities flags</span>
+<span class="sd">    :return: Parser which handles utility flags</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--solc-json&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Json for the optional &#39;settings&#39; parameter of solc&#39;s standard-json input&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--solc-args&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Provide solc args, example: --solc-args &quot;--allow-paths --include-path /root_folder/node_modules --base-path /home/contracts&quot; &quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--solv&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;specify solidity compiler version. If not present, will try to install it (Experimental)&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;SOLV&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+
+<div class="viewcode-block" id="create_concolic_parser">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.create_concolic_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">create_concolic_parser</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get parser which handles arguments for concolic branch flipping</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;input&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The input jsonv2 file with concrete data&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--branches&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;branch addresses to be flipped. usage: --branches 34,6f8,16a&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;BRANCH&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--solver-timeout&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The maximum amount of time(in milli seconds) the solver spends for queries from analysis modules&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.main">[docs]</a>
+<span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The main CLI interface entry point.&quot;&quot;&quot;</span>
+
+    <span class="n">rpc_parser</span> <span class="o">=</span> <span class="n">get_rpc_parser</span><span class="p">()</span>
+    <span class="n">utilities_parser</span> <span class="o">=</span> <span class="n">get_utilities_parser</span><span class="p">()</span>
+    <span class="n">runtime_input_parser</span> <span class="o">=</span> <span class="n">get_runtime_input_parser</span><span class="p">()</span>
+    <span class="n">creation_input_parser</span> <span class="o">=</span> <span class="n">get_creation_input_parser</span><span class="p">()</span>
+    <span class="n">output_parser</span> <span class="o">=</span> <span class="n">get_output_parser</span><span class="p">()</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Security analysis of Ethereum smart contracts&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--epic&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;log level (0-5)&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;LOG_LEVEL&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">2</span>
+    <span class="p">)</span>
+
+    <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s2">&quot;command&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Commands&quot;</span><span class="p">)</span>
+    <span class="n">safe_function_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="n">SAFE_FUNCTIONS_COMMAND</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Check functions which are completely safe using symbolic execution&quot;</span><span class="p">,</span>
+        <span class="n">parents</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">rpc_parser</span><span class="p">,</span>
+            <span class="n">utilities_parser</span><span class="p">,</span>
+            <span class="n">creation_input_parser</span><span class="p">,</span>
+            <span class="n">runtime_input_parser</span><span class="p">,</span>
+            <span class="n">output_parser</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">RawTextHelpFormatter</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">analyzer_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="n">ANALYZE_LIST</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Triggers the analysis of the smart contract&quot;</span><span class="p">,</span>
+        <span class="n">parents</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">rpc_parser</span><span class="p">,</span>
+            <span class="n">utilities_parser</span><span class="p">,</span>
+            <span class="n">creation_input_parser</span><span class="p">,</span>
+            <span class="n">runtime_input_parser</span><span class="p">,</span>
+            <span class="n">output_parser</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">aliases</span><span class="o">=</span><span class="n">ANALYZE_LIST</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">RawTextHelpFormatter</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">create_safe_functions_parser</span><span class="p">(</span><span class="n">safe_function_parser</span><span class="p">)</span>
+    <span class="n">create_analyzer_parser</span><span class="p">(</span><span class="n">analyzer_parser</span><span class="p">)</span>
+
+    <span class="n">disassemble_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="n">DISASSEMBLE_LIST</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Disassembles the smart contract&quot;</span><span class="p">,</span>
+        <span class="n">aliases</span><span class="o">=</span><span class="n">DISASSEMBLE_LIST</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+        <span class="n">parents</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">rpc_parser</span><span class="p">,</span>
+            <span class="n">utilities_parser</span><span class="p">,</span>
+            <span class="n">creation_input_parser</span><span class="p">,</span>
+            <span class="n">runtime_input_parser</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">RawTextHelpFormatter</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">create_disassemble_parser</span><span class="p">(</span><span class="n">disassemble_parser</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">PluginDiscovery</span><span class="p">()</span><span class="o">.</span><span class="n">is_installed</span><span class="p">(</span><span class="s2">&quot;myth_concolic_execution&quot;</span><span class="p">):</span>
+        <span class="n">concolic_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+            <span class="n">CONCOLIC_LIST</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Runs concolic execution to flip the desired branches&quot;</span><span class="p">,</span>
+            <span class="n">aliases</span><span class="o">=</span><span class="n">CONCOLIC_LIST</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+            <span class="n">parents</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">formatter_class</span><span class="o">=</span><span class="n">RawTextHelpFormatter</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">create_concolic_parser</span><span class="p">(</span><span class="n">concolic_parser</span><span class="p">)</span>
+
+    <span class="n">foundry_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="n">FOUNDRY_LIST</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Triggers the analysis of the smart contract&quot;</span><span class="p">,</span>
+        <span class="n">parents</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">rpc_parser</span><span class="p">,</span>
+            <span class="n">utilities_parser</span><span class="p">,</span>
+            <span class="n">output_parser</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">aliases</span><span class="o">=</span><span class="n">FOUNDRY_LIST</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">RawTextHelpFormatter</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">list_detectors_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="n">LIST_DETECTORS_COMMAND</span><span class="p">,</span>
+        <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">output_parser</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Lists available detection modules&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">read_storage_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;read-storage&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Retrieves storage slots from a given address through rpc&quot;</span><span class="p">,</span>
+        <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">rpc_parser</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">contract_func_to_hash</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="n">FUNCTION_TO_HASH_COMMAND</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Returns the hash signature of the function&quot;</span>
+    <span class="p">)</span>
+    <span class="n">contract_hash_to_addr</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="n">HASH_TO_ADDRESS_COMMAND</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;converts the hashes in the blockchain to ethereum address&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="n">VERSION_COMMAND</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">output_parser</span><span class="p">],</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Outputs the version&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">create_read_storage_parser</span><span class="p">(</span><span class="n">read_storage_parser</span><span class="p">)</span>
+    <span class="n">create_hash_to_addr_parser</span><span class="p">(</span><span class="n">contract_hash_to_addr</span><span class="p">)</span>
+    <span class="n">create_func_to_hash_parser</span><span class="p">(</span><span class="n">contract_func_to_hash</span><span class="p">)</span>
+    <span class="n">create_foundry_parser</span><span class="p">(</span><span class="n">foundry_parser</span><span class="p">)</span>
+    <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="n">HELP_COMMAND</span><span class="p">,</span> <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Get config values</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">parse_args_and_execute</span><span class="p">(</span><span class="n">parser</span><span class="o">=</span><span class="n">parser</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_disassemble_parser">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.create_disassemble_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">create_disassemble_parser</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modify parser to handle disassembly</span>
+<span class="sd">    :param parser:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Using nargs=* would the implementation below for getting code for both disassemble and analyze</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;solidity_files&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Inputs file name and contract name. Currently supports a single contract</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;usage: file1.sol:OptionalContractName&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_read_storage_parser">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.create_read_storage_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">create_read_storage_parser</span><span class="p">(</span><span class="n">read_storage_parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modify parser to handle storage slots</span>
+<span class="sd">    :param read_storage_parser:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">read_storage_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;storage_slots&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;read state variables from storage index&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;INDEX,NUM_SLOTS,[array] / mapping,INDEX,[KEY1, KEY2...]&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">read_storage_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;address&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;contract address&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;ADDRESS&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_func_to_hash_parser">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.create_func_to_hash_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">create_func_to_hash_parser</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modify parser to handle func_to_hash command</span>
+<span class="sd">    :param parser:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;func_name&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;calculate function signature hash&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;SIGNATURE&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_hash_to_addr_parser">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.create_hash_to_addr_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">create_hash_to_addr_parser</span><span class="p">(</span><span class="n">hash_parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modify parser to handle hash_to_addr command</span>
+<span class="sd">    :param hash_parser:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hash_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;hash&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Find the address from hash&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FUNCTION_NAME&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_graph_commands">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.add_graph_commands">[docs]</a>
+<span class="k">def</span> <span class="nf">add_graph_commands</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">):</span>
+    <span class="n">commands</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;commands&quot;</span><span class="p">)</span>
+
+    <span class="n">commands</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-g&quot;</span><span class="p">,</span> <span class="s2">&quot;--graph&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;generate a control flow graph&quot;</span><span class="p">)</span>
+
+    <span class="n">commands</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-j&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--statespace-json&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;dumps the statespace json&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;OUTPUT_FILE&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_safe_functions_parser">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.create_safe_functions_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">create_safe_functions_parser</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The duplication exists between safe-functions and analyze as some of them have different default values.</span>
+<span class="sd">    :param parser: Parser</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;solidity_files&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Inputs file name and contract name. </span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;usage: file1.sol:OptionalContractName file2.sol file3.sol:OptionalContractName&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">options</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">)</span>
+    <span class="n">add_analysis_args</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">add_fwrg_analysis_args</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="c1">#@wei</span></div>
+
+
+<div class="viewcode-block" id="add_fwrg_analysis_args">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.add_fwrg_analysis_args">[docs]</a>
+<span class="k">def</span> <span class="nf">add_fwrg_analysis_args</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
+    <span class="c1"># @wei</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--optimization&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;optimization, current support: 1(yes),0(no)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># @wei</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--consider-all-reads&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;indicate whether all reads are considered or not&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># @wei</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-fct&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--function-coverage-threshold&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">98</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;specify the code coverage threshold that is used to determine deep functions&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># @wei</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-fss&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--function-search-strategy&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dfs&quot;</span><span class="p">,</span> <span class="s2">&quot;bfs&quot;</span><span class="p">,</span> <span class="s2">&quot;mine&quot;</span><span class="p">,</span> <span class="s1">&#39;seq&#39;</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;mine&quot;</span><span class="p">,</span>
+
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Function data flow graph search strategy&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># @wei</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-seq&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--sequences&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;sequences that will be executed directly&quot;</span><span class="p">,</span>
+
+    <span class="p">)</span>
+
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--print-function-coverage&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;0: no; 1:print function coverage&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-p1dl&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--phase1-depth-limit&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;determine the depth limit of the sequences in Phase 1&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--preprocess-timeout&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The amount of seconds to spend on the preprocess&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--execution-times-limit&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;limit the times a function can be executed&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--random-baseline&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 0 means the baseline is inactive</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot; with values from  0 to 10. indicate the percent of functions to be considered&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="add_fwrg_arguments">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.add_fwrg_arguments">[docs]</a>
+<span class="k">def</span> <span class="nf">add_fwrg_arguments</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    collect the values for the global parameters defined in fdg.global_config.py.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">function_coverage_threshold</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">function_coverage_threshold</span>
+    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">function_search_strategy</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">function_search_strategy</span>
+    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">sequences</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">sequences</span>
+    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">random_baseline</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">random_baseline</span>
+
+    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">print_function_coverage</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">print_function_coverage</span>
+    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">p1_dl</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">phase1_depth_limit</span>
+    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">preprocess_timeout</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">preprocess_timeout</span>
+    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">optimization</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">optimization</span>
+    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">flag_consider_all_reads</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">consider_all_reads</span>
+    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">execution_times_limit</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">execution_times_limit</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">no_guidance</span><span class="p">:</span>
+        <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">flag_fwrg</span><span class="o">=</span><span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">flag_fwrg</span><span class="o">=</span><span class="kc">True</span>
+    <span class="c1"># fdg.global_config.flag_fwrg=args.function_wr_graph</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">v</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">:</span>
+        <span class="n">fdg</span><span class="o">.</span><span class="n">output_data</span><span class="o">.</span><span class="n">flag_basic</span><span class="o">=</span><span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="add_analysis_args">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.add_analysis_args">[docs]</a>
+<span class="k">def</span> <span class="nf">add_analysis_args</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds arguments for analysis</span>
+
+<span class="sd">    :param options: Analysis Options</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-fdg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--function-wr-graph&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="c1">#</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;use guided exploration&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+
+        <span class="s2">&quot;--no-guidance&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;use guided exploration&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-m&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--modules&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Comma-separated list of security analysis modules&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;MODULES&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--max-depth&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Maximum recursion depth for symbolic execution&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--call-depth-limit&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Maximum call depth limit for symbolic execution&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--strategy&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dfs&quot;</span><span class="p">,</span> <span class="s2">&quot;bfs&quot;</span><span class="p">,</span> <span class="s2">&quot;naive-random&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted-random&quot;</span><span class="p">,</span> <span class="s2">&quot;delayed&quot;</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;bfs&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Symbolic execution strategy&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--transaction-sequences&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The possible transaction sequences to be executed. &quot;</span>
+        <span class="s2">&quot;Like [[func_hash1, func_hash2], [func_hash2, func_hash3]] where the first transaction is constrained &quot;</span>
+        <span class="s2">&quot;with func_hash1 and func_hash2, and the second tx is constrained with func_hash2 and func_hash3. Use -1 as a proxy for fallback() function and -2 for receive() function.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--beam-search&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Beam search with with&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-b&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--loop-bound&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Bound loops at n iterations&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;N&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-t&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--transaction-count&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Maximum number of transactions issued by laser&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--execution-timeout&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">86400</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The amount of seconds to spend on symbolic execution&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--solver-timeout&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The maximum amount of time(in milli seconds) the solver spends for queries from analysis modules&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--create-timeout&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The amount of seconds to spend on the initial contract creation&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+
+
+
+
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--parallel-solving&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable solving z3 queries in parallel&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--solver-log&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to the directory for solver log&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;SOLVER_LOG&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--no-onchain-data&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Don&#39;t attempt to retrieve contract code, variables and balances from the blockchain&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--pruning-factor&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Checks for reachability at the rate of &lt;pruning-factor&gt; (range 0-1.0). Where 1.0 would mean checking for every execution&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--unconstrained-storage&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Default storage value is symbolic, turns off the on-chain storage loading&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--phrack&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Phrack-style call graph&quot;</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--enable-physics&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;enable graph physics simulation&quot;</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-q&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--query-signature&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Lookup function signatures through www.4byte.directory&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--enable-iprof&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;enable the instruction profiler&quot;</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--disable-dependency-pruning&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Deactivate dependency-based pruning&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--enable-coverage-strategy&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;enable coverage based search strategy&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--custom-modules-directory&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;designates a separate directory to search for custom analysis modules&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;CUSTOM_MODULES_DIRECTORY&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--attacker-address&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Designates a specific attacker address to use during analysis&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;ATTACKER_ADDRESS&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--creator-address&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Designates a specific creator address to use during analysis&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;CREATOR_ADDRESS&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_analyzer_parser">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.create_analyzer_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">create_analyzer_parser</span><span class="p">(</span><span class="n">analyzer_parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modify parser to handle analyze command</span>
+<span class="sd">    :param analyzer_parser:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">analyzer_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;solidity_files&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Inputs file name and contract name. </span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;usage: file1.sol:OptionalContractName file2.sol file3.sol:OptionalContractName&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">add_graph_commands</span><span class="p">(</span><span class="n">analyzer_parser</span><span class="p">)</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">analyzer_parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">)</span>
+    <span class="n">add_analysis_args</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">add_fwrg_analysis_args</span><span class="p">(</span><span class="n">options</span><span class="p">)</span><span class="c1">#@wei</span></div>
+
+
+<div class="viewcode-block" id="create_foundry_parser">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.create_foundry_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">create_foundry_parser</span><span class="p">(</span><span class="n">foundry_parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">):</span>
+    <span class="n">add_graph_commands</span><span class="p">(</span><span class="n">foundry_parser</span><span class="p">)</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">foundry_parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">)</span>
+    <span class="n">add_analysis_args</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">add_fwrg_analysis_args</span><span class="p">(</span><span class="n">options</span><span class="p">)</span><span class="c1">#@wei</span></div>
+
+
+
+<div class="viewcode-block" id="validate_args">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.validate_args">[docs]</a>
+<span class="k">def</span> <span class="nf">validate_args</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate cli args</span>
+<span class="sd">    :param args:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">args</span><span class="o">.</span><span class="n">v</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="n">log_levels</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">,</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+            <span class="p">]</span>
+            <span class="n">coloredlogs</span><span class="o">.</span><span class="n">install</span><span class="p">(</span>
+                <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(name)s</span><span class="s2"> [</span><span class="si">%(levelname)s</span><span class="s2">]: </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">log_levels</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">v</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">exit_with_error</span><span class="p">(</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">outform</span><span class="p">,</span> <span class="s2">&quot;Invalid -v value, you can find valid values in usage&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="ow">in</span> <span class="n">DISASSEMBLE_LIST</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">solidity_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">exit_with_error</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;Only a single arg is supported for using disassemble&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;transaction_sequences&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;disable_dependency_pruning&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;It is advised to disable dependency pruning (use the flag --disable-dependency-pruning) when specifying transaction sequences.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">transaction_sequences</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">transaction_sequences</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">exit_with_error</span><span class="p">(</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">outform</span><span class="p">,</span>
+                <span class="s2">&quot;The transaction sequence is in incorrect format, It should be &quot;</span>
+                <span class="s2">&quot;[list of possible function hashes in 1st transaction, &quot;</span>
+                <span class="s2">&quot;list of possible func hashes in 2nd tx, ...] &quot;</span>
+                <span class="s2">&quot;If any list is empty then all possible functions are considered for that transaction.&quot;</span>
+                <span class="s2">&quot;Use -1 as a proxy for fallback() and -2 for receive() function.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">transaction_sequences</span><span class="p">)</span> <span class="o">!=</span> <span class="n">args</span><span class="o">.</span><span class="n">transaction_count</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">transaction_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">transaction_sequences</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="ow">in</span> <span class="n">ANALYZE_LIST</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">query_signature</span> <span class="ow">and</span> <span class="n">sigs</span><span class="o">.</span><span class="n">ethereum_input_decoder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">exit_with_error</span><span class="p">(</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">outform</span><span class="p">,</span>
+                <span class="s2">&quot;The --query-signature function requires the python package ethereum-input-decoder&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">enable_iprof</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">v</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">exit_with_error</span><span class="p">(</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">outform</span><span class="p">,</span>
+                <span class="s2">&quot;--enable-iprof must be used with -v LOG_LEVEL where LOG_LEVEL &gt;= 4&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="set_config">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.set_config">[docs]</a>
+<span class="k">def</span> <span class="nf">set_config</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set config based on args</span>
+<span class="sd">    :param args:</span>
+<span class="sd">    :return: modified config</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">MythrilConfig</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;infura_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">set_api_infura_id</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">infura_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="ow">in</span> <span class="n">ANALYZE_LIST</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">no_onchain_data</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">rpc</span> <span class="ow">or</span> <span class="n">args</span><span class="o">.</span><span class="n">i</span>
+    <span class="p">):</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">set_api_from_config_path</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rpc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Establish RPC connection if necessary</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">set_api_rpc</span><span class="p">(</span><span class="n">rpc</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">rpc</span><span class="p">,</span> <span class="n">rpctls</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">rpctls</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">config</span></div>
+
+
+
+<div class="viewcode-block" id="load_code">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.load_code">[docs]</a>
+<span class="k">def</span> <span class="nf">load_code</span><span class="p">(</span><span class="n">disassembler</span><span class="p">:</span> <span class="n">MythrilDisassembler</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads code into disassembly and returns address</span>
+<span class="sd">    :param disassembler:</span>
+<span class="sd">    :param args:</span>
+<span class="sd">    :return: Address</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">address</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="c1"># Load from bytecode</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">code</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;0x&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">args</span><span class="o">.</span><span class="n">code</span>
+        <span class="n">address</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">disassembler</span><span class="o">.</span><span class="n">load_from_bytecode</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">bin_runtime</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;codefile&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">bytecode</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">codefile</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">bytecode</span> <span class="o">=</span> <span class="n">bytecode</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="k">if</span> <span class="n">bytecode</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;0x&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">bytecode</span>
+        <span class="n">address</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">disassembler</span><span class="o">.</span><span class="n">load_from_bytecode</span><span class="p">(</span><span class="n">bytecode</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">bin_runtime</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;address&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="c1"># Get bytecode from a contract address</span>
+        <span class="n">address</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">disassembler</span><span class="o">.</span><span class="n">load_from_address</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;solidity_files&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="c1"># Compile Solidity source file(s)</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="ow">in</span> <span class="n">ANALYZE_LIST</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">graph</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">solidity_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">exit_with_error</span><span class="p">(</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">outform</span><span class="p">,</span>
+                <span class="s2">&quot;Cannot generate call graphs from multiple input files. Please do it one at a time.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">address</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">disassembler</span><span class="o">.</span><span class="n">load_from_solidity</span><span class="p">(</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">solidity_files</span>
+        <span class="p">)</span>  <span class="c1"># list of files</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="ow">in</span> <span class="n">FOUNDRY_LIST</span><span class="p">:</span>
+        <span class="n">address</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">disassembler</span><span class="o">.</span><span class="n">load_from_foundry</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">exit_with_error</span><span class="p">(</span>
+            <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;outform&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;No input bytecode. Please provide EVM code via -c BYTECODE, -a ADDRESS, -f BYTECODE_FILE or &lt;SOLIDITY_FILE&gt;&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">address</span></div>
+
+
+
+<div class="viewcode-block" id="print_function_report">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.print_function_report">[docs]</a>
+<span class="k">def</span> <span class="nf">print_function_report</span><span class="p">(</span><span class="n">myth_disassembler</span><span class="p">:</span> <span class="n">MythrilDisassembler</span><span class="p">,</span> <span class="n">report</span><span class="p">:</span> <span class="n">Report</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prints the function report</span>
+<span class="sd">    :param report: Mythril&#39;s report</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">contract_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">contract</span> <span class="ow">in</span> <span class="n">myth_disassembler</span><span class="o">.</span><span class="n">contracts</span><span class="p">:</span>
+        <span class="n">contract_data</span><span class="p">[</span><span class="n">contract</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">set</span><span class="p">(</span><span class="n">contract</span><span class="o">.</span><span class="n">disassembly</span><span class="o">.</span><span class="n">address_to_function_name</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">issues</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">issue</span><span class="o">.</span><span class="n">function</span> <span class="ow">in</span> <span class="n">contract_data</span><span class="p">[</span><span class="n">issue</span><span class="o">.</span><span class="n">contract</span><span class="p">]:</span>
+            <span class="n">contract_data</span><span class="p">[</span><span class="n">issue</span><span class="o">.</span><span class="n">contract</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">issue</span><span class="o">.</span><span class="n">function</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">contract</span><span class="p">,</span> <span class="n">function_list</span> <span class="ow">in</span> <span class="n">contract_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Contract </span><span class="si">{</span><span class="n">contract</span><span class="si">}</span><span class="s2">: </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">function_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> functions are deemed safe in this contract: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">function_list</span><span class="p">)</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="execute_command">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.execute_command">[docs]</a>
+<span class="k">def</span> <span class="nf">execute_command</span><span class="p">(</span>
+    <span class="n">disassembler</span><span class="p">:</span> <span class="n">MythrilDisassembler</span><span class="p">,</span>
+    <span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">,</span>
+    <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Execute command</span>
+<span class="sd">    :param disassembler:</span>
+<span class="sd">    :param address:</span>
+<span class="sd">    :param parser:</span>
+<span class="sd">    :param args:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;beam_search&quot;</span><span class="p">):</span>
+        <span class="n">strategy</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;beam-search: </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">beam_search</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">strategy</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;strategy&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;read-storage&quot;</span><span class="p">:</span>
+        <span class="n">storage</span> <span class="o">=</span> <span class="n">disassembler</span><span class="o">.</span><span class="n">get_state_variable_from_storage</span><span class="p">(</span>
+            <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">storage_slots</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)],</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="ow">in</span> <span class="n">DISASSEMBLE_LIST</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">disassembler</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">code</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Runtime Disassembly: </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">disassembler</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_easm</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">disassembler</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">creation_code</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Disassembly: </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">disassembler</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_creation_easm</span><span class="p">())</span>
+
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="n">SAFE_FUNCTIONS_COMMAND</span><span class="p">:</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">unconstrained_storage</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">pruning_factor</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">disable_dependency_pruning</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">no_onchain_data</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">function_analyzer</span> <span class="o">=</span> <span class="n">MythrilAnalyzer</span><span class="p">(</span>
+            <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">,</span> <span class="n">disassembler</span><span class="o">=</span><span class="n">disassembler</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span> <span class="n">cmd_args</span><span class="o">=</span><span class="n">args</span>
+        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">report</span> <span class="o">=</span> <span class="n">function_analyzer</span><span class="o">.</span><span class="n">fire_lasers</span><span class="p">(</span>
+                <span class="n">modules</span><span class="o">=</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+                <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">modules</span>
+                <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">transaction_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">print_function_report</span><span class="p">(</span><span class="n">disassembler</span><span class="p">,</span> <span class="n">report</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">DetectorNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">exit_with_error</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">CriticalError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">exit_with_error</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;Analysis error encountered: &quot;</span> <span class="o">+</span> <span class="nb">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="ow">in</span> <span class="n">ANALYZE_LIST</span> <span class="o">+</span> <span class="n">FOUNDRY_LIST</span><span class="p">:</span>
+        <span class="n">add_fwrg_arguments</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="c1">#@wei</span>
+        <span class="n">analyzer</span> <span class="o">=</span> <span class="n">MythrilAnalyzer</span><span class="p">(</span>
+            <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">,</span> <span class="n">disassembler</span><span class="o">=</span><span class="n">disassembler</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span> <span class="n">cmd_args</span><span class="o">=</span><span class="n">args</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">disassembler</span><span class="o">.</span><span class="n">contracts</span><span class="p">:</span>
+            <span class="n">exit_with_error</span><span class="p">(</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">outform</span><span class="p">,</span> <span class="s2">&quot;input files do not contain any valid contracts&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">attacker_address</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ACTORS</span><span class="p">[</span><span class="s2">&quot;ATTACKER&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">attacker_address</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">exit_with_error</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">outform</span><span class="p">,</span> <span class="s2">&quot;Attacker address is invalid&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">creator_address</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ACTORS</span><span class="p">[</span><span class="s2">&quot;CREATOR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">creator_address</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">exit_with_error</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">outform</span><span class="p">,</span> <span class="s2">&quot;Creator address is invalid&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">graph</span><span class="p">:</span>
+            <span class="n">html</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">graph_html</span><span class="p">(</span>
+                <span class="n">contract</span><span class="o">=</span><span class="n">analyzer</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">enable_physics</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">enable_physics</span><span class="p">,</span>
+                <span class="n">phrackify</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">phrack</span><span class="p">,</span>
+                <span class="n">transaction_count</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">transaction_count</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">exit_with_error</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">outform</span><span class="p">,</span> <span class="s2">&quot;Error saving graph: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">statespace_json</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">contracts</span><span class="p">:</span>
+                <span class="n">exit_with_error</span><span class="p">(</span>
+                    <span class="n">args</span><span class="o">.</span><span class="n">outform</span><span class="p">,</span> <span class="s2">&quot;input files do not contain any valid contracts&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">statespace</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">dump_statespace</span><span class="p">(</span><span class="n">contract</span><span class="o">=</span><span class="n">analyzer</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">statespace_json</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">statespace</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">exit_with_error</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">outform</span><span class="p">,</span> <span class="s2">&quot;Error saving json: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">report</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">fire_lasers</span><span class="p">(</span>
+                    <span class="n">modules</span><span class="o">=</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+                    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">modules</span>
+                    <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">transaction_count</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">transaction_count</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">outputs</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;json&quot;</span><span class="p">:</span> <span class="n">report</span><span class="o">.</span><span class="n">as_json</span><span class="p">(),</span>
+                    <span class="s2">&quot;jsonv2&quot;</span><span class="p">:</span> <span class="n">report</span><span class="o">.</span><span class="n">as_swc_standard_format</span><span class="p">(),</span>
+                    <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">report</span><span class="o">.</span><span class="n">as_text</span><span class="p">(),</span>
+                    <span class="s2">&quot;markdown&quot;</span><span class="p">:</span> <span class="n">report</span><span class="o">.</span><span class="n">as_markdown</span><span class="p">(),</span>
+                <span class="p">}</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">outputs</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">outform</span><span class="p">])</span>
+                <span class="c1"># comment them so that the time can be printed in semyth.py</span>
+                <span class="c1"># if len(report.issues) &gt; 0:</span>
+                <span class="c1">#     exit(1)</span>
+                <span class="c1"># else:</span>
+                <span class="c1">#     exit(0)</span>
+            <span class="k">except</span> <span class="n">DetectorNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">exit_with_error</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">outform</span><span class="p">,</span> <span class="nb">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">except</span> <span class="n">CriticalError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">exit_with_error</span><span class="p">(</span>
+                    <span class="n">args</span><span class="o">.</span><span class="n">outform</span><span class="p">,</span> <span class="s2">&quot;Analysis error encountered: &quot;</span> <span class="o">+</span> <span class="nb">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="contract_hash_to_address">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.contract_hash_to_address">[docs]</a>
+<span class="k">def</span> <span class="nf">contract_hash_to_address</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    prints the hash from function signature</span>
+<span class="sd">    :param args:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">MythrilDisassembler</span><span class="o">.</span><span class="n">hash_for_function_signature</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">func_name</span><span class="p">))</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="parse_args_and_execute">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.parse_args_and_execute">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_args_and_execute</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses the arguments</span>
+<span class="sd">    :param parser: The parser</span>
+<span class="sd">    :param args: The args</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">epic</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;--epic&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; | python3 &quot;</span> <span class="o">+</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/epic.py&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">COMMAND_LIST</span> <span class="ow">or</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="n">VERSION_COMMAND</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">outform</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;version_str&quot;</span><span class="p">:</span> <span class="n">VERSION</span><span class="p">}))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SmartExecutor version </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">VERSION</span><span class="p">))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="n">LIST_DETECTORS_COMMAND</span><span class="p">:</span>
+        <span class="n">modules</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">ModuleLoader</span><span class="p">()</span><span class="o">.</span><span class="n">get_detection_modules</span><span class="p">():</span>
+            <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;classname&quot;</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="n">module</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">module</span><span class="o">.</span><span class="n">name</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">outform</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">modules</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">module_data</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">module_data</span><span class="p">[</span><span class="s2">&quot;classname&quot;</span><span class="p">],</span> <span class="n">module_data</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="n">HELP_COMMAND</span><span class="p">:</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="ow">in</span> <span class="n">CONCOLIC_LIST</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">MythrilConfig</span><span class="o">.</span><span class="n">init_mythril_dir</span><span class="p">()</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">concrete_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">output_list</span> <span class="o">=</span> <span class="n">concolic_execution</span><span class="p">(</span>
+            <span class="n">concrete_data</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">branches</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">),</span> <span class="n">args</span><span class="o">.</span><span class="n">solver_timeout</span>
+        <span class="p">)</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">output_list</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="c1"># Parse cmdline args</span>
+    <span class="n">validate_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="n">FUNCTION_TO_HASH_COMMAND</span><span class="p">:</span>
+            <span class="n">contract_hash_to_address</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">set_config</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">query_signature</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;query_signature&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">solc_json</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;solc_json&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">solv</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;solv&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">solc_args</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;solc_args&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">disassembler</span> <span class="o">=</span> <span class="n">MythrilDisassembler</span><span class="p">(</span>
+            <span class="n">eth</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">eth</span><span class="p">,</span>
+            <span class="n">solc_version</span><span class="o">=</span><span class="n">solv</span><span class="p">,</span>
+            <span class="n">solc_settings_json</span><span class="o">=</span><span class="n">solc_json</span><span class="p">,</span>
+            <span class="n">enable_online_lookup</span><span class="o">=</span><span class="n">query_signature</span><span class="p">,</span>
+            <span class="n">solc_args</span><span class="o">=</span><span class="n">solc_args</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">address</span> <span class="o">=</span> <span class="n">load_code</span><span class="p">(</span><span class="n">disassembler</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="n">execute_command</span><span class="p">(</span>
+            <span class="n">disassembler</span><span class="o">=</span><span class="n">disassembler</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span> <span class="n">parser</span><span class="o">=</span><span class="n">parser</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="n">CriticalError</span> <span class="k">as</span> <span class="n">ce</span><span class="p">:</span>
+        <span class="n">exit_with_error</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;outform&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">ce</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">exit_with_error</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;outform&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">),</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

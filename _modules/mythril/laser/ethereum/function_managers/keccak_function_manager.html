@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mythril.laser.ethereum.function_managers.keccak_function_manager &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../../../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../../../../about.html" />
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for mythril.laser.ethereum.function_managers.keccak_function_manager</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+
+<span class="kn">from</span> <span class="nn">fdg.expression_slot</span> <span class="kn">import</span> <span class="n">expression_str_to_slot_normal</span><span class="p">,</span> \
+    <span class="n">map_concrete_hash_key_to_slot_normal</span>
+<span class="kn">from</span> <span class="nn">fdg.preprocessing.slot_location</span> <span class="kn">import</span> <span class="n">map_concrete_hash_key_to_slot</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.smt</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BitVec</span><span class="p">,</span>
+    <span class="n">Function</span><span class="p">,</span>
+    <span class="n">URem</span><span class="p">,</span>
+    <span class="n">symbol_factory</span><span class="p">,</span>
+    <span class="n">ULE</span><span class="p">,</span>
+    <span class="n">And</span><span class="p">,</span>
+    <span class="n">ULT</span><span class="p">,</span>
+    <span class="n">Bool</span><span class="p">,</span>
+    <span class="n">Or</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">mythril.support.support_utils</span> <span class="kn">import</span> <span class="n">sha3</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">fdg.global_config</span>
+
+<span class="n">TOTAL_PARTS</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="mi">40</span>
+<span class="n">PART</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">256</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">TOTAL_PARTS</span>
+<span class="n">INTERVAL_DIFFERENCE</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="mi">30</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="KeccakFunctionManager">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.function_managers.html#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager">[docs]</a>
+<span class="k">class</span> <span class="nc">KeccakFunctionManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A bunch of uninterpreted functions are considered like keccak256_160 ,...</span>
+<span class="sd">    where keccak256_160 means the input of keccak256() is 160 bit number.</span>
+<span class="sd">    the range of these functions are constrained to some mutually disjoint intervals</span>
+<span class="sd">    All the hashes modulo 64 are 0 as we need a spread among hashes for array type data structures</span>
+<span class="sd">    All the functions are kind of one to one due to constraint of the existence of inverse</span>
+<span class="sd">    for each encountered input.</span>
+<span class="sd">    For more info https://files.sri.inf.ethz.ch/website/papers/sp20-verx.pdf</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">hash_matcher</span> <span class="o">=</span> <span class="s2">&quot;fffffff&quot;</span>  <span class="c1"># This is usually the prefix for the hash in the output</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store_function</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Function</span><span class="p">,</span> <span class="n">Function</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interval_hook_for_size</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_index_counter</span> <span class="o">=</span> <span class="n">TOTAL_PARTS</span> <span class="o">-</span> <span class="mi">34534</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash_result_store</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">BitVec</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">quick_inverse</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">BitVec</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># This is for VMTests</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">concrete_hashes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">BitVec</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symbolic_inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">BitVec</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="KeccakFunctionManager.reset">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.function_managers.html#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.reset">[docs]</a>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store_function</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interval_hook_for_size</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash_result_store</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">BitVec</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quick_inverse</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">concrete_hashes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symbolic_inputs</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+
+
+    <span class="c1">#@wei</span>
+<div class="viewcode-block" id="KeccakFunctionManager.set_data">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.function_managers.html#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.set_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">:</span><span class="nb">object</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store_function</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">store_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interval_hook_for_size</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">interval_hook_for_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash_result_store</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">hash_result_store</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quick_inverse</span> <span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">quick_inverse</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">concrete_hashes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">concrete_hashes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symbolic_inputs</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">symbolic_inputs</span></div>
+
+<div class="viewcode-block" id="KeccakFunctionManager.find_concrete_keccak">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.function_managers.html#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.find_concrete_keccak">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">find_concrete_keccak</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">BitVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BitVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates concrete keccak</span>
+<span class="sd">        :param data: input bitvecval</span>
+<span class="sd">        :return: concrete keccak output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keccak</span> <span class="o">=</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span>
+            <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span>
+                <span class="n">sha3</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">//</span> <span class="mi">8</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="s2">&quot;big&quot;</span><span class="p">)),</span> <span class="s2">&quot;big&quot;</span>
+            <span class="p">),</span>
+            <span class="mi">256</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">keccak</span></div>
+
+
+<div class="viewcode-block" id="KeccakFunctionManager.get_function">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.function_managers.html#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.get_function">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Function</span><span class="p">,</span> <span class="n">Function</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the keccak functions for the corresponding length</span>
+<span class="sd">        :param length: input size</span>
+<span class="sd">        :return: tuple of keccak and it&#39;s inverse</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">func</span><span class="p">,</span> <span class="n">inverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">store_function</span><span class="p">[</span><span class="n">length</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="s2">&quot;keccak256_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">length</span><span class="p">),</span> <span class="p">[</span><span class="n">length</span><span class="p">],</span> <span class="mi">256</span><span class="p">)</span>
+            <span class="n">inverse</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="s2">&quot;keccak256_</span><span class="si">{}</span><span class="s2">-1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">length</span><span class="p">),</span> <span class="p">[</span><span class="mi">256</span><span class="p">],</span> <span class="n">length</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">store_function</span><span class="p">[</span><span class="n">length</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">inverse</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hash_result_store</span><span class="p">[</span><span class="n">length</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">,</span> <span class="n">inverse</span></div>
+
+
+<div class="viewcode-block" id="KeccakFunctionManager.get_empty_keccak_hash">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.function_managers.html#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.get_empty_keccak_hash">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_empty_keccak_hash</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">BitVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returns sha3(&quot;&quot;)</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="mi">89477152217924674838424037953991966239322087453347756267410168184682657981552</span>
+        <span class="k">return</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="KeccakFunctionManager.create_keccak">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.function_managers.html#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.create_keccak">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_keccak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BitVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BitVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates Keccak of the data</span>
+<span class="sd">        :param data: input</span>
+<span class="sd">        :return: Tuple of keccak and the condition it should satisfy</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="n">func</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">symbolic</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">concrete_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_concrete_keccak</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">concrete_hashes</span><span class="p">[</span><span class="n">data</span><span class="p">]</span> <span class="o">=</span> <span class="n">concrete_hash</span>
+            <span class="c1"># @wei</span>
+            <span class="k">if</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">flag_preprocessing</span> <span class="ow">or</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">tx_len</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">map_concrete_hash_key_to_slot</span><span class="p">(</span><span class="n">concrete_hash</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
+            <span class="c1"># @wei</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">flag_preprocessing</span><span class="p">:</span>
+                <span class="c1"># collect the map from data to concrete hash in the normal execution</span>
+                <span class="n">map_concrete_hash_key_to_slot_normal</span><span class="p">(</span><span class="n">concrete_hash</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">concrete_hash</span>
+
+        <span class="k">if</span> <span class="n">length</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbolic_inputs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">symbolic_inputs</span><span class="p">[</span><span class="n">length</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">symbolic_inputs</span><span class="p">[</span><span class="n">length</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash_result_store</span><span class="p">[</span><span class="n">length</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KeccakFunctionManager.create_conditions">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.function_managers.html#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.create_conditions">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Bool</span><span class="p">:</span>
+        <span class="n">condition</span> <span class="o">=</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">inputs_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbolic_inputs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">symbolic_input</span> <span class="ow">in</span> <span class="n">inputs_list</span><span class="p">:</span>
+                <span class="n">condition</span> <span class="o">=</span> <span class="n">And</span><span class="p">(</span>
+                    <span class="n">condition</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_condition</span><span class="p">(</span><span class="n">func_input</span><span class="o">=</span><span class="n">symbolic_input</span><span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">for</span> <span class="n">concrete_input</span><span class="p">,</span> <span class="n">concrete_hash</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">concrete_hashes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">func</span><span class="p">,</span> <span class="n">inverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="n">concrete_input</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+            <span class="n">condition</span> <span class="o">=</span> <span class="n">And</span><span class="p">(</span>
+                <span class="n">condition</span><span class="p">,</span>
+                <span class="n">func</span><span class="p">(</span><span class="n">concrete_input</span><span class="p">)</span> <span class="o">==</span> <span class="n">concrete_hash</span><span class="p">,</span>
+                <span class="n">inverse</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">concrete_input</span><span class="p">))</span> <span class="o">==</span> <span class="n">concrete_input</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">condition</span></div>
+
+
+<div class="viewcode-block" id="KeccakFunctionManager.get_concrete_hash_data">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.function_managers.html#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.get_concrete_hash_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_concrete_hash_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returns concrete values of hashes in the self.hash_result_store</span>
+<span class="sd">        :param model: The z3 model to query for concrete values</span>
+<span class="sd">        :return: A dictionary with concrete hashes { &lt;hash_input_size&gt; : [&lt;concrete_hash&gt;, &lt;concrete_hash&gt;]}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">concrete_hashes</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># type: Dict[int, List[Optional[int]]]</span>
+        <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_result_store</span><span class="p">:</span>
+            <span class="n">concrete_hashes</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_result_store</span><span class="p">[</span><span class="n">size</span><span class="p">]:</span>
+                <span class="n">eval_</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">raw</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">concrete_val</span> <span class="o">=</span> <span class="n">eval_</span><span class="o">.</span><span class="n">as_long</span><span class="p">()</span>
+                    <span class="n">concrete_hashes</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">concrete_val</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="k">continue</span>
+        <span class="k">return</span> <span class="n">concrete_hashes</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_create_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_input</span><span class="p">:</span> <span class="n">BitVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the constraints for hash</span>
+<span class="sd">        :param func_input: input of the hash</span>
+<span class="sd">        :return: condition</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">func_input</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="n">func</span><span class="p">,</span> <span class="n">inv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval_hook_for_size</span><span class="p">[</span><span class="n">length</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interval_hook_for_size</span><span class="p">[</span><span class="n">length</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index_counter</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index_counter</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_index_counter</span> <span class="o">-=</span> <span class="n">INTERVAL_DIFFERENCE</span>
+
+        <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">index</span> <span class="o">*</span> <span class="n">PART</span>
+        <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">lower_bound</span> <span class="o">+</span> <span class="n">PART</span>
+
+        <span class="n">cond</span> <span class="o">=</span> <span class="n">And</span><span class="p">(</span>
+            <span class="n">inv</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">func_input</span><span class="p">))</span> <span class="o">==</span> <span class="n">func_input</span><span class="p">,</span>
+            <span class="n">ULE</span><span class="p">(</span><span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">lower_bound</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span> <span class="n">func</span><span class="p">(</span><span class="n">func_input</span><span class="p">)),</span>
+            <span class="n">ULT</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">func_input</span><span class="p">),</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">upper_bound</span><span class="p">,</span> <span class="mi">256</span><span class="p">)),</span>
+            <span class="n">URem</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">func_input</span><span class="p">),</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">256</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">concrete_cond</span> <span class="o">=</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">keccak</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">concrete_hashes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n">func_input</span><span class="o">.</span><span class="n">size</span><span class="p">():</span>
+                <span class="n">hash_eq</span> <span class="o">=</span> <span class="n">And</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">func_input</span><span class="p">)</span> <span class="o">==</span> <span class="n">keccak</span><span class="p">,</span> <span class="n">key</span> <span class="o">==</span> <span class="n">func_input</span><span class="p">)</span>
+                <span class="n">concrete_cond</span> <span class="o">=</span> <span class="n">Or</span><span class="p">(</span><span class="n">concrete_cond</span><span class="p">,</span> <span class="n">hash_eq</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">And</span><span class="p">(</span><span class="n">inv</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">func_input</span><span class="p">))</span> <span class="o">==</span> <span class="n">func_input</span><span class="p">,</span> <span class="n">Or</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">concrete_cond</span><span class="p">))</span></div>
+
+
+
+<span class="n">keccak_function_manager</span> <span class="o">=</span> <span class="n">KeccakFunctionManager</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

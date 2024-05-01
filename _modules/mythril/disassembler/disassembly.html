@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mythril.disassembler.disassembly &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for mythril.disassembler.disassembly</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module contains the class used to represent disassembly code.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">fdg.output_data</span> <span class="kn">import</span> <span class="n">print_dict</span>
+<span class="kn">from</span> <span class="nn">mythril.ethereum</span> <span class="kn">import</span> <span class="n">util</span>
+<span class="kn">from</span> <span class="nn">mythril.disassembler</span> <span class="kn">import</span> <span class="n">asm</span>
+<span class="kn">from</span> <span class="nn">mythril.support.signatures</span> <span class="kn">import</span> <span class="n">SignatureDB</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span> <span class="nn">fdg.global_config</span>
+
+<div class="viewcode-block" id="Disassembly">
+<a class="viewcode-back" href="../../../mythril.disassembler.html#mythril.disassembler.disassembly.Disassembly">[docs]</a>
+<span class="k">class</span> <span class="nc">Disassembly</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disassembly class.</span>
+
+<span class="sd">    Stores bytecode, and its disassembly.</span>
+<span class="sd">    Additionally it will gather the following information on the existing functions in the disassembled code:</span>
+<span class="sd">    - function hashes</span>
+<span class="sd">    - function name to entry point mapping</span>
+<span class="sd">    - function entry point to function name mapping</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">enable_online_lookup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param code:</span>
+<span class="sd">        :param enable_online_lookup:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instruction_list</span> <span class="o">=</span> <span class="n">asm</span><span class="o">.</span><span class="n">disassemble</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">safe_decode</span><span class="p">(</span><span class="n">code</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instruction_list</span> <span class="o">=</span> <span class="n">asm</span><span class="o">.</span><span class="n">disassemble</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func_hashes</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># type: List[str]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">function_name_to_address</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># type: Dict[str, int]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">address_to_function_name</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># type: Dict[int, str]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enable_online_lookup</span> <span class="o">=</span> <span class="n">enable_online_lookup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assign_bytecode</span><span class="p">(</span><span class="n">bytecode</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Disassembly.assign_bytecode">
+<a class="viewcode-back" href="../../../mythril.disassembler.html#mythril.disassembler.disassembly.Disassembly.assign_bytecode">[docs]</a>
+    <span class="k">def</span> <span class="nf">assign_bytecode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="n">bytecode</span>
+        <span class="c1"># open from default locations</span>
+        <span class="c1"># control if you want to have online signature hash lookups</span>
+        <span class="n">signatures</span> <span class="o">=</span> <span class="n">SignatureDB</span><span class="p">(</span><span class="n">enable_online_lookup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">enable_online_lookup</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instruction_list</span> <span class="o">=</span> <span class="n">asm</span><span class="o">.</span><span class="n">disassemble</span><span class="p">(</span><span class="n">bytecode</span><span class="p">)</span>
+        <span class="c1"># Need to take from PUSH1 to PUSH4 because solc seems to remove excess 0s at the beginning for optimizing</span>
+        <span class="n">jump_table_indices</span> <span class="o">=</span> <span class="n">asm</span><span class="o">.</span><span class="n">find_op_code_sequence</span><span class="p">(</span>
+            <span class="p">[(</span><span class="s2">&quot;PUSH1&quot;</span><span class="p">,</span> <span class="s2">&quot;PUSH2&quot;</span><span class="p">,</span> <span class="s2">&quot;PUSH3&quot;</span><span class="p">,</span> <span class="s2">&quot;PUSH4&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;EQ&quot;</span><span class="p">,)],</span> <span class="bp">self</span><span class="o">.</span><span class="n">instruction_list</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">jump_table_indices</span><span class="p">:</span>
+            <span class="n">function_hash</span><span class="p">,</span> <span class="n">jump_target</span><span class="p">,</span> <span class="n">function_name</span> <span class="o">=</span> <span class="n">get_function_info</span><span class="p">(</span>
+                <span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">instruction_list</span><span class="p">,</span> <span class="n">signatures</span>
+            <span class="p">)</span>
+            <span class="c1"># @wei get a mapping from function name to function hash</span>
+            <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">method_identifiers</span><span class="p">[</span><span class="n">function_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">function_hash</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">func_hashes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function_hash</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">jump_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">function_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">function_name_to_address</span><span class="p">[</span><span class="n">function_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">jump_target</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">address_to_function_name</span><span class="p">[</span><span class="n">jump_target</span><span class="p">]</span> <span class="o">=</span> <span class="n">function_name</span></div>
+
+        <span class="c1"># print_dict(fdg.global_config.method_identifiers,&quot;method identifiers in disassembler.py&quot;)</span>
+
+<div class="viewcode-block" id="Disassembly.get_easm">
+<a class="viewcode-back" href="../../../mythril.disassembler.html#mythril.disassembler.disassembly.Disassembly.get_easm">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_easm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">asm</span><span class="o">.</span><span class="n">instruction_list_to_easm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instruction_list</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_function_info">
+<a class="viewcode-back" href="../../../mythril.disassembler.html#mythril.disassembler.disassembly.get_function_info">[docs]</a>
+<span class="k">def</span> <span class="nf">get_function_info</span><span class="p">(</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">instruction_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">signature_database</span><span class="p">:</span> <span class="n">SignatureDB</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Finds the function information for a call table entry Solidity uses the</span>
+<span class="sd">    first 4 bytes of the calldata to indicate which function the message call</span>
+<span class="sd">    should execute The generated code that directs execution to the correct</span>
+<span class="sd">    function looks like this:</span>
+
+<span class="sd">    - PUSH function_hash</span>
+<span class="sd">    - EQ</span>
+<span class="sd">    - PUSH entry_point</span>
+<span class="sd">    - JUMPI</span>
+
+<span class="sd">    This function takes an index that points to the first instruction, and from that finds out the function hash,</span>
+<span class="sd">    function entry and the function name.</span>
+
+<span class="sd">    :param index: Start of the entry pattern</span>
+<span class="sd">    :param instruction_list: Instruction list for the contract that is being analyzed</span>
+<span class="sd">    :param signature_database: Database used to map function hashes to their respective function names</span>
+<span class="sd">    :return: function hash, function entry point, function name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Append with missing 0s at the beginning</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">instruction_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s2">&quot;argument&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">function_hash</span> <span class="o">=</span> <span class="s2">&quot;0x&quot;</span> <span class="o">+</span> <span class="nb">bytes</span><span class="p">(</span>
+                <span class="n">instruction_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s2">&quot;argument&quot;</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Mythril currently does not support symbolic function signatures&quot;</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">function_hash</span> <span class="o">=</span> <span class="s2">&quot;0x&quot;</span> <span class="o">+</span> <span class="n">instruction_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s2">&quot;argument&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span>
+
+    <span class="n">function_names</span> <span class="o">=</span> <span class="n">signature_database</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">function_hash</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">function_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">function_name</span> <span class="o">=</span> <span class="s2">&quot; or &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">function_names</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">function_name</span> <span class="o">=</span> <span class="s2">&quot;_function_&quot;</span> <span class="o">+</span> <span class="n">function_hash</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">instruction_list</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="s2">&quot;argument&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">:</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
+        <span class="n">entry_point</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">function_hash</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">function_hash</span><span class="p">,</span> <span class="n">entry_point</span><span class="p">,</span> <span class="n">function_name</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

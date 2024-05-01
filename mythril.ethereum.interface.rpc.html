@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mythril.ethereum.interface.rpc package &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mythril.interfaces package" href="mythril.interfaces.html" />
+    <link rel="prev" title="mythril.ethereum.interface package" href="mythril.ethereum.interface.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mythril-ethereum-interface-rpc-package">
+<h1>mythril.ethereum.interface.rpc package<a class="headerlink" href="#mythril-ethereum-interface-rpc-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-mythril.ethereum.interface.rpc.base_client">
+<span id="mythril-ethereum-interface-rpc-base-client-module"></span><h2>mythril.ethereum.interface.rpc.base_client module<a class="headerlink" href="#module-mythril.ethereum.interface.rpc.base_client" title="Link to this heading">¶</a></h2>
+<p>This module provides a basic RPC interface client.</p>
+<p>This code is adapted from: <a class="reference external" href="https://github.com/ConsenSys/ethjsonrpc">https://github.com/ConsenSys/ethjsonrpc</a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.base_client.BaseClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.ethereum.interface.rpc.base_client.</span></span><span class="sig-name descname"><span class="pre">BaseClient</span></span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/base_client.html#BaseClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.base_client.BaseClient" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The base RPC client class.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.base_client.BaseClient.eth_blockNumber">
+<span class="sig-name descname"><span class="pre">eth_blockNumber</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/base_client.html#BaseClient.eth_blockNumber"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.base_client.BaseClient.eth_blockNumber" title="Link to this definition">¶</a></dt>
+<dd><p>TODO: documentation</p>
+<p><a class="reference external" href="https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_blocknumber">https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_blocknumber</a></p>
+<p>TESTED</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.base_client.BaseClient.eth_coinbase">
+<span class="sig-name descname"><span class="pre">eth_coinbase</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/base_client.html#BaseClient.eth_coinbase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.base_client.BaseClient.eth_coinbase" title="Link to this definition">¶</a></dt>
+<dd><p>TODO: documentation</p>
+<p><a class="reference external" href="https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_coinbase">https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_coinbase</a></p>
+<p>TESTED</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getBalance">
+<span class="sig-name descname"><span class="pre">eth_getBalance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'latest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/base_client.html#BaseClient.eth_getBalance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getBalance" title="Link to this definition">¶</a></dt>
+<dd><p>TODO: documentation</p>
+<p><a class="reference external" href="https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getbalance">https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getbalance</a></p>
+<p>TESTED</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getBlockByNumber">
+<span class="sig-name descname"><span class="pre">eth_getBlockByNumber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'latest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_objects</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/base_client.html#BaseClient.eth_getBlockByNumber"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getBlockByNumber" title="Link to this definition">¶</a></dt>
+<dd><p>TODO: documentation</p>
+<p><a class="reference external" href="https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblockbynumber">https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblockbynumber</a></p>
+<p>TESTED</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getCode">
+<span class="sig-name descname"><span class="pre">eth_getCode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'latest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/base_client.html#BaseClient.eth_getCode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getCode" title="Link to this definition">¶</a></dt>
+<dd><p>TODO: documentation</p>
+<p><a class="reference external" href="https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getcode">https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getcode</a></p>
+<p>NEEDS TESTING</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getStorageAt">
+<span class="sig-name descname"><span class="pre">eth_getStorageAt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'latest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/base_client.html#BaseClient.eth_getStorageAt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getStorageAt" title="Link to this definition">¶</a></dt>
+<dd><p>TODO: documentation</p>
+<p><a class="reference external" href="https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getstorageat">https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getstorageat</a></p>
+<p>TESTED</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getTransactionReceipt">
+<span class="sig-name descname"><span class="pre">eth_getTransactionReceipt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tx_hash</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/base_client.html#BaseClient.eth_getTransactionReceipt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getTransactionReceipt" title="Link to this definition">¶</a></dt>
+<dd><p>TODO: documentation</p>
+<p><a class="reference external" href="https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionreceipt">https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionreceipt</a></p>
+<p>TESTED</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.ethereum.interface.rpc.client">
+<span id="mythril-ethereum-interface-rpc-client-module"></span><h2>mythril.ethereum.interface.rpc.client module<a class="headerlink" href="#module-mythril.ethereum.interface.rpc.client" title="Link to this heading">¶</a></h2>
+<p>This module contains a basic Ethereum RPC client.</p>
+<p>This code is adapted from: <a class="reference external" href="https://github.com/ConsenSys/ethjsonrpc">https://github.com/ConsenSys/ethjsonrpc</a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.client.EthJsonRpc">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.ethereum.interface.rpc.client.</span></span><span class="sig-name descname"><span class="pre">EthJsonRpc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8545</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/client.html#EthJsonRpc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.client.EthJsonRpc" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.ethereum.interface.rpc.base_client.BaseClient" title="mythril.ethereum.interface.rpc.base_client.BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseClient</span></code></a></p>
+<p>Ethereum JSON-RPC client class.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.client.EthJsonRpc.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/client.html#EthJsonRpc.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.client.EthJsonRpc.close" title="Link to this definition">¶</a></dt>
+<dd><p>Close the RPC client’s session.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.ethereum.interface.rpc.constants">
+<span id="mythril-ethereum-interface-rpc-constants-module"></span><h2>mythril.ethereum.interface.rpc.constants module<a class="headerlink" href="#module-mythril.ethereum.interface.rpc.constants" title="Link to this heading">¶</a></h2>
+<p>This file contains constants used used by the Ethereum JSON RPC
+interface.</p>
+</section>
+<section id="module-mythril.ethereum.interface.rpc.exceptions">
+<span id="mythril-ethereum-interface-rpc-exceptions-module"></span><h2>mythril.ethereum.interface.rpc.exceptions module<a class="headerlink" href="#module-mythril.ethereum.interface.rpc.exceptions" title="Link to this heading">¶</a></h2>
+<p>This module contains exceptions regarding JSON-RPC communication.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.exceptions.BadJsonError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.ethereum.interface.rpc.exceptions.</span></span><span class="sig-name descname"><span class="pre">BadJsonError</span></span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/exceptions.html#BadJsonError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.exceptions.BadJsonError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.ethereum.interface.rpc.exceptions.EthJsonRpcError" title="mythril.ethereum.interface.rpc.exceptions.EthJsonRpcError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EthJsonRpcError</span></code></a></p>
+<p>An RPC exception denoting that the RPC instance returned a bad JSON
+object.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.exceptions.BadResponseError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.ethereum.interface.rpc.exceptions.</span></span><span class="sig-name descname"><span class="pre">BadResponseError</span></span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/exceptions.html#BadResponseError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.exceptions.BadResponseError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.ethereum.interface.rpc.exceptions.EthJsonRpcError" title="mythril.ethereum.interface.rpc.exceptions.EthJsonRpcError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EthJsonRpcError</span></code></a></p>
+<p>An RPC exception denoting that the RPC instance returned a bad
+response.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.exceptions.BadStatusCodeError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.ethereum.interface.rpc.exceptions.</span></span><span class="sig-name descname"><span class="pre">BadStatusCodeError</span></span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/exceptions.html#BadStatusCodeError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.exceptions.BadStatusCodeError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.ethereum.interface.rpc.exceptions.EthJsonRpcError" title="mythril.ethereum.interface.rpc.exceptions.EthJsonRpcError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EthJsonRpcError</span></code></a></p>
+<p>An RPC exception denoting a bad status code returned by the RPC
+instance.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.exceptions.ConnectionError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.ethereum.interface.rpc.exceptions.</span></span><span class="sig-name descname"><span class="pre">ConnectionError</span></span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/exceptions.html#ConnectionError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.exceptions.ConnectionError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.ethereum.interface.rpc.exceptions.EthJsonRpcError" title="mythril.ethereum.interface.rpc.exceptions.EthJsonRpcError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EthJsonRpcError</span></code></a></p>
+<p>An RPC exception denoting there was an error in connecting to the RPC
+instance.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.exceptions.EthJsonRpcError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.ethereum.interface.rpc.exceptions.</span></span><span class="sig-name descname"><span class="pre">EthJsonRpcError</span></span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/exceptions.html#EthJsonRpcError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.exceptions.EthJsonRpcError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>The JSON-RPC base exception type.</p>
+</dd></dl>
+
+</section>
+<section id="module-mythril.ethereum.interface.rpc.utils">
+<span id="mythril-ethereum-interface-rpc-utils-module"></span><h2>mythril.ethereum.interface.rpc.utils module<a class="headerlink" href="#module-mythril.ethereum.interface.rpc.utils" title="Link to this heading">¶</a></h2>
+<p>This module contains various utility functions regarding the RPC data format
+and validation.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.utils.clean_hex">
+<span class="sig-prename descclassname"><span class="pre">mythril.ethereum.interface.rpc.utils.</span></span><span class="sig-name descname"><span class="pre">clean_hex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/utils.html#clean_hex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.utils.clean_hex" title="Link to this definition">¶</a></dt>
+<dd><p>Convert decimal to hex and remove the “L” suffix that is appended to
+large numbers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>d</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.utils.ether_to_wei">
+<span class="sig-prename descclassname"><span class="pre">mythril.ethereum.interface.rpc.utils.</span></span><span class="sig-name descname"><span class="pre">ether_to_wei</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ether</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/utils.html#ether_to_wei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.utils.ether_to_wei" title="Link to this definition">¶</a></dt>
+<dd><p>Convert ether to wei.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ether</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.utils.hex_to_dec">
+<span class="sig-prename descclassname"><span class="pre">mythril.ethereum.interface.rpc.utils.</span></span><span class="sig-name descname"><span class="pre">hex_to_dec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/utils.html#hex_to_dec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.utils.hex_to_dec" title="Link to this definition">¶</a></dt>
+<dd><p>Convert hex to decimal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.utils.validate_block">
+<span class="sig-prename descclassname"><span class="pre">mythril.ethereum.interface.rpc.utils.</span></span><span class="sig-name descname"><span class="pre">validate_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/utils.html#validate_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.utils.validate_block" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>block</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.ethereum.interface.rpc.utils.wei_to_ether">
+<span class="sig-prename descclassname"><span class="pre">mythril.ethereum.interface.rpc.utils.</span></span><span class="sig-name descname"><span class="pre">wei_to_ether</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wei</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/ethereum/interface/rpc/utils.html#wei_to_ether"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.ethereum.interface.rpc.utils.wei_to_ether" title="Link to this definition">¶</a></dt>
+<dd><p>Convert wei to ether.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wei</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-mythril.ethereum.interface.rpc">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mythril.ethereum.interface.rpc" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="mythril.html">mythril package</a><ul>
+  <li><a href="mythril.ethereum.html">mythril.ethereum package</a><ul>
+  <li><a href="mythril.ethereum.interface.html">mythril.ethereum.interface package</a><ul>
+      <li>Previous: <a href="mythril.ethereum.interface.html" title="previous chapter">mythril.ethereum.interface package</a></li>
+      <li>Next: <a href="mythril.interfaces.html" title="next chapter">mythril.interfaces package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/mythril.ethereum.interface.rpc.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mythril.ethereum.interface package &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mythril.ethereum.interface.rpc package" href="mythril.ethereum.interface.rpc.html" />
+    <link rel="prev" title="mythril.ethereum package" href="mythril.ethereum.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mythril-ethereum-interface-package">
+<h1>mythril.ethereum.interface package<a class="headerlink" href="#mythril-ethereum-interface-package" title="Link to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mythril.ethereum.interface.rpc.html">mythril.ethereum.interface.rpc package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#module-mythril.ethereum.interface.rpc.base_client">mythril.ethereum.interface.rpc.base_client module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.base_client.BaseClient"><code class="docutils literal notranslate"><span class="pre">BaseClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.base_client.BaseClient.eth_blockNumber"><code class="docutils literal notranslate"><span class="pre">BaseClient.eth_blockNumber()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.base_client.BaseClient.eth_coinbase"><code class="docutils literal notranslate"><span class="pre">BaseClient.eth_coinbase()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getBalance"><code class="docutils literal notranslate"><span class="pre">BaseClient.eth_getBalance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getBlockByNumber"><code class="docutils literal notranslate"><span class="pre">BaseClient.eth_getBlockByNumber()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getCode"><code class="docutils literal notranslate"><span class="pre">BaseClient.eth_getCode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getStorageAt"><code class="docutils literal notranslate"><span class="pre">BaseClient.eth_getStorageAt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.base_client.BaseClient.eth_getTransactionReceipt"><code class="docutils literal notranslate"><span class="pre">BaseClient.eth_getTransactionReceipt()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#module-mythril.ethereum.interface.rpc.client">mythril.ethereum.interface.rpc.client module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.client.EthJsonRpc"><code class="docutils literal notranslate"><span class="pre">EthJsonRpc</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.client.EthJsonRpc.close"><code class="docutils literal notranslate"><span class="pre">EthJsonRpc.close()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#module-mythril.ethereum.interface.rpc.constants">mythril.ethereum.interface.rpc.constants module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#module-mythril.ethereum.interface.rpc.exceptions">mythril.ethereum.interface.rpc.exceptions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.exceptions.BadJsonError"><code class="docutils literal notranslate"><span class="pre">BadJsonError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.exceptions.BadResponseError"><code class="docutils literal notranslate"><span class="pre">BadResponseError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.exceptions.BadStatusCodeError"><code class="docutils literal notranslate"><span class="pre">BadStatusCodeError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.exceptions.ConnectionError"><code class="docutils literal notranslate"><span class="pre">ConnectionError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.exceptions.EthJsonRpcError"><code class="docutils literal notranslate"><span class="pre">EthJsonRpcError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#module-mythril.ethereum.interface.rpc.utils">mythril.ethereum.interface.rpc.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.utils.clean_hex"><code class="docutils literal notranslate"><span class="pre">clean_hex()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.utils.ether_to_wei"><code class="docutils literal notranslate"><span class="pre">ether_to_wei()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.utils.hex_to_dec"><code class="docutils literal notranslate"><span class="pre">hex_to_dec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.utils.validate_block"><code class="docutils literal notranslate"><span class="pre">validate_block()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.utils.wei_to_ether"><code class="docutils literal notranslate"><span class="pre">wei_to_ether()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#module-mythril.ethereum.interface.rpc">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-mythril.ethereum.interface">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mythril.ethereum.interface" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="mythril.html">mythril package</a><ul>
+  <li><a href="mythril.ethereum.html">mythril.ethereum package</a><ul>
+      <li>Previous: <a href="mythril.ethereum.html" title="previous chapter">mythril.ethereum package</a></li>
+      <li>Next: <a href="mythril.ethereum.interface.rpc.html" title="next chapter">mythril.ethereum.interface.rpc package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/mythril.ethereum.interface.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

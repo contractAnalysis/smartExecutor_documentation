@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>fdg.fdg_pruner &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for fdg.fdg_pruner</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># support FDG-guided execution and sequence execution</span>
+<span class="kn">from</span> <span class="nn">fdg.control.mine</span> <span class="kn">import</span> <span class="n">Mine</span>
+<span class="kn">from</span> <span class="nn">fdg.preprocessing.address_collection</span> <span class="kn">import</span> <span class="n">collect_addresses_in_constructor</span>
+
+<span class="kn">from</span> <span class="nn">fdg.control.ftn_search_strategy</span> <span class="kn">import</span> <span class="n">BFS</span><span class="p">,</span> <span class="n">RandomBaseline</span><span class="p">,</span> <span class="n">DFS</span><span class="p">,</span> <span class="n">Seq</span>
+<span class="kn">from</span> <span class="nn">fdg.control.guider</span> <span class="kn">import</span> <span class="n">Guider</span>
+
+<span class="kn">from</span> <span class="nn">fdg.function_coverage</span> <span class="kn">import</span> <span class="n">FunctionCoverage</span>
+
+<span class="kn">from</span> <span class="nn">fdg.preprocessing.preprocess</span> <span class="kn">import</span> <span class="n">Preprocessing</span>
+
+
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.state.world_state</span> <span class="kn">import</span> <span class="n">WorldState</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.svm</span> <span class="kn">import</span> <span class="n">LaserEVM</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.plugin.interface</span> <span class="kn">import</span> <span class="n">LaserPlugin</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.plugin.builder</span> <span class="kn">import</span> <span class="n">PluginBuilder</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.plugin.plugins.coverage</span> <span class="kn">import</span> <span class="n">InstructionCoveragePlugin</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.state.global_state</span> <span class="kn">import</span> <span class="n">GlobalState</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.transaction.transaction_models</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ContractCreationTransaction</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">fdg.global_config</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.plugin.plugins.dependency_pruner</span> <span class="kn">import</span> <span class="n">get_dependency_annotation</span>
+
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+
+
+<div class="viewcode-block" id="FDG_prunerBuilder">
+<a class="viewcode-back" href="../../fdg.html#fdg.fdg_pruner.FDG_prunerBuilder">[docs]</a>
+<span class="k">class</span> <span class="nc">FDG_prunerBuilder</span><span class="p">(</span><span class="n">PluginBuilder</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;fdg-pruner&quot;</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FDG_pruner</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="FDG_pruner">
+<a class="viewcode-back" href="../../fdg.html#fdg.fdg_pruner.FDG_pruner">[docs]</a>
+<span class="k">class</span> <span class="nc">FDG_pruner</span><span class="p">(</span><span class="n">LaserPlugin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">instructionCoveragePlugin</span><span class="p">:</span><span class="n">InstructionCoveragePlugin</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates FDG pruner&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">functionCoverage</span><span class="o">=</span><span class="n">FunctionCoverage</span><span class="p">(</span><span class="n">instructionCoveragePlugin</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_hash_check</span><span class="o">=</span><span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span><span class="o">=</span><span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">condi_cov</span><span class="o">=</span><span class="kc">None</span>
+
+
+        <span class="k">if</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">random_baseline</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span> <span class="o">=</span> <span class="n">RandomBaseline</span><span class="p">(</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">random_baseline</span><span class="p">,</span>
+                                                  <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">method_identifiers</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">function_search_strategy</span><span class="o">==</span><span class="s1">&#39;dfs&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span><span class="o">=</span><span class="n">DFS</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">function_search_strategy</span><span class="o">==</span><span class="s1">&#39;mine&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span><span class="o">=</span><span class="n">Mine</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">function_search_strategy</span><span class="o">==</span><span class="s1">&#39;seq&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span><span class="o">=</span><span class="n">Seq</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span> <span class="o">=</span> <span class="n">Mine</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">=</span><span class="n">Guider</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span><span class="p">,</span><span class="nb">list</span><span class="p">(</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">method_identifiers</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth_k</span><span class="o">=</span><span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flag_code_cov</span><span class="o">=</span><span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flag_num_condition</span><span class="o">=</span><span class="kc">False</span>
+
+<div class="viewcode-block" id="FDG_pruner.initialize">
+<a class="viewcode-back" href="../../fdg.html#fdg.fdg_pruner.FDG_pruner.initialize">[docs]</a>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbolic_vm</span><span class="p">:</span> <span class="n">LaserEVM</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the FDG_pruner</span>
+<span class="sd">        :param symbolic_vm</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">()</span>
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">laser_hook</span><span class="p">(</span><span class="s2">&quot;start_sym_exec&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">start_sym_exec_hook</span><span class="p">():</span>
+
+            <span class="c1"># # for saving the generated states and executed sequences</span>
+            <span class="c1"># self.state_hash_check=state_constraints_hash_check()</span>
+            <span class="k">pass</span>
+
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">laser_hook</span><span class="p">(</span><span class="s2">&quot;stop_sym_exec&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">stop_sym_exec_hook</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">random_baseline</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span><span class="k">return</span>
+            <span class="c1"># if not fdg.global_config.flag_preprocess_timeout:</span>
+            <span class="c1">#     if not fdg.global_config.preprocessing_exception:</span>
+            <span class="c1">#         if self.preprocess is not None and self.functionCoverage is not None:</span>
+            <span class="c1">#             if self.preprocess.coverage == self.functionCoverage.coverage:</span>
+            <span class="c1">#                 print(f&#39;Reach the maximum coverage.&#39;)</span>
+            <span class="c1">#</span>
+            <span class="c1"># if fdg.global_config.print_function_coverage==1:</span>
+            <span class="c1">#    deep_functions_1st_time=self.functionCoverage.get_deep_functions_1st_time()</span>
+            <span class="c1">#    if len(deep_functions_1st_time) &gt; 0:</span>
+            <span class="c1">#         self.get_depth_k_functions()</span>
+            <span class="c1">#         deep_function_in_the_end =self.depth_k</span>
+            <span class="c1">#         print(</span>
+            <span class="c1">#             f&#39;depth-k functions: {len(deep_functions_1st_time) - len(deep_function_in_the_end)} out of {len(deep_functions_1st_time)} reaches the threshold {fdg.global_config.function_coverage_threshold}%&#39;)</span>
+            <span class="c1">#</span>
+            <span class="c1">#         print(f&#39;all depth-k function(s): {deep_functions_1st_time}&#39;)</span>
+            <span class="c1">#         print(f&#39;left depth-k function(s): {deep_function_in_the_end}&#39;)</span>
+
+
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">laser_hook</span><span class="p">(</span><span class="s2">&quot;start_sym_trans_laserEVM&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">start_sym_trans_hook_laserEVM</span><span class="p">(</span><span class="n">laserEVM</span><span class="p">:</span> <span class="n">LaserEVM</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            ...</span>
+<span class="sd">            add states to laserEVM.open_states so that they can be used</span>
+<span class="sd">            as base states in the next iteration of symbolic transaction</span>
+<span class="sd">            :param laserEVM: instance of LaserEVM</span>
+<span class="sd">            :return:</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">tx_len</span><span class="o">=</span><span class="mi">1</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">===================================&#39;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;start_iteration: self._iteration_=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">state</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span> <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">is_possible</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">transaction_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;no state is generated&#39;</span><span class="p">)</span>
+                    <span class="k">return</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;number of genesis states: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+                <span class="c1"># it means no contract is deployed as no valid contracts are given</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">contract_address</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> <span class="k">return</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">instructionModification</span><span class="o">.</span><span class="n">feed_instructions</span><span class="p">(</span>
+                    <span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">contract_address</span><span class="p">)</span>
+
+                <span class="c1"># self.guider.save_genesis_states(laserEVM.open_states) # to-do: think about removing it</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_runtime_bytecode</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">contract_address</span><span class="p">)</span>
+
+
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># create a Preprocessing instance</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span> <span class="o">=</span> <span class="n">Preprocessing</span><span class="p">(</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">method_identifiers</span><span class="p">,</span>
+                                                <span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">contract_address</span><span class="p">)</span>
+
+                <span class="c1"># do preprocessing</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span><span class="o">.</span><span class="n">main_preprocessing_start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="p">,</span> <span class="n">laserEVM</span><span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="o">&lt;=</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">p1_dl</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="c1"># Phase 1</span>
+                    <span class="o">...</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Phase 2</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">get_depth_k_functions</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">start_iteration</span><span class="p">(</span><span class="n">laserEVM</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_k</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="p">)</span>
+                    <span class="n">flag_terminate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">should_terminate</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">flag_terminate</span><span class="p">:</span>
+                        <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">transaction_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span>
+                        <span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">laser_hook</span><span class="p">(</span><span class="s2">&quot;stop_sym_trans_laserEVM&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">stop_sym_trans_hook_laserEVM</span><span class="p">(</span><span class="n">laserEVM</span><span class="p">:</span> <span class="n">LaserEVM</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            - save states</span>
+<span class="sd">            - some saved states are used as initial states in sequence execution</span>
+
+<span class="sd">            :param laserEVM:</span>
+<span class="sd">            :return:</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">----------------------------------------&#39;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;end: self._iteration_=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="c1">#++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span>
+
+            <span class="c1"># collect results at the end of preprocessing</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span><span class="o">.</span><span class="n">main_preprocessing_end</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">functionCoverage</span><span class="o">.</span><span class="n">feed_function_intruction_indices</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span><span class="o">.</span><span class="n">instruction_cov</span><span class="o">.</span><span class="n">function_instruction_indices</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">functionCoverage</span><span class="o">.</span><span class="n">set_runtime_bytecode</span><span class="p">(</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">target_runtime_bytecode</span><span class="p">)</span>
+                <span class="k">return</span>
+
+
+            <span class="c1">#----------------------------------------</span>
+            <span class="c1"># at the end of each iteration in the normal symbolic execution</span>
+            <span class="c1"># prune unfeasible states</span>
+            <span class="n">old_states_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span>
+            <span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">state</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span> <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">is_possible</span>
+            <span class="p">]</span>
+            <span class="n">prune_count</span> <span class="o">=</span> <span class="n">old_states_count</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">prune_count</span><span class="p">:</span> <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Pruned </span><span class="si">{}</span><span class="s2"> unreachable states&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prune_count</span><span class="p">))</span>
+
+
+            <span class="c1"># compute coverage</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">functionCoverage</span><span class="o">.</span><span class="n">compute_coverage</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">functionCoverage</span><span class="o">.</span><span class="n">print_coverage</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># at iteration 2 (i.e., at the end of depth 1)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No states are generated at depth 1.&#39;</span><span class="p">)</span>
+                    <span class="c1"># terminate</span>
+                    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">transaction_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span>
+                    <span class="k">return</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="o">&lt;=</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">p1_dl</span><span class="p">:</span>
+                <span class="c1"># the basic symbolic execution</span>
+                <span class="o">...</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="o">==</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">p1_dl</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># call init() of self.guider so that it can prepare to guide</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">end_iteration</span><span class="p">(</span><span class="n">laserEVM</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="p">)</span>
+                <span class="n">sequences</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">get_start_sequence</span><span class="p">(</span><span class="n">laserEVM</span><span class="p">)</span>
+
+                <span class="n">flag_termination</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">should_terminate</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">flag_termination</span><span class="p">:</span>
+                    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">transaction_count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span>
+                    <span class="k">return</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;bfs&#39;</span><span class="p">,</span><span class="s1">&#39;dfs&#39;</span><span class="p">,</span><span class="s1">&#39;mine&#39;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">get_depth_k_functions</span><span class="p">()</span>
+                    <span class="n">start_functions</span> <span class="o">=</span> <span class="p">[</span><span class="n">seq</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="n">sequences</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span> <span class="p">]</span>
+                    <span class="n">start_functions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">start_functions</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">start_functions</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_k</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span><span class="p">)</span>
+
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># belong to Phase 2</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">end_iteration</span><span class="p">(</span><span class="n">laserEVM</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="p">)</span>
+
+            <span class="n">flag_termination</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">should_terminate</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">flag_termination</span><span class="p">:</span>
+                <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">transaction_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span>
+
+
+            <span class="c1"># # termination based on deep functions(not appropriate when timeout can happen in preprocessing as the instructions of functions can not be correctly obtained)</span>
+            <span class="c1"># self.get_depth_k_functions()            #</span>
+            <span class="c1"># if len(self.depth_k) ==0:</span>
+            <span class="c1">#     fdg.global_config.transaction_count = self._iteration_</span>
+
+            <span class="c1"># termination based on the coverage of the contract</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">functionCoverage</span><span class="o">.</span><span class="n">coverage</span><span class="o">&gt;=</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">function_coverage_threshold</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;mine&#39;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">functionCoverage</span><span class="o">.</span><span class="n">coverage</span><span class="o">&gt;=</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">function_coverage_threshold</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span><span class="o">.</span><span class="n">flag_one_start_function</span><span class="p">:</span>
+                            <span class="c1"># make sure that when there is only one state generated at depth1,</span>
+                            <span class="c1"># the execution does not terminate</span>
+                            <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">transaction_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span><span class="o">.</span><span class="n">flag_one_start_function</span><span class="p">:</span>
+                        <span class="c1"># make sure that when there is only one state generated at depth1,</span>
+                        <span class="c1"># the execution does not terminate</span>
+                        <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">transaction_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span>
+
+        <span class="c1"># record the instructions visited</span>
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">laser_hook</span><span class="p">(</span><span class="s2">&quot;preprocessing_execute_state&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">execute_state_hook</span><span class="p">(</span><span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">,</span><span class="n">opcode</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span><span class="o">.</span><span class="n">instruction_cov</span><span class="o">.</span><span class="n">update_coverage</span><span class="p">(</span><span class="n">global_state</span><span class="p">,</span><span class="n">opcode</span><span class="p">)</span>
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">preprocessing_pre_hook</span><span class="p">(</span><span class="s2">&quot;SLOAD&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">sload_hook</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">               collect the locations in storage that are read</span>
+<span class="sd">            :param state:</span>
+<span class="sd">            :return:</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span><span class="o">.</span><span class="n">write_read_info</span><span class="o">.</span><span class="n">update_sload</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">preprocessing_pre_hook</span><span class="p">(</span><span class="s2">&quot;SSTORE&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">sstore_hook</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">             collect the locations in storage that are written</span>
+<span class="sd">            :param state:</span>
+<span class="sd">            :return:</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span><span class="o">.</span><span class="n">write_read_info</span><span class="o">.</span><span class="n">update_sstore</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">preprocessing_pre_hook</span><span class="p">(</span><span class="s2">&quot;JUMPI&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">jumpi_hook</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">             collect the locations in storage that are written</span>
+<span class="sd">            :param state:</span>
+<span class="sd">            :return:</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span><span class="o">.</span><span class="n">read_in_conditions</span><span class="o">.</span><span class="n">collect_conditions</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">pre_hook</span><span class="p">(</span><span class="s2">&quot;SSTORE&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">sstore_hook_constructor</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            collect concrete addresses in constructor if there are</span>
+<span class="sd">            :param state:</span>
+<span class="sd">            :return:</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># collect addresses</span>
+                <span class="n">location</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">stack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">stack</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">symbolic</span><span class="p">:</span>
+                    <span class="n">collect_addresses_in_constructor</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">location</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">laser_hook</span><span class="p">(</span><span class="s2">&quot;pre_execute_state&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">pre_execute_state_hook</span><span class="p">(</span><span class="n">global_state</span><span class="p">:</span><span class="n">GlobalState</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state_hash_check</span><span class="o">.</span><span class="n">record_pre_hash</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">laser_hook</span><span class="p">(</span><span class="s2">&quot;post_execute_state&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">post_execute_state_hook</span><span class="p">(</span><span class="n">opcode</span><span class="p">,</span><span class="n">new_states</span><span class="p">:[</span><span class="n">GlobalState</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state_hash_check</span><span class="o">.</span><span class="n">record_post_hash</span><span class="p">(</span><span class="n">opcode</span><span class="p">,</span><span class="n">new_states</span><span class="p">)</span>
+
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">pre_hook</span><span class="p">(</span><span class="s2">&quot;STOP&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">stop_hook</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">):</span>
+            <span class="c1"># _transaction_end(state)</span>
+            <span class="k">pass</span>
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">pre_hook</span><span class="p">(</span><span class="s2">&quot;RETURN&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">return_hook</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">):</span>
+            <span class="c1"># _transaction_end(state)</span>
+            <span class="k">pass</span>
+
+        <span class="k">def</span> <span class="nf">_transaction_end</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;update the function sequence resulting this state</span>
+
+<span class="sd">            :param state:</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="k">pass</span>
+
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">laser_hook</span><span class="p">(</span><span class="s2">&quot;add_world_state&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">world_state_filter_hook</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">current_transaction</span><span class="p">,</span> <span class="n">ContractCreationTransaction</span><span class="p">):</span>
+                <span class="c1"># Reset iteration variable</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">return</span></div>
+
+
+
+<div class="viewcode-block" id="FDG_pruner.get_depth_k_functions">
+<a class="viewcode-back" href="../../fdg.html#fdg.fdg_pruner.FDG_pruner.get_depth_k_functions">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_depth_k_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># ---------------------------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth_k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">functionCoverage</span><span class="o">.</span><span class="n">compute_deep_functions</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="FDG_pruner.get_runtime_bytecode">
+<a class="viewcode-back" href="../../fdg.html#fdg.fdg_pruner.FDG_pruner.get_runtime_bytecode">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_runtime_bytecode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">state</span><span class="p">:</span><span class="n">WorldState</span><span class="p">,</span><span class="n">contract_address</span><span class="p">):</span>
+        <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">target_runtime_bytecode</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">accounts</span><span class="p">[</span><span class="n">contract_address</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">bytecode</span></div>
+</div>
+
+
+
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

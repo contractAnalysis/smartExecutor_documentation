@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mythril.laser.ethereum.svm &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../../../about.html" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for mythril.laser.ethereum.svm</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module implements the main symbolic execution engine.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">DefaultDict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">mythril.support.opcodes</span> <span class="kn">import</span> <span class="n">OPCODES</span>
+<span class="kn">from</span> <span class="nn">mythril.analysis.potential_issues</span> <span class="kn">import</span> <span class="n">check_potential_issues</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.execution_info</span> <span class="kn">import</span> <span class="n">ExecutionInfo</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.cfg</span> <span class="kn">import</span> <span class="n">NodeFlags</span><span class="p">,</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Edge</span><span class="p">,</span> <span class="n">JumpType</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.evm_exceptions</span> <span class="kn">import</span> <span class="n">StackUnderflowException</span><span class="p">,</span> <span class="n">VmException</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.instructions</span> <span class="kn">import</span> <span class="n">Instruction</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.instruction_data</span> <span class="kn">import</span> <span class="n">get_required_stack_elements</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.plugin.signals</span> <span class="kn">import</span> <span class="n">PluginSkipWorldState</span><span class="p">,</span> <span class="n">PluginSkipState</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.state.global_state</span> <span class="kn">import</span> <span class="n">GlobalState</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.state.world_state</span> <span class="kn">import</span> <span class="n">WorldState</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.strategy.basic</span> <span class="kn">import</span> <span class="n">DepthFirstSearchStrategy</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.strategy.constraint_strategy</span> <span class="kn">import</span> <span class="n">DelayConstraintStrategy</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.time_handler</span> <span class="kn">import</span> <span class="n">time_handler</span>
+
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.transaction</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ContractCreationTransaction</span><span class="p">,</span>
+    <span class="n">TransactionEndSignal</span><span class="p">,</span>
+    <span class="n">TransactionStartSignal</span><span class="p">,</span>
+    <span class="n">execute_contract_creation</span><span class="p">,</span>
+    <span class="n">execute_message_call</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.smt</span> <span class="kn">import</span> <span class="n">symbol_factory</span>
+<span class="kn">from</span> <span class="nn">mythril.support.support_args</span> <span class="kn">import</span> <span class="n">args</span>
+<span class="kn">import</span> <span class="nn">fdg</span>
+
+<span class="kn">from</span> <span class="nn">fdg.preprocessing.preprocess</span> <span class="kn">import</span> <span class="n">execute_preprocessing</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SVMError">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.SVMError">[docs]</a>
+<span class="k">class</span> <span class="nc">SVMError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An exception denoting an unexpected state in symbolic execution.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="LaserEVM">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM">[docs]</a>
+<span class="k">class</span> <span class="nc">LaserEVM</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The LASER EVM.</span>
+
+<span class="sd">    Just as Mithril had to be mined at great efforts to provide the</span>
+<span class="sd">    Dwarves with their exceptional armour, LASER stands at the heart of</span>
+<span class="sd">    Mythril, digging deep in the depths of call graphs, unearthing the</span>
+<span class="sd">    most precious symbolic call data, that is then hand-forged into</span>
+<span class="sd">    beautiful and strong security issues by the experienced smiths we</span>
+<span class="sd">    call detection modules. It is truly a magnificent symbiosis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dynamic_loader</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_depth</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">),</span>
+        <span class="n">execution_timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+        <span class="n">create_timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">strategy</span><span class="o">=</span><span class="n">DepthFirstSearchStrategy</span><span class="p">,</span>
+        <span class="n">transaction_count</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">requires_statespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">iprof</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_reachability_check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">beam_width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the laser evm object</span>
+
+<span class="sd">        :param dynamic_loader: Loads data from chain</span>
+<span class="sd">        :param max_depth: Maximum execution depth this vm should execute</span>
+<span class="sd">        :param execution_timeout: Time to take for execution</span>
+<span class="sd">        :param create_timeout: Time to take for contract creation</span>
+<span class="sd">        :param strategy: Execution search strategy</span>
+<span class="sd">        :param transaction_count: The amount of transactions to execute</span>
+<span class="sd">        :param requires_statespace: Variable indicating whether the statespace should be recorded</span>
+<span class="sd">        :param iprof: Instruction Profiler</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">execution_info</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ExecutionInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">WorldState</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_states</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_loader</span> <span class="o">=</span> <span class="n">dynamic_loader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_reachability_check</span> <span class="o">=</span> <span class="n">use_reachability_check</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">GlobalState</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">strategy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="n">beam_width</span><span class="o">=</span><span class="n">beam_width</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">=</span> <span class="n">max_depth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transaction_count</span> <span class="o">=</span> <span class="n">transaction_count</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">execution_timeout</span> <span class="o">=</span> <span class="n">execution_timeout</span> <span class="ow">or</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_timeout</span> <span class="o">=</span> <span class="n">create_timeout</span> <span class="ow">or</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">requires_statespace</span> <span class="o">=</span> <span class="n">requires_statespace</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">requires_statespace</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Edge</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed_transactions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pre_hooks</span><span class="p">:</span> <span class="n">DefaultDict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_hooks</span><span class="p">:</span> <span class="n">DefaultDict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_world_state_hooks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_execute_state_hooks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_exec_trans_hooks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_exec_trans_hooks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_sym_trans_hooks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_sym_trans_hooks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_sym_exec_hooks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_sym_exec_hooks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_exec_hooks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_exec_hooks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transaction_end_hooks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">iprof</span> <span class="o">=</span> <span class="n">iprof</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instr_pre_hook</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instr_post_hook</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_sym_trans_hooks_laserEVM</span><span class="o">=</span><span class="p">[]</span> <span class="c1">#@wei</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_sym_trans_hooks_laserEVM</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># @wei</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_branch_check_hooks</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># @wei</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preprocessing_pre_hooks</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>  <span class="c1"># @wei</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pre_execute_state_hooks</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># type:List[Callable]#@wei</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_execute_state_hooks</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># type:List[Callable] #@wei</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_preprocessing_execute_state_hooks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">OPCODES</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr_pre_hook</span><span class="p">[</span><span class="n">op</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr_post_hook</span><span class="p">[</span><span class="n">op</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hook_type_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;start_execute_transactions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_exec_trans_hooks</span><span class="p">,</span>
+            <span class="s2">&quot;stop_execute_transactions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_exec_trans_hooks</span><span class="p">,</span>
+            <span class="s2">&quot;add_world_state&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_world_state_hooks</span><span class="p">,</span>
+            <span class="s2">&quot;execute_state&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_state_hooks</span><span class="p">,</span>
+            <span class="s2">&quot;start_sym_exec&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_sym_exec_hooks</span><span class="p">,</span>
+            <span class="s2">&quot;stop_sym_exec&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_sym_exec_hooks</span><span class="p">,</span>
+            <span class="s2">&quot;start_sym_trans&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_sym_trans_hooks</span><span class="p">,</span>
+            <span class="s2">&quot;stop_sym_trans&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_sym_trans_hooks</span><span class="p">,</span>
+            <span class="s2">&quot;start_exec&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_exec_hooks</span><span class="p">,</span>
+            <span class="s2">&quot;stop_exec&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_exec_hooks</span><span class="p">,</span>
+            <span class="s2">&quot;transaction_end&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transaction_end_hooks</span><span class="p">,</span>
+            <span class="s1">&#39;pre_execute_state&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_pre_execute_state_hooks</span><span class="p">,</span><span class="c1">#@wei</span>
+            <span class="s1">&#39;post_execute_state&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_post_execute_state_hooks</span><span class="p">,</span><span class="c1">#@wei</span>
+            <span class="s1">&#39;branch_check&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_branch_check_hooks</span><span class="p">,</span><span class="c1">#@wei</span>
+            <span class="s1">&#39;preprocessing_execute_state&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_preprocessing_execute_state_hooks</span><span class="p">,</span><span class="c1">#@wei</span>
+            <span class="s1">&#39;start_sym_trans_laserEVM&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_sym_trans_hooks_laserEVM</span><span class="p">,</span><span class="c1">#@wei</span>
+            <span class="s1">&#39;stop_sym_trans_laserEVM&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_stop_sym_trans_hooks_laserEVM</span><span class="p">,</span><span class="c1">#@wei</span>
+        <span class="p">}</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;LASER EVM initialized with dynamic loader: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dynamic_loader</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="LaserEVM.extend_strategy">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.extend_strategy">[docs]</a>
+    <span class="k">def</span> <span class="nf">extend_strategy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">extension</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">strategy</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LaserEVM.sym_exec">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.sym_exec">[docs]</a>
+    <span class="k">def</span> <span class="nf">sym_exec</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">world_state</span><span class="p">:</span> <span class="n">WorldState</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">target_address</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">creation_code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">contract_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Starts symbolic execution</span>
+<span class="sd">        There are two modes of execution.</span>
+<span class="sd">        Either we analyze a preconfigured configuration, in which case the world_state and target_address variables</span>
+<span class="sd">        must be supplied.</span>
+<span class="sd">        Or we execute the creation code of a contract, in which case the creation code and desired name of that</span>
+<span class="sd">        contract should be provided.</span>
+
+<span class="sd">        :param world_state The world state configuration from which to perform analysis</span>
+<span class="sd">        :param target_address The address of the contract account in the world state which analysis should target</span>
+<span class="sd">        :param creation_code The creation code to create the target contract in the symbolic environment</span>
+<span class="sd">        :param contract_name The name that the created account should be associated with</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pre_configuration_mode</span> <span class="o">=</span> <span class="n">target_address</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">scratch_mode</span> <span class="o">=</span> <span class="n">creation_code</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">contract_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">pre_configuration_mode</span> <span class="o">==</span> <span class="n">scratch_mode</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Symbolic execution started with invalid parameters&quot;</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting LASER execution&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_sym_exec_hooks</span><span class="p">:</span>
+            <span class="n">hook</span><span class="p">()</span>
+
+        <span class="n">time_handler</span><span class="o">.</span><span class="n">start_execution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">execution_timeout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">pre_configuration_mode</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">open_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">world_state</span><span class="p">]</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting message call transaction to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_address</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">execute_transactions</span><span class="p">(</span><span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">target_address</span><span class="p">,</span> <span class="mi">256</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="n">scratch_mode</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting contract creation transaction&quot;</span><span class="p">)</span>
+
+            <span class="n">created_account</span> <span class="o">=</span> <span class="n">execute_contract_creation</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span> <span class="n">creation_code</span><span class="p">,</span> <span class="n">contract_name</span><span class="p">,</span> <span class="n">world_state</span><span class="o">=</span><span class="n">world_state</span>
+            <span class="p">)</span>
+            <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">contract_address</span> <span class="o">=</span> <span class="n">created_account</span><span class="o">.</span><span class="n">address</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Finished contract creation, found </span><span class="si">{}</span><span class="s2"> open states&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;No contract was created during the execution of contract creation &quot;</span>
+                    <span class="s2">&quot;Increase the resources for creation execution (--max-depth or --create-timeout) &quot;</span>
+                    <span class="s2">&quot;Check whether the bytecode is indeed the creation code, otherwise use the --bin-runtime flag&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># if fdg.global_config.flag_fwrg:</span>
+            <span class="c1">#     self._execute_transactions_fdg(created_account.address)</span>
+            <span class="c1"># else:</span>
+            <span class="c1">#     self._execute_transactions(created_account.address)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">execute_transactions</span><span class="p">(</span><span class="n">created_account</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finished symbolic execution&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">requires_statespace</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%d</span><span class="s2"> nodes, </span><span class="si">%d</span><span class="s2"> edges, </span><span class="si">%d</span><span class="s2"> total states&quot;</span><span class="p">,</span>
+                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">),</span>
+                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">total_states</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;#@statespace&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> nodes, </span><span class="si">{}</span><span class="s2"> edges, </span><span class="si">{}</span><span class="s2"> total states&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_states</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_sym_exec_hooks</span><span class="p">:</span>
+            <span class="n">hook</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="LaserEVM.execute_transactions">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.execute_transactions">[docs]</a>
+    <span class="k">def</span> <span class="nf">execute_transactions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This function helps runs plugins that can order transactions.</span>
+<span class="sd">        Such plugins should set self.executed_transactions as True after its execution</span>
+
+<span class="sd">        :param address: Address of the contract</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_exec_trans_hooks</span><span class="p">:</span>
+            <span class="n">hook</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">executed_transactions</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">flag_fwrg</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_execute_transactions_fdg</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_execute_transactions</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+            <span class="c1"># self._execute_transactions(address)</span>
+
+        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_exec_trans_hooks</span><span class="p">:</span>
+            <span class="n">hook</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_execute_transactions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This function executes multiple transactions on the address</span>
+
+<span class="sd">        :param address: Address of the contract</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transaction_count</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">old_states_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_reachability_check</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;do reachability check&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">open_states</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">state</span>
+                    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">open_states</span>
+                    <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">is_possible</span><span class="p">()</span>
+                <span class="p">]</span>
+                <span class="n">prune_count</span> <span class="o">=</span> <span class="n">old_states_count</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">prune_count</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Pruned </span><span class="si">{}</span><span class="s2"> unreachable states&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prune_count</span><span class="p">))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Starting message call transaction, iteration: </span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2"> initial states&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">i</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">func_hashes</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">transaction_sequences</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">transaction_sequences</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">func_hashes</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">itr</span><span class="p">,</span> <span class="n">func_hash</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">func_hashes</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">func_hash</span> <span class="ow">in</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">):</span>
+                        <span class="n">func_hashes</span><span class="p">[</span><span class="n">itr</span><span class="p">]</span> <span class="o">=</span> <span class="n">func_hash</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">func_hashes</span><span class="p">[</span><span class="n">itr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">func_hash</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_sym_trans_hooks</span><span class="p">:</span>
+                <span class="n">hook</span><span class="p">()</span>
+
+            <span class="n">execute_message_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">func_hashes</span><span class="o">=</span><span class="n">func_hashes</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_sym_trans_hooks</span><span class="p">:</span>
+                <span class="n">hook</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed_transactions</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_execute_transactions_fdg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This function executes multiple transactions on the address</span>
+
+<span class="sd">        :param address: Address of the contract</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">transaction_count</span><span class="p">:</span>  <span class="c1"># @wei rewrite loop</span>
+            <span class="k">if</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">random_baseline</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">copy_laserEVM</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                    <span class="n">copy_laserEVM</span><span class="o">.</span><span class="n">requires_statespace</span><span class="o">=</span><span class="kc">False</span>
+                    <span class="n">copy_laserEVM</span><span class="o">.</span><span class="n">post_hooks</span><span class="o">=</span><span class="p">{}</span>
+                    <span class="n">copy_laserEVM</span><span class="o">.</span><span class="n">pre_hooks</span><span class="o">=</span><span class="p">{}</span>
+                    <span class="n">execute_preprocessing</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">copy_laserEVM</span><span class="p">)</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">continue</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Starting message call transaction, iteration: </span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2"> initial states&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">i</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_sym_trans_hooks</span><span class="p">:</span>
+                <span class="n">hook</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_sym_trans_hooks_laserEVM</span><span class="p">:</span>
+                <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+            <span class="n">execute_message_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_sym_trans_hooks</span><span class="p">:</span>
+                <span class="n">hook</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_sym_trans_hooks_laserEVM</span><span class="p">:</span>
+                <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">_check_create_termination</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">create_timeout</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">create_timeout</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_execution_termination</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_check_execution_termination</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">execution_timeout</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">execution_timeout</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="c1"># @wei</span>
+
+    <span class="k">def</span> <span class="nf">_check_preprocessing_termination</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">preprocess_timeout</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+        <span class="c1"># @wei</span>
+
+    <span class="k">def</span> <span class="nf">_check_preprocessing_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">preprocessing_exception</span>
+
+
+    <span class="c1"># @wei adopt from exec()</span>
+<div class="viewcode-block" id="LaserEVM.exec_preprocessing">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.exec_preprocessing">[docs]</a>
+    <span class="k">def</span> <span class="nf">exec_preprocessing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                :param create:</span>
+<span class="sd">                :param track_gas:</span>
+<span class="sd">                :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">global_state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span><span class="p">:</span>
+            <span class="c1"># @wei througth timeout</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_preprocessing_termination</span><span class="p">():</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;hit the exec_preprocessing excution time, return.&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;hit the exec_preprocessing excution time, return.&quot;</span><span class="p">)</span>
+                <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">flag_preprocess_timeout</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="c1"># @wei check errors in preprocessing</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_preprocessing_error</span><span class="p">():</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;have exceptions in preprocessing.&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;have exceptions in preprocessing.&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">new_states</span><span class="p">,</span> <span class="n">op_code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_state_preprocessing</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Encountered unimplemented instruction&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># should be kept otherwise, active function information can not be obtained.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">manage_cfg</span><span class="p">(</span><span class="n">op_code</span><span class="p">,</span> <span class="n">new_states</span><span class="p">)</span>  <span class="c1"># TODO: What about op_code is None?</span>
+            <span class="k">if</span> <span class="n">new_states</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span> <span class="o">+=</span> <span class="n">new_states</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+    <span class="c1"># @wei</span>
+    <span class="k">def</span> <span class="nf">_execute_preprocessing_pre_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">global_state</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">op_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessing_pre_hooks</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessing_pre_hooks</span><span class="p">[</span><span class="n">op_code</span><span class="p">]:</span>
+            <span class="n">hook</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+
+    <span class="c1"># @wei</span>
+<div class="viewcode-block" id="LaserEVM.execute_state_preprocessing">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.execute_state_preprocessing">[docs]</a>
+    <span class="k">def</span> <span class="nf">execute_state_preprocessing</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">GlobalState</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute a single instruction in global_state.</span>
+
+<span class="sd">        :param global_state:</span>
+<span class="sd">        :return: A list of successor states.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">instructions</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">instruction_list</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">op_code</span> <span class="o">=</span> <span class="n">instructions</span><span class="p">[</span><span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">pc</span><span class="p">][</span><span class="s2">&quot;opcode&quot;</span><span class="p">]</span>
+            <span class="c1"># Execute hooks</span>
+            <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preprocessing_execute_state_hooks</span><span class="p">:</span>
+                <span class="n">hook</span><span class="p">(</span><span class="n">global_state</span><span class="p">,</span> <span class="n">op_code</span><span class="p">)</span>
+
+            <span class="c1"># if global_state.environment.active_function_name in [&#39;getBalance(address,address)&#39;]:</span>
+            <span class="c1">#     print(f&#39;{global_state.environment.active_function_name}:{instructions[global_state.mstate.pc]}&#39;)</span>
+
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="c1"># self._add_world_state(global_state)</span>
+            <span class="k">return</span> <span class="p">[],</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">stack</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">get_required_stack_elements</span><span class="p">(</span><span class="n">op_code</span><span class="p">):</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Stack Underflow Exception due to insufficient &quot;</span>
+                <span class="s2">&quot;stack elements for the address </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">instructions</span><span class="p">[</span><span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">pc</span><span class="p">][</span><span class="s2">&quot;address&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">new_global_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_vm_exception</span><span class="p">(</span>
+                <span class="n">global_state</span><span class="p">,</span> <span class="n">op_code</span><span class="p">,</span> <span class="n">error_msg</span>
+            <span class="p">)</span>
+            <span class="c1"># self._execute_post_hook(op_code, new_global_states)</span>
+            <span class="k">return</span> <span class="n">new_global_states</span><span class="p">,</span> <span class="n">op_code</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_execute_preprocessing_pre_hook</span><span class="p">(</span><span class="n">op_code</span><span class="p">,</span> <span class="n">global_state</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">PluginSkipState</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[],</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">new_global_states</span> <span class="o">=</span> <span class="n">Instruction</span><span class="p">(</span>
+                <span class="n">op_code</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_loader</span><span class="p">,</span>
+                <span class="n">pre_hooks</span><span class="o">=</span><span class="p">[],</span>
+                <span class="n">post_hooks</span><span class="o">=</span><span class="p">[],</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">VmException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># for hook in self._transaction_end_hooks:</span>
+            <span class="c1">#     hook(</span>
+            <span class="c1">#         global_state,</span>
+            <span class="c1">#         global_state.current_transaction,</span>
+            <span class="c1">#         None,</span>
+            <span class="c1">#         False,</span>
+            <span class="c1">#     )</span>
+            <span class="n">new_global_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_vm_exception</span><span class="p">(</span><span class="n">global_state</span><span class="p">,</span> <span class="n">op_code</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="n">TransactionStartSignal</span> <span class="k">as</span> <span class="n">start_signal</span><span class="p">:</span>
+            <span class="c1"># Setup new global state</span>
+            <span class="n">new_global_state</span> <span class="o">=</span> <span class="n">start_signal</span><span class="o">.</span><span class="n">transaction</span><span class="o">.</span><span class="n">initial_global_state</span><span class="p">()</span>
+
+            <span class="n">new_global_state</span><span class="o">.</span><span class="n">transaction_stack</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span>
+                <span class="n">global_state</span><span class="o">.</span><span class="n">transaction_stack</span>
+            <span class="p">)</span> <span class="o">+</span> <span class="p">[(</span><span class="n">start_signal</span><span class="o">.</span><span class="n">transaction</span><span class="p">,</span> <span class="n">global_state</span><span class="p">)]</span>
+            <span class="n">new_global_state</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">node</span>
+            <span class="n">new_global_state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">constraints</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">start_signal</span><span class="o">.</span><span class="n">global_state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">constraints</span>
+            <span class="p">)</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting new transaction </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">start_signal</span><span class="o">.</span><span class="n">transaction</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="p">[</span><span class="n">new_global_state</span><span class="p">],</span> <span class="n">op_code</span>
+
+        <span class="k">except</span> <span class="n">TransactionEndSignal</span> <span class="k">as</span> <span class="n">end_signal</span><span class="p">:</span>
+            <span class="p">(</span>
+                <span class="n">transaction</span><span class="p">,</span>
+                <span class="n">return_global_state</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="n">end_signal</span><span class="o">.</span><span class="n">global_state</span><span class="o">.</span><span class="n">transaction_stack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Ending transaction </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">transaction</span><span class="p">)</span>
+
+            <span class="c1"># for hook in self._transaction_end_hooks:</span>
+            <span class="c1">#     hook(</span>
+            <span class="c1">#         end_signal.global_state,</span>
+            <span class="c1">#         transaction,</span>
+            <span class="c1">#         return_global_state,</span>
+            <span class="c1">#         end_signal.revert,</span>
+            <span class="c1">#     )</span>
+
+            <span class="k">if</span> <span class="n">return_global_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># if (</span>
+                <span class="c1">#     not isinstance(transaction, ContractCreationTransaction)</span>
+                <span class="c1">#     or transaction.return_data</span>
+                <span class="c1"># ) and not end_signal.revert:</span>
+                <span class="c1">#     check_potential_issues(global_state)</span>
+                <span class="c1">#     end_signal.global_state.world_state.node = global_state.node</span>
+                <span class="c1">#     self._add_world_state(end_signal.global_state)</span>
+
+                <span class="n">new_global_states</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># # First execute the post hook for the transaction ending instruction</span>
+                <span class="c1"># self._execute_post_hook(op_code, [end_signal.global_state])</span>
+
+                <span class="c1"># Propagate annotations</span>
+                <span class="n">new_annotations</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">annotation</span>
+                    <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">global_state</span><span class="o">.</span><span class="n">annotations</span>
+                    <span class="k">if</span> <span class="n">annotation</span><span class="o">.</span><span class="n">persist_over_calls</span>
+                <span class="p">]</span>
+                <span class="n">return_global_state</span><span class="o">.</span><span class="n">add_annotations</span><span class="p">(</span><span class="n">new_annotations</span><span class="p">)</span>
+
+                <span class="n">new_global_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_end_message_call</span><span class="p">(</span>
+                    <span class="n">copy</span><span class="p">(</span><span class="n">return_global_state</span><span class="p">),</span>
+                    <span class="n">global_state</span><span class="p">,</span>
+                    <span class="n">revert_changes</span><span class="o">=</span><span class="kc">False</span> <span class="ow">or</span> <span class="n">end_signal</span><span class="o">.</span><span class="n">revert</span><span class="p">,</span>
+                    <span class="n">return_data</span><span class="o">=</span><span class="n">transaction</span><span class="o">.</span><span class="n">return_data</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="c1"># self._execute_post_hook(op_code, new_global_states)</span>
+
+        <span class="k">return</span> <span class="n">new_global_states</span><span class="p">,</span> <span class="n">op_code</span></div>
+
+
+
+
+<div class="viewcode-block" id="LaserEVM.exec">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.exec">[docs]</a>
+    <span class="k">def</span> <span class="nf">exec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">create</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">track_gas</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">GlobalState</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param create:</span>
+<span class="sd">        :param track_gas:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">final_states</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># type: List[GlobalState]</span>
+        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_exec_hooks</span><span class="p">:</span>
+            <span class="n">hook</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">global_state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">create</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_create_termination</span><span class="p">():</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Hit create timeout, returning.&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">final_states</span> <span class="o">+</span> <span class="p">[</span><span class="n">global_state</span><span class="p">]</span> <span class="k">if</span> <span class="n">track_gas</span> <span class="k">else</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">create</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_execution_termination</span><span class="p">():</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Hit execution timeout, returning.&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">final_states</span> <span class="o">+</span> <span class="p">[</span><span class="n">global_state</span><span class="p">]</span> <span class="k">if</span> <span class="n">track_gas</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="k">try</span><span class="p">:</span>
+
+                <span class="n">new_states</span><span class="p">,</span> <span class="n">op_code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_state</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Encountered unimplemented instruction&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">run_check</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">new_states</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">args</span><span class="o">.</span><span class="n">pruning_factor</span>
+            <span class="p">):</span> <span class="c1"># need to be careful: previous version:if args.sparse_pruning is False:</span>
+
+                <span class="n">new_states</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">state</span>
+                    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">new_states</span>
+                    <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">is_possible</span><span class="p">()</span>
+                <span class="p">]</span>
+
+
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">manage_cfg</span><span class="p">(</span><span class="n">op_code</span><span class="p">,</span> <span class="n">new_states</span><span class="p">)</span>  <span class="c1"># TODO: What about op_code is None?</span>
+            <span class="k">if</span> <span class="n">new_states</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span> <span class="o">+=</span> <span class="n">new_states</span>
+            <span class="k">elif</span> <span class="n">track_gas</span><span class="p">:</span>
+                <span class="n">final_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">total_states</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_states</span><span class="p">)</span>
+
+        <span class="c1"># need to be careful as this does not appear in previous version</span>
+        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_exec_hooks</span><span class="p">:</span>
+            <span class="n">hook</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">final_states</span> <span class="k">if</span> <span class="n">track_gas</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_add_world_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stores the world_state of the passed global state in the open states&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_world_state_hooks</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">hook</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">PluginSkipWorldState</span><span class="p">:</span>
+                <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">global_state</span><span class="o">.</span><span class="n">world_state</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LaserEVM.handle_vm_exception">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.handle_vm_exception">[docs]</a>
+    <span class="k">def</span> <span class="nf">handle_vm_exception</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">,</span> <span class="n">op_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">error_msg</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">GlobalState</span><span class="p">]:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">return_global_state</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">transaction_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">return_global_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># In this case we don&#39;t put an unmodified world state in the open_states list Since in the case of an</span>
+            <span class="c1">#  exceptional halt all changes should be discarded, and this world state would not provide us with a</span>
+            <span class="c1">#  previously unseen world state</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Encountered a VmException, ending path: `</span><span class="si">{}</span><span class="s2">`&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error_msg</span><span class="p">))</span>
+            <span class="n">new_global_states</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># type: List[GlobalState]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># First execute the post hook for the transaction ending instruction</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_execute_post_hook</span><span class="p">(</span><span class="n">op_code</span><span class="p">,</span> <span class="p">[</span><span class="n">global_state</span><span class="p">])</span>
+            <span class="n">new_global_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_end_message_call</span><span class="p">(</span>
+                <span class="n">return_global_state</span><span class="p">,</span> <span class="n">global_state</span><span class="p">,</span> <span class="n">revert_changes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_data</span><span class="o">=</span><span class="kc">None</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_global_states</span></div>
+
+
+<div class="viewcode-block" id="LaserEVM.execute_state">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.execute_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">execute_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">GlobalState</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute a single instruction in global_state.</span>
+
+<span class="sd">        :param global_state:</span>
+<span class="sd">        :return: A list of successor states.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Execute hooks</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_state_hooks</span><span class="p">:</span>
+                <span class="n">hook</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">PluginSkipState</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[],</span> <span class="kc">None</span>
+
+        <span class="n">instructions</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">instruction_list</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">op_code</span> <span class="o">=</span> <span class="n">instructions</span><span class="p">[</span><span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">pc</span><span class="p">][</span><span class="s2">&quot;opcode&quot;</span><span class="p">]</span>
+            <span class="c1"># if global_state.environment.active_function_name in [&#39;getBalance(address,address)&#39;]:</span>
+            <span class="c1">#     print(f&#39;{global_state.environment.active_function_name}:{instructions[global_state.mstate.pc]}&#39;)</span>
+
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_world_state</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[],</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">stack</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">get_required_stack_elements</span><span class="p">(</span><span class="n">op_code</span><span class="p">):</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Stack Underflow Exception due to insufficient &quot;</span>
+                <span class="s2">&quot;stack elements for the address </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">instructions</span><span class="p">[</span><span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">pc</span><span class="p">][</span><span class="s2">&quot;address&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">new_global_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_vm_exception</span><span class="p">(</span>
+                <span class="n">global_state</span><span class="p">,</span> <span class="n">op_code</span><span class="p">,</span> <span class="n">error_msg</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_execute_post_hook</span><span class="p">(</span><span class="n">op_code</span><span class="p">,</span> <span class="n">new_global_states</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">new_global_states</span><span class="p">,</span> <span class="n">op_code</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_execute_pre_hook</span><span class="p">(</span><span class="n">op_code</span><span class="p">,</span> <span class="n">global_state</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">PluginSkipState</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[],</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">new_global_states</span> <span class="o">=</span> <span class="n">Instruction</span><span class="p">(</span>
+                <span class="n">op_code</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_loader</span><span class="p">,</span>
+                <span class="n">pre_hooks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">instr_pre_hook</span><span class="p">[</span><span class="n">op_code</span><span class="p">],</span>
+                <span class="n">post_hooks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">instr_post_hook</span><span class="p">[</span><span class="n">op_code</span><span class="p">],</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">VmException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transaction_end_hooks</span><span class="p">:</span>
+                <span class="n">hook</span><span class="p">(</span>
+                    <span class="n">global_state</span><span class="p">,</span>
+                    <span class="n">global_state</span><span class="o">.</span><span class="n">current_transaction</span><span class="p">,</span>
+                    <span class="kc">None</span><span class="p">,</span>
+                    <span class="kc">False</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">new_global_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_vm_exception</span><span class="p">(</span><span class="n">global_state</span><span class="p">,</span> <span class="n">op_code</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="n">TransactionStartSignal</span> <span class="k">as</span> <span class="n">start_signal</span><span class="p">:</span>
+            <span class="c1"># Setup new global state</span>
+            <span class="n">new_global_state</span> <span class="o">=</span> <span class="n">start_signal</span><span class="o">.</span><span class="n">transaction</span><span class="o">.</span><span class="n">initial_global_state</span><span class="p">()</span>
+
+            <span class="n">new_global_state</span><span class="o">.</span><span class="n">transaction_stack</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span>
+                <span class="n">global_state</span><span class="o">.</span><span class="n">transaction_stack</span>
+            <span class="p">)</span> <span class="o">+</span> <span class="p">[(</span><span class="n">start_signal</span><span class="o">.</span><span class="n">transaction</span><span class="p">,</span> <span class="n">global_state</span><span class="p">)]</span>
+            <span class="n">new_global_state</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">node</span>
+            <span class="n">new_global_state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">constraints</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">start_signal</span><span class="o">.</span><span class="n">global_state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">constraints</span>
+            <span class="p">)</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting new transaction </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">start_signal</span><span class="o">.</span><span class="n">transaction</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="p">[</span><span class="n">new_global_state</span><span class="p">],</span> <span class="n">op_code</span>
+
+        <span class="k">except</span> <span class="n">TransactionEndSignal</span> <span class="k">as</span> <span class="n">end_signal</span><span class="p">:</span>
+            <span class="p">(</span>
+                <span class="n">transaction</span><span class="p">,</span>
+                <span class="n">return_global_state</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="n">end_signal</span><span class="o">.</span><span class="n">global_state</span><span class="o">.</span><span class="n">transaction_stack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Ending transaction </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">transaction</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transaction_end_hooks</span><span class="p">:</span>
+                <span class="n">hook</span><span class="p">(</span>
+                    <span class="n">end_signal</span><span class="o">.</span><span class="n">global_state</span><span class="p">,</span>
+                    <span class="n">transaction</span><span class="p">,</span>
+                    <span class="n">return_global_state</span><span class="p">,</span>
+                    <span class="n">end_signal</span><span class="o">.</span><span class="n">revert</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">return_global_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transaction</span><span class="p">,</span> <span class="n">ContractCreationTransaction</span><span class="p">)</span>
+                    <span class="ow">or</span> <span class="n">transaction</span><span class="o">.</span><span class="n">return_data</span>
+                <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">end_signal</span><span class="o">.</span><span class="n">revert</span><span class="p">:</span>
+                    <span class="n">check_potential_issues</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+                    <span class="n">end_signal</span><span class="o">.</span><span class="n">global_state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">node</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_add_world_state</span><span class="p">(</span><span class="n">end_signal</span><span class="o">.</span><span class="n">global_state</span><span class="p">)</span>
+
+                <span class="n">new_global_states</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># First execute the post hook for the transaction ending instruction</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_execute_post_hook</span><span class="p">(</span><span class="n">op_code</span><span class="p">,</span> <span class="p">[</span><span class="n">end_signal</span><span class="o">.</span><span class="n">global_state</span><span class="p">])</span>
+
+                <span class="c1"># Propagate annotations</span>
+                <span class="n">new_annotations</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">annotation</span>
+                    <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">global_state</span><span class="o">.</span><span class="n">annotations</span>
+                    <span class="k">if</span> <span class="n">annotation</span><span class="o">.</span><span class="n">persist_over_calls</span>
+                <span class="p">]</span>
+                <span class="n">return_global_state</span><span class="o">.</span><span class="n">add_annotations</span><span class="p">(</span><span class="n">new_annotations</span><span class="p">)</span>
+
+                <span class="n">new_global_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_end_message_call</span><span class="p">(</span>
+                    <span class="n">copy</span><span class="p">(</span><span class="n">return_global_state</span><span class="p">),</span>
+                    <span class="n">global_state</span><span class="p">,</span>
+                    <span class="n">revert_changes</span><span class="o">=</span><span class="kc">False</span> <span class="ow">or</span> <span class="n">end_signal</span><span class="o">.</span><span class="n">revert</span><span class="p">,</span>
+                    <span class="n">return_data</span><span class="o">=</span><span class="n">transaction</span><span class="o">.</span><span class="n">return_data</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_execute_post_hook</span><span class="p">(</span><span class="n">op_code</span><span class="p">,</span> <span class="n">new_global_states</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_global_states</span><span class="p">,</span> <span class="n">op_code</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_end_message_call</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">return_global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">,</span>
+        <span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">,</span>
+        <span class="n">revert_changes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">return_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">GlobalState</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param return_global_state:</span>
+<span class="sd">        :param global_state:</span>
+<span class="sd">        :param revert_changes:</span>
+<span class="sd">        :param return_data:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">return_global_state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">constraints</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="n">global_state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">constraints</span>
+        <span class="p">)</span>
+        <span class="c1"># Resume execution of the transaction initializing instruction</span>
+        <span class="n">op_code</span> <span class="o">=</span> <span class="n">return_global_state</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">instruction_list</span><span class="p">[</span>
+            <span class="n">return_global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">pc</span>
+        <span class="p">][</span><span class="s2">&quot;opcode&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Set execution result in the return_state</span>
+        <span class="n">return_global_state</span><span class="o">.</span><span class="n">last_return_data</span> <span class="o">=</span> <span class="n">return_data</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">revert_changes</span><span class="p">:</span>
+            <span class="n">return_global_state</span><span class="o">.</span><span class="n">world_state</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">global_state</span><span class="o">.</span><span class="n">world_state</span><span class="p">)</span>
+            <span class="n">return_global_state</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">active_account</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">accounts</span><span class="p">[</span>
+                <span class="n">return_global_state</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">active_account</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">global_state</span><span class="o">.</span><span class="n">current_transaction</span><span class="p">,</span> <span class="n">ContractCreationTransaction</span>
+            <span class="p">):</span>
+                <span class="n">return_global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">min_gas_used</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">min_gas_used</span>
+                <span class="p">)</span>
+                <span class="n">return_global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">max_gas_used</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">max_gas_used</span>
+                <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Execute the post instruction handler</span>
+            <span class="n">new_global_states</span> <span class="o">=</span> <span class="n">Instruction</span><span class="p">(</span>
+                <span class="n">op_code</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_loader</span><span class="p">,</span>
+                <span class="n">pre_hooks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">instr_pre_hook</span><span class="p">[</span><span class="n">op_code</span><span class="p">],</span>
+                <span class="n">post_hooks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">instr_post_hook</span><span class="p">[</span><span class="n">op_code</span><span class="p">],</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">return_global_state</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">VmException</span><span class="p">:</span>
+            <span class="n">new_global_states</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># In order to get a nice call graph we need to set the nodes here</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">new_global_states</span><span class="p">:</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">node</span>
+
+        <span class="k">return</span> <span class="n">new_global_states</span>
+
+<div class="viewcode-block" id="LaserEVM.manage_cfg">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.manage_cfg">[docs]</a>
+    <span class="k">def</span> <span class="nf">manage_cfg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opcode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">GlobalState</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param opcode:</span>
+<span class="sd">        :param new_states:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">opcode</span> <span class="o">==</span> <span class="s2">&quot;JUMP&quot;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_states</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">new_states</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_new_node_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">opcode</span> <span class="o">==</span> <span class="s2">&quot;JUMPI&quot;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_states</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span>
+            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">new_states</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_new_node_state</span><span class="p">(</span>
+                    <span class="n">state</span><span class="p">,</span> <span class="n">JumpType</span><span class="o">.</span><span class="n">CONDITIONAL</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">opcode</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;SLOAD&quot;</span><span class="p">,</span> <span class="s2">&quot;SSTORE&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_states</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">new_states</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_new_node_state</span><span class="p">(</span>
+                    <span class="n">state</span><span class="p">,</span> <span class="n">JumpType</span><span class="o">.</span><span class="n">CONDITIONAL</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">opcode</span> <span class="o">==</span> <span class="s2">&quot;RETURN&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">new_states</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_new_node_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">JumpType</span><span class="o">.</span><span class="n">RETURN</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">new_states</span><span class="p">:</span>
+            <span class="c1"># state.node.states.append(state)</span>
+            <span class="c1"># @wei</span>
+            <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">pc</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">instruction_list</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;self.mstate.pc:</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">pc</span><span class="si">}</span><span class="s1">; len(instructions):</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">instruction_list</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_new_node_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">,</span> <span class="n">edge_type</span><span class="o">=</span><span class="n">JumpType</span><span class="o">.</span><span class="n">UNCONDITIONAL</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param state:</span>
+<span class="sd">        :param edge_type:</span>
+<span class="sd">        :param condition:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">address</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">instruction_list</span><span class="p">[</span><span class="n">state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">pc</span><span class="p">][</span>
+                <span class="s2">&quot;address&quot;</span>
+            <span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">new_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">active_account</span><span class="o">.</span><span class="n">contract_name</span><span class="p">)</span>
+        <span class="n">old_node</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">node</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">new_node</span>
+        <span class="n">new_node</span><span class="o">.</span><span class="n">constraints</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">constraints</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">requires_statespace</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">new_node</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_node</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Edge</span><span class="p">(</span>
+                    <span class="n">old_node</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">new_node</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">edge_type</span><span class="o">=</span><span class="n">edge_type</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="n">condition</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">edge_type</span> <span class="o">==</span> <span class="n">JumpType</span><span class="o">.</span><span class="n">RETURN</span><span class="p">:</span>
+            <span class="n">new_node</span><span class="o">.</span><span class="n">flags</span> <span class="o">|=</span> <span class="n">NodeFlags</span><span class="o">.</span><span class="n">CALL_RETURN</span>
+        <span class="k">elif</span> <span class="n">edge_type</span> <span class="o">==</span> <span class="n">JumpType</span><span class="o">.</span><span class="n">CALL</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;retval&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">stack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="n">new_node</span><span class="o">.</span><span class="n">flags</span> <span class="o">|=</span> <span class="n">NodeFlags</span><span class="o">.</span><span class="n">CALL_RETURN</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_node</span><span class="o">.</span><span class="n">flags</span> <span class="o">|=</span> <span class="n">NodeFlags</span><span class="o">.</span><span class="n">FUNC_ENTRY</span>
+            <span class="k">except</span> <span class="n">StackUnderflowException</span><span class="p">:</span>
+                <span class="n">new_node</span><span class="o">.</span><span class="n">flags</span> <span class="o">|=</span> <span class="n">NodeFlags</span><span class="o">.</span><span class="n">FUNC_ENTRY</span>
+
+        <span class="n">environment</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">environment</span>
+        <span class="n">disassembly</span> <span class="o">=</span> <span class="n">environment</span><span class="o">.</span><span class="n">code</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">transaction_sequence</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">ContractCreationTransaction</span>
+        <span class="p">):</span>
+            <span class="n">environment</span><span class="o">.</span><span class="n">active_function_name</span> <span class="o">=</span> <span class="s2">&quot;constructor&quot;</span>
+        <span class="k">elif</span> <span class="n">address</span> <span class="ow">in</span> <span class="n">disassembly</span><span class="o">.</span><span class="n">address_to_function_name</span><span class="p">:</span>
+            <span class="c1"># Enter a new function</span>
+            <span class="n">environment</span><span class="o">.</span><span class="n">active_function_name</span> <span class="o">=</span> <span class="n">disassembly</span><span class="o">.</span><span class="n">address_to_function_name</span><span class="p">[</span>
+                <span class="n">address</span>
+            <span class="p">]</span>
+            <span class="n">new_node</span><span class="o">.</span><span class="n">flags</span> <span class="o">|=</span> <span class="n">NodeFlags</span><span class="o">.</span><span class="n">FUNC_ENTRY</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;- Entering function &quot;</span>
+                <span class="o">+</span> <span class="n">environment</span><span class="o">.</span><span class="n">active_account</span><span class="o">.</span><span class="n">contract_name</span>
+                <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+                <span class="o">+</span> <span class="n">new_node</span><span class="o">.</span><span class="n">function_name</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">address</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">environment</span><span class="o">.</span><span class="n">active_function_name</span> <span class="o">=</span> <span class="s2">&quot;fallback&quot;</span>
+
+        <span class="n">new_node</span><span class="o">.</span><span class="n">function_name</span> <span class="o">=</span> <span class="n">environment</span><span class="o">.</span><span class="n">active_function_name</span>
+
+<div class="viewcode-block" id="LaserEVM.register_hooks">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.register_hooks">[docs]</a>
+    <span class="k">def</span> <span class="nf">register_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hook_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param hook_type:</span>
+<span class="sd">        :param hook_dict:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">hook_type</span> <span class="o">==</span> <span class="s2">&quot;pre&quot;</span><span class="p">:</span>
+            <span class="n">entrypoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_hooks</span>
+        <span class="k">elif</span> <span class="n">hook_type</span> <span class="o">==</span> <span class="s2">&quot;post&quot;</span><span class="p">:</span>
+            <span class="n">entrypoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_hooks</span>
+        <span class="k">elif</span> <span class="n">hook_type</span><span class="o">==</span><span class="s1">&#39;preprocessing_pre&#39;</span><span class="p">:</span> <span class="c1">#@wei</span>
+            <span class="n">entrypoint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">preprocessing_pre_hooks</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Invalid hook type </span><span class="si">%s</span><span class="s2">. Must be one of {pre, post}&quot;</span><span class="p">,</span> <span class="n">hook_type</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">op_code</span><span class="p">,</span> <span class="n">funcs</span> <span class="ow">in</span> <span class="n">hook_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">entrypoint</span><span class="p">[</span><span class="n">op_code</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">funcs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LaserEVM.register_laser_hooks">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.register_laser_hooks">[docs]</a>
+    <span class="k">def</span> <span class="nf">register_laser_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;registers the hook with this Laser VM&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">hook_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hook_type_map</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hook_type_map</span><span class="p">[</span><span class="n">hook_type</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hook</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid hook type </span><span class="si">{</span><span class="n">hook_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LaserEVM.register_instr_hooks">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.register_instr_hooks">[docs]</a>
+    <span class="k">def</span> <span class="nf">register_instr_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">opcode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Registers instructions hooks from plugins&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">hook_type</span> <span class="o">==</span> <span class="s2">&quot;pre&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">opcode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">OPCODES</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">instr_pre_hook</span><span class="p">[</span><span class="n">op</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hook</span><span class="p">(</span><span class="n">op</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">instr_pre_hook</span><span class="p">[</span><span class="n">opcode</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hook</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">hook_type</span> <span class="o">==</span> <span class="s1">&#39;preprocessing_pre&#39;</span><span class="p">:</span>  <span class="c1"># @wei</span>
+            <span class="k">if</span> <span class="n">opcode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">op</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">OPCODES</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">instr_post_hook</span><span class="p">[</span><span class="n">op</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hook</span><span class="p">(</span><span class="n">op</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">instr_post_hook</span><span class="p">[</span><span class="n">opcode</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hook</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">opcode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">OPCODES</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">instr_post_hook</span><span class="p">[</span><span class="n">op</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hook</span><span class="p">(</span><span class="n">op</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">instr_post_hook</span><span class="p">[</span><span class="n">opcode</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hook</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LaserEVM.instr_hook">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.instr_hook">[docs]</a>
+    <span class="k">def</span> <span class="nf">instr_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook_type</span><span class="p">,</span> <span class="n">opcode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Registers the annoted function with register_instr_hooks</span>
+
+<span class="sd">        :param hook_type: Type of hook pre/post</span>
+<span class="sd">        :param opcode: The opcode related to the function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">hook_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Hook decorator generated by laser_hook</span>
+
+<span class="sd">            :param func: Decorated function</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_instr_hooks</span><span class="p">(</span><span class="n">hook_type</span><span class="p">,</span> <span class="n">opcode</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">hook_decorator</span></div>
+
+
+<div class="viewcode-block" id="LaserEVM.laser_hook">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.laser_hook">[docs]</a>
+    <span class="k">def</span> <span class="nf">laser_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Registers the annotated function with register_laser_hooks</span>
+
+<span class="sd">        :param hook_type:</span>
+<span class="sd">        :return: hook decorator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">hook_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Hook decorator generated by laser_hook</span>
+
+<span class="sd">            :param func: Decorated function</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_laser_hooks</span><span class="p">(</span><span class="n">hook_type</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">func</span>
+
+        <span class="k">return</span> <span class="n">hook_decorator</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_execute_pre_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param op_code:</span>
+<span class="sd">        :param global_state:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">op_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_hooks</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_hooks</span><span class="p">[</span><span class="n">op_code</span><span class="p">]:</span>
+            <span class="n">hook</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_execute_post_hook</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">op_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">global_states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">GlobalState</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param op_code:</span>
+<span class="sd">        :param global_states:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">op_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_hooks</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_hooks</span><span class="p">[</span><span class="n">op_code</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">global_state</span> <span class="ow">in</span> <span class="n">global_states</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">hook</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">PluginSkipState</span><span class="p">:</span>
+                    <span class="n">global_states</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">global_state</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LaserEVM.pre_hook">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.pre_hook">[docs]</a>
+    <span class="k">def</span> <span class="nf">pre_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param op_code:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">hook_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">            :param func:</span>
+<span class="sd">            :return:</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">op_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_hooks</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pre_hooks</span><span class="p">[</span><span class="n">op_code</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pre_hooks</span><span class="p">[</span><span class="n">op_code</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">func</span>
+
+        <span class="k">return</span> <span class="n">hook_decorator</span></div>
+
+
+<div class="viewcode-block" id="LaserEVM.post_hook">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.post_hook">[docs]</a>
+    <span class="k">def</span> <span class="nf">post_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param op_code:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">hook_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">            :param func:</span>
+<span class="sd">            :return:</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">op_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_hooks</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">post_hooks</span><span class="p">[</span><span class="n">op_code</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">post_hooks</span><span class="p">[</span><span class="n">op_code</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">func</span>
+
+        <span class="k">return</span> <span class="n">hook_decorator</span></div>
+
+
+    <span class="c1">#@wei  preprocessing_pre_hook</span>
+<div class="viewcode-block" id="LaserEVM.preprocessing_pre_hook">
+<a class="viewcode-back" href="../../../../mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.preprocessing_pre_hook">[docs]</a>
+    <span class="k">def</span> <span class="nf">preprocessing_pre_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param op_code:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">hook_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            :param func:</span>
+<span class="sd">            :return:</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">op_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessing_pre_hooks</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">preprocessing_pre_hooks</span><span class="p">[</span><span class="n">op_code</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">preprocessing_pre_hooks</span><span class="p">[</span><span class="n">op_code</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">func</span>
+
+        <span class="k">return</span> <span class="n">hook_decorator</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

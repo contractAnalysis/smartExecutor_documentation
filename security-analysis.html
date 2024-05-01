@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Security Analysis &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Analysis Modules" href="analysis-modules.html" />
+    <link rel="prev" title="Tutorial" href="tutorial.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="security-analysis">
+<h1>Security Analysis<a class="headerlink" href="#security-analysis" title="Link to this heading">¶</a></h1>
+<p>Run <code class="code docutils literal notranslate"><span class="pre">semyth</span> <span class="pre">analyze</span></code> with one of the input options described below will run the analysis modules in the <a class="reference external" href="https://github.com/contractAnalysis/smartExecutor/tree/master/mythril/analysis/modules">/analysis/modules</a> directory. (Note that this page is adapted from the <a class="reference external" href="https://mythril-classic.readthedocs.io/en/master/security-analysis.html">Security Analysis page of Mythril</a>.)</p>
+<section id="analyzing-solidity-code">
+<h2>Analyzing Solidity Code<a class="headerlink" href="#analyzing-solidity-code" title="Link to this heading">¶</a></h2>
+<p>In order to work with Solidity source code files, the <a class="reference external" href="https://solidity.readthedocs.io/en/develop/using-the-compiler.html">solc command line compiler</a> needs to be installed and in PATH. You can then provide the source file(s) as positional arguments.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>myth<span class="w"> </span>analyze<span class="w"> </span>ether_send.sol
+<span class="o">====</span><span class="w"> </span>Unprotected<span class="w"> </span>Ether<span class="w"> </span><span class="nv">Withdrawal</span><span class="w"> </span><span class="o">====</span>
+SWC<span class="w"> </span>ID:<span class="w"> </span><span class="m">105</span>
+Severity:<span class="w"> </span>High
+Contract:<span class="w"> </span>Crowdfunding
+Function<span class="w"> </span>name:<span class="w"> </span>withdrawfunds<span class="o">()</span>
+PC<span class="w"> </span>address:<span class="w"> </span><span class="m">730</span>
+Estimated<span class="w"> </span>Gas<span class="w"> </span>Usage:<span class="w"> </span><span class="m">1132</span><span class="w"> </span>-<span class="w"> </span><span class="m">1743</span>
+Anyone<span class="w"> </span>can<span class="w"> </span>withdraw<span class="w"> </span>ETH<span class="w"> </span>from<span class="w"> </span>the<span class="w"> </span>contract<span class="w"> </span>account.
+Arbitrary<span class="w"> </span>senders<span class="w"> </span>other<span class="w"> </span>than<span class="w"> </span>the<span class="w"> </span>contract<span class="w"> </span>creator<span class="w"> </span>can<span class="w"> </span>withdraw<span class="w"> </span>ETH<span class="w"> </span>from<span class="w"> </span>the<span class="w"> </span>contract<span class="w"> </span>account<span class="w"> </span>without<span class="w"> </span>previously<span class="w"> </span>having<span class="w"> </span>sent<span class="w"> </span>an<span class="w"> </span>equivalent<span class="w"> </span>amount<span class="w"> </span>of<span class="w"> </span>ETH<span class="w"> </span>to<span class="w"> </span>it.<span class="w"> </span>This<span class="w"> </span>is<span class="w"> </span>likely<span class="w"> </span>to<span class="w"> </span>be<span class="w"> </span>a<span class="w"> </span>vulnerability.
+--------------------
+In<span class="w"> </span>file:<span class="w"> </span>tests/testdata/input_contracts/ether_send.sol:21
+
+msg.sender.transfer<span class="o">(</span>address<span class="o">(</span>this<span class="o">)</span>.balance<span class="o">)</span>
+
+--------------------
+</pre></div>
+</div>
+<p>If an input file contains multiple contract definitions, SmartExecutor analyzes the <em>last</em> bytecode output produced by solc. You can override this by specifying the contract name explicitly:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>myth<span class="w"> </span>analyze<span class="w"> </span>OmiseGo.sol:OMGToken
+</pre></div>
+</div>
+<section id="specifying-solc-versions">
+<h3>Specifying Solc Versions<a class="headerlink" href="#specifying-solc-versions" title="Link to this heading">¶</a></h3>
+<p>You can specify a version of the solidity compiler to be used with <code class="code docutils literal notranslate"><span class="pre">--solv</span> <span class="pre">&lt;version</span> <span class="pre">number&gt;</span></code>. Please be aware that this uses <a class="reference external" href="https://github.com/ethereum/py-solc">py-solc</a> and will only work on Linux and macOS. It will check the version of solc in your path, and if this is not what is specified, it will download binaries on Linux or try to compile from source on macOS.</p>
+</section>
+<section id="output-formats">
+<h3>Output Formats<a class="headerlink" href="#output-formats" title="Link to this heading">¶</a></h3>
+<p>By default, analysis results are printed to the terminal in text format. You can change the output format with the <code class="code docutils literal notranslate"><span class="pre">-o</span></code> argument:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>myth<span class="w"> </span>analyze<span class="w"> </span>underflow.sol<span class="w"> </span>-o<span class="w"> </span>jsonv2
+</pre></div>
+</div>
+<p>Available formats are <code class="code docutils literal notranslate"><span class="pre">text</span></code>, <code class="code docutils literal notranslate"><span class="pre">markdown</span></code>, <code class="code docutils literal notranslate"><span class="pre">json</span></code>, and <code class="code docutils literal notranslate"><span class="pre">jsonv2</span></code>. For integration with other tools, <code class="code docutils literal notranslate"><span class="pre">jsonv2</span></code> is generally preferred over <code class="code docutils literal notranslate"><span class="pre">json</span></code> because it is consistent with other <a class="reference external" href="https://mythx.io">MythX</a> tools.</p>
+</section>
+</section>
+<section id="speed-vs-coverage">
+<h2>Speed vs. Coverage<a class="headerlink" href="#speed-vs-coverage" title="Link to this heading">¶</a></h2>
+<p>The execution timeout can be specified with the <code class="code docutils literal notranslate"><span class="pre">--execution-timeout</span> <span class="pre">&lt;seconds&gt;</span></code> argument. When the timeout is reached, mythril will stop analysis and print out all currently found issues.</p>
+<p>The depth limit in Phase 1 can set via <code class="code docutils literal notranslate"><span class="pre">--phase1-depth-limit</span></code> argument. The maximum recursion depth for the symbolic execution engine can be controlled with the <code class="code docutils literal notranslate"><span class="pre">--max-depth</span></code> argument. The default value is 22. Lowering this value will decrease the number of explored states and analysis time, while increasing this number will increase the number of explored states and increase analysis time. For some contracts, it helps to fine tune this number to get the best analysis results.
+-</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="tutorial.html" title="previous chapter">Tutorial</a></li>
+      <li>Next: <a href="analysis-modules.html" title="next chapter">Analysis Modules</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/security-analysis.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

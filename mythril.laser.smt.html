@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mythril.laser.smt package &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mythril.laser.smt.solver package" href="mythril.laser.smt.solver.html" />
+    <link rel="prev" title="mythril.laser.plugin.plugins.summary_backup package" href="mythril.laser.plugin.plugins.summary_backup.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mythril-laser-smt-package">
+<h1>mythril.laser.smt package<a class="headerlink" href="#mythril-laser-smt-package" title="Link to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mythril.laser.smt.solver.html">mythril.laser.smt.solver package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.solver.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.solver.html#module-mythril.laser.smt.solver.independence_solver">mythril.laser.smt.solver.independence_solver module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.independence_solver.DependenceBucket"><code class="docutils literal notranslate"><span class="pre">DependenceBucket</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.independence_solver.DependenceMap"><code class="docutils literal notranslate"><span class="pre">DependenceMap</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.independence_solver.DependenceMap.add_condition"><code class="docutils literal notranslate"><span class="pre">DependenceMap.add_condition()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.independence_solver.IndependenceSolver"><code class="docutils literal notranslate"><span class="pre">IndependenceSolver</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.independence_solver.IndependenceSolver.add"><code class="docutils literal notranslate"><span class="pre">IndependenceSolver.add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.independence_solver.IndependenceSolver.append"><code class="docutils literal notranslate"><span class="pre">IndependenceSolver.append()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.independence_solver.IndependenceSolver.check"><code class="docutils literal notranslate"><span class="pre">IndependenceSolver.check()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.independence_solver.IndependenceSolver.model"><code class="docutils literal notranslate"><span class="pre">IndependenceSolver.model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.independence_solver.IndependenceSolver.pop"><code class="docutils literal notranslate"><span class="pre">IndependenceSolver.pop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.independence_solver.IndependenceSolver.reset"><code class="docutils literal notranslate"><span class="pre">IndependenceSolver.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.independence_solver.IndependenceSolver.set_timeout"><code class="docutils literal notranslate"><span class="pre">IndependenceSolver.set_timeout()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.solver.html#module-mythril.laser.smt.solver.solver">mythril.laser.smt.solver.solver module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver.BaseSolver"><code class="docutils literal notranslate"><span class="pre">BaseSolver</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver.BaseSolver.add"><code class="docutils literal notranslate"><span class="pre">BaseSolver.add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver.BaseSolver.append"><code class="docutils literal notranslate"><span class="pre">BaseSolver.append()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver.BaseSolver.check"><code class="docutils literal notranslate"><span class="pre">BaseSolver.check()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver.BaseSolver.model"><code class="docutils literal notranslate"><span class="pre">BaseSolver.model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver.BaseSolver.set_timeout"><code class="docutils literal notranslate"><span class="pre">BaseSolver.set_timeout()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver.BaseSolver.sexpr"><code class="docutils literal notranslate"><span class="pre">BaseSolver.sexpr()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver.Optimize"><code class="docutils literal notranslate"><span class="pre">Optimize</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver.Optimize.maximize"><code class="docutils literal notranslate"><span class="pre">Optimize.maximize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver.Optimize.minimize"><code class="docutils literal notranslate"><span class="pre">Optimize.minimize()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver.Solver"><code class="docutils literal notranslate"><span class="pre">Solver</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver.Solver.pop"><code class="docutils literal notranslate"><span class="pre">Solver.pop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver.Solver.reset"><code class="docutils literal notranslate"><span class="pre">Solver.reset()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.solver.html#module-mythril.laser.smt.solver.solver_statistics">mythril.laser.smt.solver.solver_statistics module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver_statistics.SolverStatistics"><code class="docutils literal notranslate"><span class="pre">SolverStatistics</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.solver.html#mythril.laser.smt.solver.solver_statistics.stat_smt_query"><code class="docutils literal notranslate"><span class="pre">stat_smt_query()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.solver.html#module-mythril.laser.smt.solver">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-mythril.laser.smt.array">
+<span id="mythril-laser-smt-array-module"></span><h2>mythril.laser.smt.array module<a class="headerlink" href="#module-mythril.laser.smt.array" title="Link to this heading">¶</a></h2>
+<p>This module contains an SMT abstraction of arrays.</p>
+<p>This includes an Array class to implement basic store and set
+operations, as well as as a K-array, which can be initialized with
+default values over a certain range.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.smt.array.Array">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.array.</span></span><span class="sig-name descname"><span class="pre">Array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/smt/array.html#Array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.array.Array" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.laser.smt.array.BaseArray" title="mythril.laser.smt.array.BaseArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseArray</span></code></a></p>
+<p>A basic symbolic array.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.smt.array.BaseArray">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.array.</span></span><span class="sig-name descname"><span class="pre">BaseArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/smt/array.html#BaseArray"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.array.BaseArray" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base array type, which implements basic store and set operations.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.smt.array.BaseArray.substitute">
+<span class="sig-name descname"><span class="pre">substitute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_expression</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_expression</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/smt/array.html#BaseArray.substitute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.array.BaseArray.substitute" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>original_expression</strong></p></li>
+<li><p><strong>new_expression</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.smt.array.K">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.array.</span></span><span class="sig-name descname"><span class="pre">K</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/smt/array.html#K"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.array.K" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.laser.smt.array.BaseArray" title="mythril.laser.smt.array.BaseArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseArray</span></code></a></p>
+<p>A basic symbolic array, which can be initialized with a default
+value.</p>
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.smt.bitvec">
+<span id="mythril-laser-smt-bitvec-module"></span><h2>mythril.laser.smt.bitvec module<a class="headerlink" href="#module-mythril.laser.smt.bitvec" title="Link to this heading">¶</a></h2>
+<p>This module provides classes for an SMT abstraction of bit vectors.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec.BitVec">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec.</span></span><span class="sig-name descname"><span class="pre">BitVec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BitVecRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec.html#BitVec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec.BitVec" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.laser.smt.expression.Expression" title="mythril.laser.smt.expression.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">BitVecRef</span></code>]</p>
+<p>A bit vector symbol.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec.BitVec.size">
+<span class="sig-name descname"><span class="pre">size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec.html#BitVec.size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec.BitVec.size" title="Link to this definition">¶</a></dt>
+<dd><p>TODO: documentation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec.BitVec.symbolic">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">symbolic</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#mythril.laser.smt.bitvec.BitVec.symbolic" title="Link to this definition">¶</a></dt>
+<dd><p>Returns whether this symbol doesn’t have a concrete value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec.BitVec.value">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#mythril.laser.smt.bitvec.BitVec.value" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the value of this symbol if concrete, otherwise None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.smt.bitvec_helper">
+<span id="mythril-laser-smt-bitvec-helper-module"></span><h2>mythril.laser.smt.bitvec_helper module<a class="headerlink" href="#module-mythril.laser.smt.bitvec_helper" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.BVAddNoOverflow">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">BVAddNoOverflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#BVAddNoOverflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.BVAddNoOverflow" title="Link to this definition">¶</a></dt>
+<dd><p>Creates predicate that verifies that the addition doesn’t overflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong></p></li>
+<li><p><strong>b</strong></p></li>
+<li><p><strong>signed</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.BVMulNoOverflow">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">BVMulNoOverflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#BVMulNoOverflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.BVMulNoOverflow" title="Link to this definition">¶</a></dt>
+<dd><p>Creates predicate that verifies that the multiplication doesn’t
+overflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong></p></li>
+<li><p><strong>b</strong></p></li>
+<li><p><strong>signed</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.BVSubNoUnderflow">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">BVSubNoUnderflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#BVSubNoUnderflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.BVSubNoUnderflow" title="Link to this definition">¶</a></dt>
+<dd><p>Creates predicate that verifies that the subtraction doesn’t overflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong></p></li>
+<li><p><strong>b</strong></p></li>
+<li><p><strong>signed</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.Concat">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">Concat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#Concat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.Concat" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">Concat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></span></dt>
+<dd><p>Create a concatenation expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.Extract">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">Extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#Extract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.Extract" title="Link to this definition">¶</a></dt>
+<dd><p>Create an extract expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>high</strong></p></li>
+<li><p><strong>low</strong></p></li>
+<li><p><strong>bv</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.If">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">If</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#If"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.If" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">If</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.array.BaseArray" title="mythril.laser.smt.array.BaseArray"><span class="pre">BaseArray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.array.BaseArray" title="mythril.laser.smt.array.BaseArray"><span class="pre">BaseArray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.array.BaseArray" title="mythril.laser.smt.array.BaseArray"><span class="pre">BaseArray</span></a></span></span></dt>
+<dd><p>Create an if-then-else expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong></p></li>
+<li><p><strong>b</strong></p></li>
+<li><p><strong>c</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.LShR">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">LShR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#LShR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.LShR" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.SRem">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">SRem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#SRem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.SRem" title="Link to this definition">¶</a></dt>
+<dd><p>Create a signed remainder expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong></p></li>
+<li><p><strong>b</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.Sum">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">Sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#Sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.Sum" title="Link to this definition">¶</a></dt>
+<dd><p>Create sum expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.UDiv">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">UDiv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#UDiv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.UDiv" title="Link to this definition">¶</a></dt>
+<dd><p>Create an unsigned division expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong></p></li>
+<li><p><strong>b</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.UGE">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">UGE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#UGE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.UGE" title="Link to this definition">¶</a></dt>
+<dd><p>Create an unsigned greater than or equal to expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong></p></li>
+<li><p><strong>b</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.UGT">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">UGT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#UGT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.UGT" title="Link to this definition">¶</a></dt>
+<dd><p>Create an unsigned greater than expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong></p></li>
+<li><p><strong>b</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.ULE">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">ULE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#ULE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.ULE" title="Link to this definition">¶</a></dt>
+<dd><p>Create an unsigned less than or equal to expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong></p></li>
+<li><p><strong>b</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.ULT">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">ULT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#ULT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.ULT" title="Link to this definition">¶</a></dt>
+<dd><p>Create an unsigned less than expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong></p></li>
+<li><p><strong>b</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bitvec_helper.URem">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bitvec_helper.</span></span><span class="sig-name descname"><span class="pre">URem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bitvec_helper.html#URem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bitvec_helper.URem" title="Link to this definition">¶</a></dt>
+<dd><p>Create an unsigned remainder expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong></p></li>
+<li><p><strong>b</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.smt.bool">
+<span id="mythril-laser-smt-bool-module"></span><h2>mythril.laser.smt.bool module<a class="headerlink" href="#module-mythril.laser.smt.bool" title="Link to this heading">¶</a></h2>
+<p>This module provides classes for an SMT abstraction of boolean
+expressions.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bool.And">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bool.</span></span><span class="sig-name descname"><span class="pre">And</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bool.html#And"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bool.And" title="Link to this definition">¶</a></dt>
+<dd><p>Create an And expression.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.smt.bool.Bool">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bool.</span></span><span class="sig-name descname"><span class="pre">Bool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/smt/bool.html#Bool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bool.Bool" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.laser.smt.expression.Expression" title="mythril.laser.smt.expression.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">BoolRef</span></code>]</p>
+<p>This is a Bool expression.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.smt.bool.Bool.is_false">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_false</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#mythril.laser.smt.bool.Bool.is_false" title="Link to this definition">¶</a></dt>
+<dd><p>Specifies whether this variable can be simplified to false.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.smt.bool.Bool.is_true">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_true</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#mythril.laser.smt.bool.Bool.is_true" title="Link to this definition">¶</a></dt>
+<dd><p>Specifies whether this variable can be simplified to true.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.smt.bool.Bool.substitute">
+<span class="sig-name descname"><span class="pre">substitute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_expression</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_expression</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/smt/bool.html#Bool.substitute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bool.Bool.substitute" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>original_expression</strong></p></li>
+<li><p><strong>new_expression</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.smt.bool.Bool.value">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#mythril.laser.smt.bool.Bool.value" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the concrete value of this bool if concrete, otherwise None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Concrete value or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bool.Not">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bool.</span></span><span class="sig-name descname"><span class="pre">Not</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bool.html#Not"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bool.Not" title="Link to this definition">¶</a></dt>
+<dd><p>Create a Not expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bool.Or">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bool.</span></span><span class="sig-name descname"><span class="pre">Or</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bool.html#Or"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bool.Or" title="Link to this definition">¶</a></dt>
+<dd><p>Create an or expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong></p></li>
+<li><p><strong>b</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bool.Xor">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bool.</span></span><span class="sig-name descname"><span class="pre">Xor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bool.html#Xor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bool.Xor" title="Link to this definition">¶</a></dt>
+<dd><p>Create an And expression.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bool.is_false">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bool.</span></span><span class="sig-name descname"><span class="pre">is_false</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bool.html#is_false"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bool.is_false" title="Link to this definition">¶</a></dt>
+<dd><p>Returns whether the provided bool can be simplified to false.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.bool.is_true">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.bool.</span></span><span class="sig-name descname"><span class="pre">is_true</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/mythril/laser/smt/bool.html#is_true"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.bool.is_true" title="Link to this definition">¶</a></dt>
+<dd><p>Returns whether the provided bool can be simplified to true.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.smt.expression">
+<span id="mythril-laser-smt-expression-module"></span><h2>mythril.laser.smt.expression module<a class="headerlink" href="#module-mythril.laser.smt.expression" title="Link to this heading">¶</a></h2>
+<p>This module contains the SMT abstraction for a basic symbol expression.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.smt.expression.Expression">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.expression.</span></span><span class="sig-name descname"><span class="pre">Expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/smt/expression.html#Expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.expression.Expression" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>This is the base symbol class and maintains functionality for
+simplification and annotations.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.smt.expression.Expression.annotate">
+<span class="sig-name descname"><span class="pre">annotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/smt/expression.html#Expression.annotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.expression.Expression.annotate" title="Link to this definition">¶</a></dt>
+<dd><p>Annotates this expression with the given annotation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>annotation</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.laser.smt.expression.Expression.annotations">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">annotations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#mythril.laser.smt.expression.Expression.annotations" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the annotations for this expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.smt.expression.Expression.get_annotations">
+<span class="sig-name descname"><span class="pre">get_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/smt/expression.html#Expression.get_annotations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.expression.Expression.get_annotations" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.smt.expression.Expression.simplify">
+<span class="sig-name descname"><span class="pre">simplify</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/smt/expression.html#Expression.simplify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.expression.Expression.simplify" title="Link to this definition">¶</a></dt>
+<dd><p>Simplify this expression.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.smt.expression.Expression.simplify_yes">
+<span class="sig-name descname"><span class="pre">simplify_yes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/laser/smt/expression.html#Expression.simplify_yes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.expression.Expression.simplify_yes" title="Link to this definition">¶</a></dt>
+<dd><p>Simplify this expression.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.smt.expression.Expression.size">
+<span class="sig-name descname"><span class="pre">size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/smt/expression.html#Expression.size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.expression.Expression.size" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.expression.simplify">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.expression.</span></span><span class="sig-name descname"><span class="pre">simplify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expression</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">G</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">G</span></span></span><a class="reference internal" href="_modules/mythril/laser/smt/expression.html#simplify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.expression.simplify" title="Link to this definition">¶</a></dt>
+<dd><p>Simplify the expression .</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>expression</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.laser.smt.expression.simplify_yes">
+<span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.expression.</span></span><span class="sig-name descname"><span class="pre">simplify_yes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expression</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">G</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">G</span></span></span><a class="reference internal" href="_modules/mythril/laser/smt/expression.html#simplify_yes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.expression.simplify_yes" title="Link to this definition">¶</a></dt>
+<dd><p>Simplify the expression .</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>expression</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.smt.function">
+<span id="mythril-laser-smt-function-module"></span><h2>mythril.laser.smt.function module<a class="headerlink" href="#module-mythril.laser.smt.function" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.smt.function.Function">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.function.</span></span><span class="sig-name descname"><span class="pre">Function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/smt/function.html#Function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.function.Function" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>An uninterpreted function.</p>
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.smt.model">
+<span id="mythril-laser-smt-model-module"></span><h2>mythril.laser.smt.model module<a class="headerlink" href="#module-mythril.laser.smt.model" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.smt.model.Model">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.model.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ModelRef</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/smt/model.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.model.Model" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The model class wraps a z3 model</p>
+<p>This implementation allows for multiple internal models, this is required for the use of an independence solver
+which has models for multiple queries which need an uniform output.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.smt.model.Model.decls">
+<span class="sig-name descname"><span class="pre">decls</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ExprRef</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/laser/smt/model.html#Model.decls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.model.Model.decls" title="Link to this definition">¶</a></dt>
+<dd><p>Get the declarations for this model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.smt.model.Model.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expression</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ExprRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_completion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ExprRef</span></span></span><a class="reference internal" href="_modules/mythril/laser/smt/model.html#Model.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.model.Model.eval" title="Link to this definition">¶</a></dt>
+<dd><p>Evaluate the expression using this model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expression</strong> – The expression to evaluate</p></li>
+<li><p><strong>model_completion</strong> – Use the default value if the model has no interpretation of the given expression</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The evaluated expression</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.smt">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mythril.laser.smt" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.smt.SymbolFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.smt.</span></span><span class="sig-name descname"><span class="pre">SymbolFactory</span></span><a class="reference internal" href="_modules/mythril/laser/smt.html#SymbolFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.SymbolFactory" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">U</span></code>]</p>
+<p>A symbol factory provides a default interface for all the components of mythril to create symbols</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.smt.SymbolFactory.BitVecSym">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BitVecSym</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">U</span></span></span><a class="reference internal" href="_modules/mythril/laser/smt.html#SymbolFactory.BitVecSym"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.SymbolFactory.BitVecSym" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a new bit vector with a symbolic value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the symbolic bit vector</p></li>
+<li><p><strong>size</strong> – The size of the bit vector</p></li>
+<li><p><strong>annotations</strong> – The annotations to initialize the bit vector with</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The freshly created bit vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.smt.SymbolFactory.BitVecVal">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BitVecVal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">U</span></span></span><a class="reference internal" href="_modules/mythril/laser/smt.html#SymbolFactory.BitVecVal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.SymbolFactory.BitVecVal" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a new bit vector with a concrete value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> – The concrete value to set the bit vector to</p></li>
+<li><p><strong>size</strong> – The size of the bit vector</p></li>
+<li><p><strong>annotations</strong> – The annotations to initialize the bit vector with</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The freshly created bit vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.smt.SymbolFactory.Bool">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Bool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">__builtins__.bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="_modules/mythril/laser/smt.html#SymbolFactory.Bool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.SymbolFactory.Bool" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a Bool with concrete value
+:param value: The boolean value
+:param annotations: The annotations to initialize the bool with
+:return: The freshly created Bool()</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.smt.SymbolFactory.BoolSym">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BoolSym</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="_modules/mythril/laser/smt.html#SymbolFactory.BoolSym"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.smt.SymbolFactory.BoolSym" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a boolean symbol
+:param name: The name of the Bool variable
+:param annotations: The annotations to initialize the bool with
+:return: The freshly created Bool()</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="mythril.html">mythril package</a><ul>
+  <li><a href="mythril.laser.html">mythril.laser package</a><ul>
+      <li>Previous: <a href="mythril.laser.plugin.plugins.summary_backup.html" title="previous chapter">mythril.laser.plugin.plugins.summary_backup package</a></li>
+      <li>Next: <a href="mythril.laser.smt.solver.html" title="next chapter">mythril.laser.smt.solver package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/mythril.laser.smt.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

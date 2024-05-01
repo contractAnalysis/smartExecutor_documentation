@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mythril.laser.plugin.plugins.mutation_pruner &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../../../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../../../../about.html" />
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for mythril.laser.plugin.plugins.mutation_pruner</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mythril.laser.plugin.signals</span> <span class="kn">import</span> <span class="n">PluginSkipWorldState</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.plugin.interface</span> <span class="kn">import</span> <span class="n">LaserPlugin</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.plugin.builder</span> <span class="kn">import</span> <span class="n">PluginBuilder</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.plugin.plugins.plugin_annotations</span> <span class="kn">import</span> <span class="n">MutationAnnotation</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.state.global_state</span> <span class="kn">import</span> <span class="n">GlobalState</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.svm</span> <span class="kn">import</span> <span class="n">LaserEVM</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.smt</span> <span class="kn">import</span> <span class="n">UGT</span><span class="p">,</span> <span class="n">symbol_factory</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.transaction.transaction_models</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ContractCreationTransaction</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">mythril.analysis</span> <span class="kn">import</span> <span class="n">solver</span>
+<span class="kn">from</span> <span class="nn">mythril.exceptions</span> <span class="kn">import</span> <span class="n">UnsatError</span>
+
+
+<div class="viewcode-block" id="MutationPrunerBuilder">
+<a class="viewcode-back" href="../../../../../mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.mutation_pruner.MutationPrunerBuilder">[docs]</a>
+<span class="k">class</span> <span class="nc">MutationPrunerBuilder</span><span class="p">(</span><span class="n">PluginBuilder</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;mutation-pruner&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">MutationPruner</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="MutationPruner">
+<a class="viewcode-back" href="../../../../../mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.mutation_pruner.MutationPruner">[docs]</a>
+<span class="k">class</span> <span class="nc">MutationPruner</span><span class="p">(</span><span class="n">LaserPlugin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mutation pruner plugin</span>
+
+<span class="sd">    Let S be a world state from which T is a symbolic transaction, and S&#39; is the resulting world state.</span>
+<span class="sd">    In a situation where T does not execute any mutating instructions we can safely abandon further analysis on top of</span>
+<span class="sd">    state S&#39;. This is for the reason that we already performed analysis on S, which is equivalent.</span>
+
+<span class="sd">    This optimization inhibits path explosion caused by &quot;clean&quot; behaviour</span>
+
+<span class="sd">    The basic operation of this plugin is as follows:</span>
+<span class="sd">     - Hook all mutating operations and introduce a MutationAnnotation to the global state on execution of the hook</span>
+<span class="sd">     - Hook the svm EndTransaction on execution filter the states that do not have a mutation annotation</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MutationPruner.initialize">
+<a class="viewcode-back" href="../../../../../mythril.laser.plugin.plugins.html#mythril.laser.plugin.plugins.mutation_pruner.MutationPruner.initialize">[docs]</a>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbolic_vm</span><span class="p">:</span> <span class="n">LaserEVM</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the mutation pruner</span>
+
+<span class="sd">        Introduces hooks for SSTORE operations</span>
+<span class="sd">        :param symbolic_vm:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">pre_hook</span><span class="p">(</span><span class="s2">&quot;SSTORE&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">sstore_mutator_hook</span><span class="p">(</span><span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">):</span>
+            <span class="n">global_state</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">MutationAnnotation</span><span class="p">())</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;FIXME: Check for changes in world_state.balances instead of adding MutationAnnotation for all calls.</span>
+<span class="sd">           Requires world_state.starting_balances to be initalized at every tx start *after* call value has been added.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">pre_hook</span><span class="p">(</span><span class="s2">&quot;CALL&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">call_mutator_hook</span><span class="p">(</span><span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">):</span>
+            <span class="n">global_state</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">MutationAnnotation</span><span class="p">())</span>
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">pre_hook</span><span class="p">(</span><span class="s2">&quot;STATICCALL&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">staticcall_mutator_hook</span><span class="p">(</span><span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">):</span>
+            <span class="n">global_state</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">MutationAnnotation</span><span class="p">())</span>
+
+        <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">laser_hook</span><span class="p">(</span><span class="s2">&quot;add_world_state&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">world_state_filter_hook</span><span class="p">(</span><span class="n">global_state</span><span class="p">:</span> <span class="n">GlobalState</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">global_state</span><span class="o">.</span><span class="n">current_transaction</span><span class="p">,</span> <span class="n">ContractCreationTransaction</span>
+            <span class="p">):</span>
+                <span class="k">return</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">global_state</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">callvalue</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="n">callvalue</span> <span class="o">=</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span>
+                    <span class="n">global_state</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">callvalue</span><span class="p">,</span> <span class="mi">256</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">callvalue</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">callvalue</span>
+
+            <span class="k">try</span><span class="p">:</span>
+
+                <span class="n">constraints</span> <span class="o">=</span> <span class="n">global_state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">constraints</span> <span class="o">+</span> <span class="p">[</span>
+                    <span class="n">UGT</span><span class="p">(</span><span class="n">callvalue</span><span class="p">,</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">))</span>
+                <span class="p">]</span>
+
+                <span class="n">solver</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="k">except</span> <span class="n">UnsatError</span><span class="p">:</span>
+                <span class="c1"># callvalue is constrained to 0, therefore there is no balance based world state mutation</span>
+                <span class="k">pass</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">global_state</span><span class="o">.</span><span class="n">get_annotations</span><span class="p">(</span><span class="n">MutationAnnotation</span><span class="p">)))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">PluginSkipWorldState</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

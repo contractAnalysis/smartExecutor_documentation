@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>fdg.control.mine &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for fdg.control.mine</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">import</span> <span class="nn">fdg</span>
+<span class="kn">from</span> <span class="nn">fdg.control.ftn_search_strategy</span> <span class="kn">import</span> <span class="n">FunctionSearchStrategy</span>
+<span class="kn">from</span> <span class="nn">fdg.control.function_assignment</span> <span class="kn">import</span> <span class="n">FunctionAssignment</span>
+<span class="kn">from</span> <span class="nn">fdg.control.weight_computation</span> <span class="kn">import</span> <span class="n">compute</span><span class="p">,</span> \
+    <span class="n">turn_write_features_to_a_value</span>
+<span class="kn">from</span> <span class="nn">fdg.expression_slot</span> <span class="kn">import</span> <span class="n">is_slot_in_a_list</span><span class="p">,</span> \
+    <span class="n">identify_slot_from_symbolic_slot_expression</span><span class="p">,</span> <span class="n">common_elements</span>
+
+<span class="kn">from</span> <span class="nn">fdg.fwrg_manager</span> <span class="kn">import</span> <span class="n">FWRG_manager</span>
+<span class="kn">from</span> <span class="nn">fdg.output_data</span> <span class="kn">import</span> <span class="n">print_data_for_mine_strategy_1</span><span class="p">,</span> \
+    <span class="n">print_data_for_mine_strategy</span><span class="p">,</span> <span class="n">my_print</span>
+<span class="kn">from</span> <span class="nn">fdg.utils</span> <span class="kn">import</span> <span class="n">get_ftn_seq_from_key_1</span><span class="p">,</span> <span class="n">get_key_1_prefix</span><span class="p">,</span> \
+    <span class="n">random_select_from_list</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.plugin.plugins.dependency_pruner</span> <span class="kn">import</span> \
+    <span class="n">get_writes_annotation_from_ws</span>
+
+
+
+<div class="viewcode-block" id="Mine">
+<a class="viewcode-back" href="../../../fdg.control.html#fdg.control.mine.Mine">[docs]</a>
+<span class="k">class</span> <span class="nc">Mine</span><span class="p">(</span><span class="n">FunctionSearchStrategy</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preprocess_timeout</span><span class="o">=</span><span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preprocess_coverage</span><span class="o">=</span><span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_storage</span><span class="o">=</span><span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">written_slots_in_depth_str</span><span class="o">=</span><span class="p">{}</span> <span class="c1"># the writes from all depths in str version</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">=</span><span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_key_assigned_at_last</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+        <span class="c1"># self.parent_state_keys = {}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flag_one_start_function</span><span class="o">=</span><span class="kc">False</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;mine&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Mine.initialize">
+<a class="viewcode-back" href="../../../fdg.control.html#fdg.control.mine.Mine.initialize">[docs]</a>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flag_one_start_function</span><span class="p">:</span><span class="nb">bool</span><span class="p">,</span> <span class="n">preprocess_timeout</span><span class="p">:</span><span class="nb">bool</span><span class="p">,</span> <span class="n">preprocess_coverage</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">all_functions</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">fwrg_manager</span><span class="p">:</span><span class="n">FWRG_manager</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flag_one_start_function</span><span class="o">=</span><span class="n">flag_one_start_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preprocess_timeout</span><span class="o">=</span><span class="n">preprocess_timeout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preprocess_coverage</span><span class="o">=</span><span class="n">preprocess_coverage</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">functionAssignment</span><span class="o">=</span><span class="n">FunctionAssignment</span><span class="p">(</span><span class="n">all_functions</span><span class="p">,</span><span class="n">fwrg_manager</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fwrg_manager</span><span class="o">=</span><span class="n">fwrg_manager</span></div>
+
+
+
+<div class="viewcode-block" id="Mine.assign_states">
+<a class="viewcode-back" href="../../../fdg.control.html#fdg.control.mine.Mine.assign_states">[docs]</a>
+    <span class="k">def</span> <span class="nf">assign_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dk_functions</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">states_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">iteration</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param dk_functions:</span>
+<span class="sd">        :param fwrg:</span>
+<span class="sd">        :param states_dict:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocess_timeout</span> <span class="ow">or</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">preprocessing_exception</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocess_coverage</span><span class="o">&lt;</span><span class="mi">50</span><span class="p">:</span>
+                <span class="c1"># execute 70% of functions+ functions assigned based on the partial graph</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_states_timeout</span><span class="p">(</span><span class="n">dk_functions</span><span class="p">,</span> <span class="n">states_dict</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocess_coverage</span><span class="o">&lt;</span><span class="mi">80</span><span class="p">:</span>
+                <span class="c1"># execute 50% of functions+ functions assigned based on the partial graph</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_states_timeout</span><span class="p">(</span><span class="n">dk_functions</span><span class="p">,</span> <span class="n">states_dict</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocess_coverage</span><span class="o">&lt;</span><span class="mi">90</span><span class="p">:</span>
+                <span class="c1"># execute 50% of functions+ functions assigned based on the partial graph</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_states_timeout</span><span class="p">(</span><span class="n">dk_functions</span><span class="p">,</span> <span class="n">states_dict</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># execute 10% of functions + functions assigned based on the partial graph</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_states_timeout</span><span class="p">(</span><span class="n">dk_functions</span><span class="p">,</span> <span class="n">states_dict</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_states_normal</span><span class="p">(</span><span class="n">dk_functions</span><span class="p">,</span> <span class="n">states_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Mine.assign_states_normal">
+<a class="viewcode-back" href="../../../fdg.control.html#fdg.control.mine.Mine.assign_states_normal">[docs]</a>
+    <span class="k">def</span> <span class="nf">assign_states_normal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dk_functions</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">states_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{})</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param dk_functions:</span>
+<span class="sd">        :param fwrg:</span>
+<span class="sd">        :param states_dict:</span>
+<span class="sd">        :return: a state and the functions to be executed on it</span>
+<span class="sd">        a flag indicating whether this state can be deleted or not.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dk_functions</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span><span class="k">return</span> <span class="p">{},</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">states_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="c1"># save the new states</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_states</span><span class="p">(</span><span class="n">states_dict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filter_states</span><span class="p">()</span>
+
+        <span class="c1"># ---------------</span>
+        <span class="n">print_data_for_mine_strategy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">)</span>
+
+        <span class="c1"># --------------</span>
+        <span class="c1"># case 1</span>
+        <span class="c1"># assign the only state</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag_one_start_function</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">flag_one_start_function</span><span class="o">=</span><span class="kc">False</span> <span class="c1"># only consider once</span>
+            <span class="n">state_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">assign_functions</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">functionAssignment</span><span class="o">.</span><span class="n">assign_all_functions</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state_key_assigned_at_last</span><span class="o">=</span><span class="n">state_key</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">state_key</span><span class="p">:</span> <span class="n">assign_functions</span><span class="p">},</span><span class="kc">True</span>
+
+        <span class="c1"># --------------</span>
+        <span class="c1"># case 2</span>
+        <span class="c1"># assign a state and the functions to be executed on it</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{},</span> <span class="kc">None</span>
+
+            <span class="n">to_execute_children</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">not_to_execute</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">flag_can_be_deleted</span><span class="o">=</span><span class="kc">True</span>
+
+            <span class="c1"># pick up a state from the queue</span>
+            <span class="n">targets</span><span class="o">=</span><span class="p">[</span><span class="n">dk</span> <span class="k">for</span> <span class="n">dk</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">dk_functions</span><span class="p">]</span>
+            <span class="n">state_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pickup_a_state</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>  <span class="c1"># order the states in self.queue and pick up the one has the highest weight</span>
+
+            <span class="c1"># assign functions</span>
+            <span class="n">assigned_children</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">functionAssignment</span><span class="o">.</span><span class="n">assign_functions</span><span class="p">(</span><span class="n">state_key</span><span class="p">,</span><span class="n">dk_functions</span><span class="p">,</span><span class="n">to_execute_children</span><span class="p">,</span><span class="n">not_to_execute</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">assigned_children</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state_key_assigned_at_last</span> <span class="o">=</span> <span class="n">state_key</span>
+                <span class="k">return</span> <span class="p">{</span><span class="n">state_key</span><span class="p">:</span> <span class="n">assigned_children</span><span class="p">},</span><span class="n">flag_can_be_deleted</span></div>
+
+
+<div class="viewcode-block" id="Mine.assign_states_timeout">
+<a class="viewcode-back" href="../../../fdg.control.html#fdg.control.mine.Mine.assign_states_timeout">[docs]</a>
+    <span class="k">def</span> <span class="nf">assign_states_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dk_functions</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">states_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">percent_of_functions</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param dk_functions:</span>
+<span class="sd">        :param fwrg:</span>
+<span class="sd">        :param states_dict:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">states_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># save the new states</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_states</span><span class="p">(</span><span class="n">states_dict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filter_states</span><span class="p">()</span>
+
+
+        <span class="c1"># ---------------</span>
+        <span class="n">print_data_for_mine_strategy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">)</span>
+
+        <span class="c1"># --------------</span>
+        <span class="c1"># case 1</span>
+        <span class="c1"># assign the only state</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag_one_start_function</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">flag_one_start_function</span><span class="o">=</span><span class="kc">False</span> <span class="c1"># only consider once</span>
+            <span class="n">state_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">assign_functions</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">functionAssignment</span><span class="o">.</span><span class="n">assign_all_functions</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state_key_assigned_at_last</span> <span class="o">=</span> <span class="n">state_key</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">state_key</span><span class="p">:</span> <span class="n">assign_functions</span><span class="p">},</span><span class="kc">True</span>
+
+        <span class="c1"># --------------</span>
+        <span class="c1"># case 2</span>
+        <span class="c1"># assign a state and the functions to be executed on it</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{},</span> <span class="kc">None</span>
+
+            <span class="c1"># pick up a state from the queue</span>
+            <span class="n">targets</span><span class="o">=</span><span class="p">[</span><span class="n">dk</span> <span class="k">for</span> <span class="n">dk</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">dk_functions</span><span class="p">]</span>
+            <span class="n">random_selected_functions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">functionAssignment</span><span class="o">.</span><span class="n">select_functions_randomly</span><span class="p">(</span><span class="n">percent_of_functions</span><span class="p">)</span>
+            <span class="c1"># for func in random_selected_functions:</span>
+            <span class="c1">#     if func not in targets:</span>
+            <span class="c1">#         targets.append(func)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;randomly selected functions: </span><span class="si">{</span><span class="n">random_selected_functions</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">state_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pickup_a_state</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>  <span class="c1"># order the states in self.queue and pick up the one has the highest weight</span>
+
+            <span class="c1"># assign functions</span>
+            <span class="n">assigned_functions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">functionAssignment</span><span class="o">.</span><span class="n">assign_functions_timeout_mine</span><span class="p">(</span><span class="n">state_key</span><span class="p">,</span> <span class="n">dk_functions</span><span class="p">,</span><span class="n">random_selected_functions</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">assigned_functions</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state_key_assigned_at_last</span> <span class="o">=</span> <span class="n">state_key</span>
+                <span class="k">return</span> <span class="p">{</span><span class="n">state_key</span><span class="p">:</span> <span class="n">assigned_functions</span><span class="p">},</span><span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="Mine.termination">
+<a class="viewcode-back" href="../../../fdg.control.html#fdg.control.mine.Mine.termination">[docs]</a>
+    <span class="k">def</span> <span class="nf">termination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states_num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">current_seq_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sequence_depth_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="n">iteration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># print(f&#39;{states_num}:{len(self.d1)}:{len(self.d2)}:{len(self.d3)}:{len(self.cur_queue)}:{iteration}&#39;)</span>
+        <span class="k">if</span> <span class="n">iteration</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">states_num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="Mine.update_states">
+<a class="viewcode-back" href="../../../fdg.control.html#fdg.control.mine.Mine.update_states">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states_dict</span><span class="p">:</span><span class="nb">dict</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        save states</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">contract_address</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">states</span> <span class="ow">in</span> <span class="n">states_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+                <span class="n">ftn_seq</span><span class="o">=</span><span class="n">get_ftn_seq_from_key_1</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;constructor&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ftn_seq</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">world_states</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">state</span><span class="p">)]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">state_storage</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">accounts</span><span class="p">[</span>
+                        <span class="n">address</span><span class="p">]</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">printable_storage</span>
+
+                    <span class="c1"># # save the parent state key for a state</span>
+                    <span class="c1"># if len(self.state_key_assigned_at_last) &gt; 0:</span>
+                    <span class="c1">#     if key not in self.parent_state_keys.keys():</span>
+                    <span class="c1">#         self.parent_state_keys[key] = self.state_key_assigned_at_last</span>
+                    <span class="c1">#     else:</span>
+                    <span class="c1">#         my_print(f&#39;Why a state has two or more parent state keys&#39;)</span>
+                    <span class="c1">#         self.parent_state_keys[key] = self.state_key_assigned_at_last</span>
+
+                    <span class="c1"># get written slots for this state</span>
+                    <span class="c1"># get written slots from its parent, the key of which is saved in self.state_key_assigned_at_last</span>
+                    <span class="n">written_slots_all_steps</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_written_slots_in_depth_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_key_assigned_at_last</span><span class="p">))</span>
+
+                    <span class="c1"># get the current writes from the dependency pruner</span>
+                    <span class="n">written_slots</span><span class="o">=</span><span class="n">get_writes_annotation_from_ws</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                    <span class="c1"># self.state_write_slots[key]= written_slots</span>
+
+                    <span class="n">writes_str</span><span class="o">=</span><span class="p">[]</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ftn_seq</span><span class="p">)</span> <span class="ow">in</span> <span class="n">written_slots</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="n">writes</span><span class="o">=</span><span class="n">written_slots</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">ftn_seq</span><span class="p">)]</span>
+                        <span class="n">writes_str</span><span class="o">=</span><span class="p">[</span><span class="n">identify_slot_from_symbolic_slot_expression</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">writes</span><span class="p">]</span>
+                        <span class="n">writes_str</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">writes_str</span><span class="p">))</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ftn_seq</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">written_slots_all_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="n">written_slots_all_steps</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">ftn_seq</span><span class="p">)]</span><span class="o">=</span><span class="n">writes_str</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">written_slots_in_depth_str</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">written_slots_all_steps</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">written_slots_all_steps</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">ftn_seq</span><span class="p">)]</span> <span class="o">=</span> <span class="n">writes_str</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">written_slots_in_depth_str</span><span class="p">[</span>
+                            <span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">written_slots_all_steps</span>
+
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">slots</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">accounts</span><span class="p">[</span><span class="n">address</span><span class="p">]</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">printable_storage</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+                    <span class="c1"># save the slots in str version</span>
+                    <span class="n">slots_str</span><span class="o">=</span><span class="p">[</span><span class="n">identify_slot_from_symbolic_slot_expression</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">slots</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">written_slots_in_depth_str</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">written_slots_in_depth_str</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="n">slots_str</span><span class="p">}</span>
+
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">state_storage</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">accounts</span><span class="p">[</span><span class="n">address</span><span class="p">]</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">printable_storage</span></div>
+
+
+<div class="viewcode-block" id="Mine.filter_states">
+<a class="viewcode-back" href="../../../fdg.control.html#fdg.control.mine.Mine.filter_states">[docs]</a>
+    <span class="k">def</span> <span class="nf">filter_states</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        for states generated from the same function sequence, only one is considered if two or more write the same state variables in the last step</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">two_list_equal</span><span class="p">(</span><span class="n">lst1</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span><span class="n">lst2</span><span class="p">:</span><span class="nb">list</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">bool</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">([</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">lst1</span> <span class="k">if</span> <span class="n">e</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lst2</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">([</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">lst2</span> <span class="k">if</span> <span class="n">e</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lst1</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="c1"># for key in state_keys:</span>
+        <span class="c1">#     self.queue.append(key)</span>
+        <span class="c1"># count based on the key prefix</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">:</span>
+            <span class="n">key_prefix</span> <span class="o">=</span> <span class="n">get_key_1_prefix</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;#&#39;</span> <span class="ow">in</span> <span class="n">key_prefix</span><span class="p">:</span> <span class="c1"># a state at depth 2 or deeper</span>
+                <span class="k">if</span> <span class="n">key_prefix</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;fallback&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">key_prefix</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;fallback&#39;</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">key_prefix</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;fallback#fallback&#39;</span><span class="p">):</span>
+                        <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">key_prefix</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">count</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">count</span><span class="p">[</span><span class="n">key_prefix</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">count</span><span class="p">[</span><span class="n">key_prefix</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">=</span><span class="p">[]</span>
+        <span class="c1"># compute priority values</span>
+        <span class="k">for</span> <span class="n">key_prefix</span><span class="p">,</span> <span class="n">keys</span> <span class="ow">in</span> <span class="n">count</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># get state keys with different priority values that share the same function sequence (key prefix)</span>
+                <span class="n">key_recent_writes_pairs</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                    <span class="n">seq_len</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">get_ftn_seq_from_key_1</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">seq_len</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">written_slots_in_depth_str</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="n">recent_writes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">written_slots_in_depth_str</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">seq_len</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">recent_writes</span><span class="o">=</span><span class="p">[]</span>
+
+                    <span class="n">key_recent_writes_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">recent_writes</span><span class="p">))</span>
+
+                <span class="c1"># sort the based on weights in descending order</span>
+                <span class="n">key_recent_writes_pairs</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="c1"># only keep states that have different writes</span>
+                <span class="n">cur_writes</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,(</span><span class="n">key</span><span class="p">,</span> <span class="n">recent_writes</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">key_recent_writes_pairs</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">idx</span><span class="o">&lt;=</span><span class="mi">2</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                        <span class="n">cur_writes</span> <span class="o">=</span> <span class="n">recent_writes</span>  <span class="c1"># update cur_writes</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># only keep keys that have weights different than -1</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">two_list_equal</span><span class="p">(</span><span class="n">cur_writes</span><span class="p">,</span><span class="n">recent_writes</span><span class="p">):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                            <span class="n">cur_writes</span> <span class="o">=</span> <span class="n">recent_writes</span>   <span class="c1"># update cur_writes</span></div>
+
+
+<div class="viewcode-block" id="Mine.get_written_slots_in_depth_str">
+<a class="viewcode-back" href="../../../fdg.control.html#fdg.control.mine.Mine.get_written_slots_in_depth_str">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_written_slots_in_depth_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_key</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">state_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">written_slots_in_depth_str</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">written_slots_in_depth_str</span><span class="p">[</span><span class="n">state_key</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Mine.pickup_a_state">
+<a class="viewcode-back" href="../../../fdg.control.html#fdg.control.mine.Mine.pickup_a_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">pickup_a_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">targets</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        order states in self.queue</span>
+<span class="sd">        return the first state in self.queue</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">evaluate_state</span><span class="p">(</span><span class="n">state_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reads_in_conditions_of_targets</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">written_slot_by_state</span><span class="o">=</span><span class="n">get_storage_written_slots_str</span><span class="p">(</span><span class="n">state_key</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">dk</span><span class="p">,</span> <span class="n">reads</span> <span class="ow">in</span> <span class="n">reads_in_conditions_of_targets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">reads</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">for function </span><span class="si">{</span><span class="n">dk</span><span class="si">}</span><span class="s1">:&#39;</span><span class="p">)</span>
+                    <span class="n">reads_str</span> <span class="o">=</span> <span class="p">[</span><span class="n">identify_slot_from_symbolic_slot_expression</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                                 <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span>
+                                 <span class="n">reads</span><span class="p">]</span>
+                    <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">read slots:</span><span class="si">{</span><span class="n">reads_str</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">count_common</span> <span class="o">=</span> <span class="n">common_elements</span><span class="p">(</span><span class="n">reads_str</span><span class="p">,</span><span class="n">written_slot_by_state</span><span class="p">)</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">count_common</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">reads</span><span class="p">))</span>
+
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;evaluation raw data:</span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">+=</span> <span class="n">ele</span>
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;evaluation value:</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">v</span>
+
+        <span class="k">def</span> <span class="nf">get_storage_written_slots_str</span><span class="p">(</span><span class="n">state_key</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;-- </span><span class="si">{</span><span class="n">state_key</span><span class="si">}</span><span class="s1"> --&#39;</span><span class="p">)</span>
+
+            <span class="c1"># ------------------------</span>
+            <span class="c1"># consider all the writes without repeated elements</span>
+            <span class="n">written_slots_str</span><span class="o">=</span> <span class="p">[</span><span class="n">identify_slot_from_symbolic_slot_expression</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">state_storage</span><span class="p">[</span><span class="n">state_key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">write slots:</span><span class="si">{</span><span class="n">written_slots_str</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">written_slots_str_all</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_written_slots_in_depth_str</span><span class="p">(</span><span class="n">state_key</span><span class="p">)</span>
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">write slots:</span><span class="si">{</span><span class="n">written_slots_str_all</span><span class="si">}</span><span class="s1"> (writes at each depth)&#39;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">written_slots_str</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">reads_in_conditions_of_targets</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">dk</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwrg_manager</span><span class="o">.</span><span class="n">fwrg</span><span class="o">.</span><span class="n">get_reads_in_conditions</span><span class="p">(</span><span class="n">dk</span><span class="p">)</span> <span class="k">for</span>
+            <span class="n">dk</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">}</span>
+
+        <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">==== Reads in conditions for targets====&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">reads_in_conditions_of_targets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">==== evaluation on the storage writes ====&#39;</span><span class="p">)</span>
+        <span class="n">state_key_value_pairs</span><span class="o">=</span><span class="p">[(</span><span class="n">key</span><span class="p">,</span><span class="n">evaluate_state</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">reads_in_conditions_of_targets</span><span class="p">))</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">]</span>
+        <span class="n">state_key_value_pairs</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">state_key_value_pairs</span><span class="p">]</span>
+        <span class="c1"># print data</span>
+        <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;-- summary --&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">state_key_value_pairs</span><span class="p">:</span>
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">high_v</span><span class="o">=</span><span class="n">state_key_value_pairs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">state_key_value_pairs_candi</span><span class="o">=</span><span class="p">[(</span><span class="n">idx</span><span class="p">,</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">state_key_value_pairs</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span><span class="o">==</span><span class="n">high_v</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_key_value_pairs_candi</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;select </span><span class="si">{</span><span class="n">state_key_value_pairs_candi</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> based on the evaluation of the writes in state storage&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># begin tie break</span>
+        <span class="n">win_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">break_a_tie</span><span class="p">(</span><span class="n">state_key_value_pairs_candi</span><span class="p">,</span><span class="n">targets</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">win_idx</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Mine.break_a_tie">
+<a class="viewcode-back" href="../../../fdg.control.html#fdg.control.mine.Mine.break_a_tie">[docs]</a>
+    <span class="k">def</span> <span class="nf">break_a_tie</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index_key_pairs</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span><span class="n">targets</span><span class="p">:</span><span class="nb">list</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">most_recent_new_writes</span><span class="p">(</span><span class="n">state_key</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+            <span class="n">written_slots_str</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_written_slots_in_depth_str</span><span class="p">(</span><span class="n">state_key</span><span class="p">)</span>
+            <span class="n">func_seq</span><span class="o">=</span><span class="n">get_ftn_seq_from_key_1</span><span class="p">(</span><span class="n">state_key</span><span class="p">)</span>
+
+            <span class="n">recent_writes</span><span class="o">=</span><span class="n">written_slots_str</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">func_seq</span><span class="p">)]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">func_seq</span><span class="p">)</span> <span class="ow">in</span> <span class="n">written_slots_str</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="p">[]</span>
+            <span class="n">previous_writes</span><span class="o">=</span><span class="p">[]</span>
+            <span class="k">for</span> <span class="n">depth</span><span class="p">,</span> <span class="n">writes</span> <span class="ow">in</span> <span class="n">written_slots_str</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">depth</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">func_seq</span><span class="p">):</span><span class="k">continue</span>
+                <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">writes</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">previous_writes</span><span class="p">:</span>
+                        <span class="n">previous_writes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+
+            <span class="n">new_recent_writes</span><span class="o">=</span><span class="p">[</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">recent_writes</span> <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">previous_writes</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">new_recent_writes</span>
+
+        <span class="k">def</span> <span class="nf">most_recent_writes</span><span class="p">(</span><span class="n">state_key</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;-- </span><span class="si">{</span><span class="n">state_key</span><span class="si">}</span><span class="s1"> --&#39;</span><span class="p">)</span>
+            <span class="n">written_slots_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_written_slots_in_depth_str</span><span class="p">(</span><span class="n">state_key</span><span class="p">)</span>
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">recent writes:</span><span class="si">{</span><span class="n">written_slots_str</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">func_seq</span><span class="o">=</span><span class="n">get_ftn_seq_from_key_1</span><span class="p">(</span><span class="n">state_key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">func_seq</span><span class="p">)</span> <span class="ow">in</span> <span class="n">written_slots_str</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">written_slots_str</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">func_seq</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[]</span>
+
+
+        <span class="k">def</span> <span class="nf">evaluate_recent_writes</span><span class="p">(</span><span class="n">state_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reads_in_conditions_of_targets</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">recent_writes</span><span class="o">=</span><span class="n">most_recent_writes</span><span class="p">(</span><span class="n">state_key</span><span class="p">)</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">dk</span><span class="p">,</span> <span class="n">reads</span> <span class="ow">in</span> <span class="n">reads_in_conditions_of_targets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">reads</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">for function </span><span class="si">{</span><span class="n">dk</span><span class="si">}</span><span class="s1">:&#39;</span><span class="p">)</span>
+                    <span class="n">reads_str</span> <span class="o">=</span> <span class="p">[</span><span class="n">identify_slot_from_symbolic_slot_expression</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                                 <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span>
+                                 <span class="n">reads</span><span class="p">]</span>
+                    <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">read slots:</span><span class="si">{</span><span class="n">reads_str</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">count_common</span> <span class="o">=</span> <span class="n">common_elements</span><span class="p">(</span><span class="n">reads_str</span><span class="p">,</span> <span class="n">recent_writes</span><span class="p">)</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">count_common</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">reads</span><span class="p">))</span>
+
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;evaluation raw data:</span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">+=</span> <span class="n">ele</span>
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;evaluation value:</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">v</span>
+
+        <span class="c1"># begin tie break</span>
+
+        <span class="k">def</span> <span class="nf">break_by_new_recent_writes</span><span class="p">(</span><span class="n">idx_key_pairs</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
+            <span class="c1"># check based on the new recent writes</span>
+            <span class="n">idx_key_new_recent_writes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">idx</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">most_recent_new_writes</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+                                         <span class="k">for</span>
+                                         <span class="n">idx</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">idx_key_pairs</span><span class="p">]</span>
+            <span class="n">idx_key_new_recent_writes</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                                           <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">==== new recent writes ====&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">new_recent_writes</span> <span class="ow">in</span> <span class="n">idx_key_new_recent_writes</span><span class="p">:</span>
+                <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">new_recent_writes</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">max_new_writes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_key_new_recent_writes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">idx_key_new_recent_writes_candi</span> <span class="o">=</span> <span class="p">[(</span><span class="n">idx</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span>
+                                               <span class="n">idx</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">new_writes</span> <span class="ow">in</span>
+                                               <span class="n">idx_key_new_recent_writes</span> <span class="k">if</span>
+                                               <span class="nb">len</span><span class="p">(</span><span class="n">new_writes</span><span class="p">)</span> <span class="o">==</span> <span class="n">max_new_writes</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_key_new_recent_writes_candi</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;select </span><span class="si">{</span><span class="n">idx_key_new_recent_writes_candi</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> based on new recent writes&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">idx_key_new_recent_writes_candi</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">idx_key_new_recent_writes_candi</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_key_new_recent_writes_candi</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">idx_key_new_recent_writes_candi</span> <span class="o">=</span> <span class="p">[(</span><span class="n">idx</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span>
+                                                   <span class="n">idx_key_new_recent_writes</span><span class="p">]</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span><span class="n">idx_key_new_recent_writes_candi</span>
+
+        <span class="k">def</span> <span class="nf">break_by_recent_writes</span><span class="p">(</span><span class="n">idx_key_pairs</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+            <span class="c1"># evaluate the recent writes to targets (a way to consider repeated writes)</span>
+            <span class="n">reads_in_conditions_of_targets</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">dk</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwrg_manager</span><span class="o">.</span><span class="n">fwrg</span><span class="o">.</span><span class="n">get_reads_in_conditions</span><span class="p">(</span><span class="n">dk</span><span class="p">)</span> <span class="k">for</span>
+                <span class="n">dk</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">}</span>
+
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">==== evaluation on the recent writes ====&#39;</span><span class="p">)</span>
+            <span class="n">idx_key_recent_writes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">idx</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">evaluate_recent_writes</span><span class="p">(</span><span class="n">key</span><span class="p">,</span>
+                                                                       <span class="n">reads_in_conditions_of_targets</span><span class="p">))</span>
+                                     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">idx_key_pairs</span><span class="p">]</span>
+            <span class="n">idx_key_recent_writes</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># print</span>
+            <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;-- summary --&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">idx_key_recent_writes</span><span class="p">:</span>
+                <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">max_value</span> <span class="o">=</span> <span class="n">idx_key_recent_writes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">idx_key_recent_writes_candi</span> <span class="o">=</span> <span class="p">[(</span><span class="n">idx</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span>
+                                           <span class="n">idx_key_recent_writes</span> <span class="k">if</span>
+                                           <span class="n">value</span> <span class="o">==</span> <span class="n">max_value</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_key_recent_writes_candi</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;select </span><span class="si">{</span><span class="n">idx_key_recent_writes_candi</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> based on the evaluation of the recent writes&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">idx_key_recent_writes_candi</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">idx_key_recent_writes_candi</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span><span class="n">idx_key_recent_writes_candi</span>
+
+        <span class="k">def</span> <span class="nf">break_by_depth</span><span class="p">(</span><span class="n">idx_key_pairs</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
+            <span class="k">def</span> <span class="nf">state_depth</span><span class="p">(</span><span class="n">state_key</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">get_ftn_seq_from_key_1</span><span class="p">(</span><span class="n">state_key</span><span class="p">))</span>
+
+            <span class="n">idx_key_depth</span> <span class="o">=</span> <span class="p">[(</span><span class="n">idx</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">state_depth</span><span class="p">(</span><span class="n">key</span><span class="p">))</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">key</span> <span class="ow">in</span> <span class="n">idx_key_pairs</span><span class="p">]</span>
+            <span class="n">idx_key_depth</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">small_depth</span><span class="o">=</span><span class="n">idx_key_depth</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">idx_key_depth_candi</span><span class="o">=</span><span class="p">[(</span><span class="n">idx</span><span class="p">,</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">depth</span> <span class="ow">in</span> <span class="n">idx_key_depth</span> <span class="k">if</span> <span class="n">depth</span><span class="o">==</span><span class="n">small_depth</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_key_depth_candi</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;select </span><span class="si">{</span><span class="n">idx_key_depth_candi</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> based on depth&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">idx_key_depth_candi</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">idx_key_depth_candi</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span><span class="n">idx_key_depth_candi</span>
+
+        <span class="k">def</span> <span class="nf">break_num_reached_dk_functions</span><span class="p">(</span><span class="n">idx_key_pairs</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span><span class="n">targets</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
+            <span class="k">def</span> <span class="nf">num_reached_dk_functions</span><span class="p">(</span><span class="n">state_key</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span><span class="n">targets</span><span class="p">:</span><span class="nb">list</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">functionAssignment</span><span class="o">.</span><span class="n">get_targets_be_reached</span><span class="p">(</span><span class="n">get_ftn_seq_from_key_1</span><span class="p">(</span><span class="n">state_key</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">targets</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+
+            <span class="n">idx_key_num_dk</span> <span class="o">=</span> <span class="p">[(</span><span class="n">idx</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">num_reached_dk_functions</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">targets</span><span class="p">))</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">key</span> <span class="ow">in</span> <span class="n">idx_key_pairs</span><span class="p">]</span>
+            <span class="n">idx_key_num_dk</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">max_num</span><span class="o">=</span><span class="n">idx_key_num_dk</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">max_num</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,[(</span><span class="n">idx</span><span class="p">,</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">num</span> <span class="ow">in</span> <span class="n">idx_key_num_dk</span><span class="p">]</span>
+
+            <span class="n">idx_key_num_dk_candi</span><span class="o">=</span><span class="p">[(</span><span class="n">idx</span><span class="p">,</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">num</span> <span class="ow">in</span> <span class="n">idx_key_num_dk</span> <span class="k">if</span> <span class="n">num</span><span class="o">==</span><span class="n">max_num</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_key_num_dk_candi</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;select </span><span class="si">{</span><span class="n">idx_key_num_dk_candi</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> based on the number of dk functions that can be reached directly&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">idx_key_num_dk_candi</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">idx_key_num_dk_candi</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span><span class="n">idx_key_num_dk_candi</span>
+
+        <span class="k">def</span> <span class="nf">select_randomly</span><span class="p">(</span><span class="n">idx_key_pairs</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="c1"># randomly select one</span>
+            <span class="n">selected</span> <span class="o">=</span> <span class="n">random_select_from_list</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">idx_key_pairs</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># print</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">idx_key_pairs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="n">selected</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">my_print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;select </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> based on random policy&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">selected</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># ------------- new recent writes -----------------</span>
+        <span class="n">win_idx</span><span class="p">,</span><span class="n">new_recent_writes_candi</span><span class="o">=</span><span class="n">break_by_new_recent_writes</span><span class="p">(</span><span class="n">index_key_pairs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">win_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">win_idx</span>
+
+        <span class="c1"># ------------- recent writes -----------------</span>
+        <span class="n">win_idx</span><span class="p">,</span> <span class="n">recent_writes_candi</span> <span class="o">=</span> <span class="n">break_by_recent_writes</span><span class="p">(</span>
+            <span class="n">new_recent_writes_candi</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">win_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">win_idx</span>
+
+        <span class="c1"># ------------- depth -----------------</span>
+        <span class="n">win_idx</span><span class="p">,</span> <span class="n">depth_candi</span> <span class="o">=</span> <span class="n">break_by_depth</span><span class="p">(</span><span class="n">recent_writes_candi</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">win_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">win_idx</span>
+
+        <span class="n">win_idx</span><span class="p">,</span> <span class="n">num_dk_candi</span><span class="o">=</span><span class="n">break_num_reached_dk_functions</span><span class="p">(</span><span class="n">depth_candi</span><span class="p">,</span><span class="n">targets</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">win_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">win_idx</span>
+
+        <span class="c1"># -------------- random policy ----------------</span>
+        <span class="k">return</span> <span class="n">select_randomly</span><span class="p">(</span><span class="n">num_dk_candi</span><span class="p">)</span></div>
+</div>
+
+
+
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

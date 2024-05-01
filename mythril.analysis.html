@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mythril.analysis package &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mythril.analysis.module package" href="mythril.analysis.module.html" />
+    <link rel="prev" title="mythril package" href="mythril.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mythril-analysis-package">
+<h1>mythril.analysis package<a class="headerlink" href="#mythril-analysis-package" title="Link to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mythril.analysis.module.html">mythril.analysis.module package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.modules.html">mythril.analysis.module.modules package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.arbitrary_jump">mythril.analysis.module.modules.arbitrary_jump module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.arbitrary_write">mythril.analysis.module.modules.arbitrary_write module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.delegatecall">mythril.analysis.module.modules.delegatecall module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.dependence_on_origin">mythril.analysis.module.modules.dependence_on_origin module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.dependence_on_predictable_vars">mythril.analysis.module.modules.dependence_on_predictable_vars module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.ether_thief">mythril.analysis.module.modules.ether_thief module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.exceptions">mythril.analysis.module.modules.exceptions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.external_calls">mythril.analysis.module.modules.external_calls module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.integer">mythril.analysis.module.modules.integer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.multiple_sends">mythril.analysis.module.modules.multiple_sends module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.state_change_external_calls">mythril.analysis.module.modules.state_change_external_calls module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.suicide">mythril.analysis.module.modules.suicide module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.unchecked_retval">mythril.analysis.module.modules.unchecked_retval module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules.user_assertions">mythril.analysis.module.modules.user_assertions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.modules.html#module-mythril.analysis.module.modules">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.html#module-mythril.analysis.module.base">mythril.analysis.module.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.base.DetectionModule"><code class="docutils literal notranslate"><span class="pre">DetectionModule</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.base.DetectionModule.description"><code class="docutils literal notranslate"><span class="pre">DetectionModule.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.base.DetectionModule.entry_point"><code class="docutils literal notranslate"><span class="pre">DetectionModule.entry_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.base.DetectionModule.execute"><code class="docutils literal notranslate"><span class="pre">DetectionModule.execute()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.base.DetectionModule.name"><code class="docutils literal notranslate"><span class="pre">DetectionModule.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.base.DetectionModule.post_hooks"><code class="docutils literal notranslate"><span class="pre">DetectionModule.post_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.base.DetectionModule.pre_hooks"><code class="docutils literal notranslate"><span class="pre">DetectionModule.pre_hooks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.base.DetectionModule.reset_module"><code class="docutils literal notranslate"><span class="pre">DetectionModule.reset_module()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.base.DetectionModule.swc_id"><code class="docutils literal notranslate"><span class="pre">DetectionModule.swc_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.base.DetectionModule.update_cache"><code class="docutils literal notranslate"><span class="pre">DetectionModule.update_cache()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.base.EntryPoint"><code class="docutils literal notranslate"><span class="pre">EntryPoint</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.base.EntryPoint.CALLBACK"><code class="docutils literal notranslate"><span class="pre">EntryPoint.CALLBACK</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.base.EntryPoint.POST"><code class="docutils literal notranslate"><span class="pre">EntryPoint.POST</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.html#module-mythril.analysis.module.loader">mythril.analysis.module.loader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.loader.ModuleLoader"><code class="docutils literal notranslate"><span class="pre">ModuleLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.loader.ModuleLoader.get_detection_modules"><code class="docutils literal notranslate"><span class="pre">ModuleLoader.get_detection_modules()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.loader.ModuleLoader.register_module"><code class="docutils literal notranslate"><span class="pre">ModuleLoader.register_module()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.html#module-mythril.analysis.module.module_helpers">mythril.analysis.module.module_helpers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.module_helpers.is_prehook"><code class="docutils literal notranslate"><span class="pre">is_prehook()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.html#module-mythril.analysis.module.util">mythril.analysis.module.util module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.util.get_detection_module_hooks"><code class="docutils literal notranslate"><span class="pre">get_detection_module_hooks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.module.html#mythril.analysis.module.util.reset_callback_modules"><code class="docutils literal notranslate"><span class="pre">reset_callback_modules()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.analysis.module.html#module-mythril.analysis.module">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-mythril.analysis.analysis_args">
+<span id="mythril-analysis-analysis-args-module"></span><h2>mythril.analysis.analysis_args module<a class="headerlink" href="#module-mythril.analysis.analysis_args" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-mythril.analysis.call_helpers">
+<span id="mythril-analysis-call-helpers-module"></span><h2>mythril.analysis.call_helpers module<a class="headerlink" href="#module-mythril.analysis.call_helpers" title="Link to this heading">¶</a></h2>
+<p>This module provides helper functions for the analysis modules to deal with
+call functionality.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.call_helpers.get_call_from_state">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.call_helpers.</span></span><span class="sig-name descname"><span class="pre">get_call_from_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.analysis.ops.Call" title="mythril.analysis.ops.Call"><span class="pre">Call</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/analysis/call_helpers.html#get_call_from_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.call_helpers.get_call_from_state" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-mythril.analysis.callgraph">
+<span id="mythril-analysis-callgraph-module"></span><h2>mythril.analysis.callgraph module<a class="headerlink" href="#module-mythril.analysis.callgraph" title="Link to this heading">¶</a></h2>
+<p>This module contains the configuration and functions to create call
+graphs.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.callgraph.extract_edges">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.callgraph.</span></span><span class="sig-name descname"><span class="pre">extract_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/callgraph.html#extract_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.callgraph.extract_edges" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>statespace</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.callgraph.extract_nodes">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.callgraph.</span></span><span class="sig-name descname"><span class="pre">extract_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/callgraph.html#extract_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.callgraph.extract_nodes" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statespace</strong></p></li>
+<li><p><strong>color_map</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.callgraph.generate_graph">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.callgraph.</span></span><span class="sig-name descname"><span class="pre">generate_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Mythril</span> <span class="pre">/</span> <span class="pre">Ethereum</span> <span class="pre">LASER</span> <span class="pre">Symbolic</span> <span class="pre">VM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">physics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phrackify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/callgraph.html#generate_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.callgraph.generate_graph" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statespace</strong></p></li>
+<li><p><strong>title</strong></p></li>
+<li><p><strong>physics</strong></p></li>
+<li><p><strong>phrackify</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-mythril.analysis.issue_annotation">
+<span id="mythril-analysis-issue-annotation-module"></span><h2>mythril.analysis.issue_annotation module<a class="headerlink" href="#module-mythril.analysis.issue_annotation" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.analysis.issue_annotation.IssueAnnotation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.analysis.issue_annotation.</span></span><span class="sig-name descname"><span class="pre">IssueAnnotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">issue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.analysis.report.Issue" title="mythril.analysis.report.Issue"><span class="pre">Issue</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/issue_annotation.html#IssueAnnotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.issue_annotation.IssueAnnotation" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.annotation.StateAnnotation" title="mythril.laser.ethereum.state.annotation.StateAnnotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">StateAnnotation</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.analysis.issue_annotation.IssueAnnotation.persist_over_calls">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">persist_over_calls</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#mythril.analysis.issue_annotation.IssueAnnotation.persist_over_calls" title="Link to this definition">¶</a></dt>
+<dd><p>If this function returns true then laser will propagate the annotation between calls</p>
+<p>The default is set to False</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.issue_annotation.IssueAnnotation.persist_to_world_state">
+<span class="sig-name descname"><span class="pre">persist_to_world_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/mythril/analysis/issue_annotation.html#IssueAnnotation.persist_to_world_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.issue_annotation.IssueAnnotation.persist_to_world_state" title="Link to this definition">¶</a></dt>
+<dd><p>If this function returns true then laser will also annotate the
+world state.</p>
+<p>If you want annotations to persist through different user initiated message call transactions
+then this should be enabled.</p>
+<p>The default is set to False</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.analysis.ops">
+<span id="mythril-analysis-ops-module"></span><h2>mythril.analysis.ops module<a class="headerlink" href="#module-mythril.analysis.ops" title="Link to this heading">¶</a></h2>
+<p>This module contains various helper methods for dealing with EVM
+operations.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.analysis.ops.Call">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.analysis.ops.</span></span><span class="sig-name descname"><span class="pre">Call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value=&lt;mythril.analysis.ops.Variable</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/ops.html#Call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.ops.Call" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mythril.analysis.ops.Op" title="mythril.analysis.ops.Op"><code class="xref py py-class docutils literal notranslate"><span class="pre">Op</span></code></a></p>
+<p>The representation of a CALL operation.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.analysis.ops.Op">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.analysis.ops.</span></span><span class="sig-name descname"><span class="pre">Op</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/ops.html#Op"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.ops.Op" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The base type for operations referencing current node and state.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.analysis.ops.VarType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.analysis.ops.</span></span><span class="sig-name descname"><span class="pre">VarType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/ops.html#VarType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.ops.VarType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>An enum denoting whether a value is symbolic or concrete.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.analysis.ops.VarType.CONCRETE">
+<span class="sig-name descname"><span class="pre">CONCRETE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#mythril.analysis.ops.VarType.CONCRETE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.analysis.ops.VarType.SYMBOLIC">
+<span class="sig-name descname"><span class="pre">SYMBOLIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#mythril.analysis.ops.VarType.SYMBOLIC" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.analysis.ops.Variable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.analysis.ops.</span></span><span class="sig-name descname"><span class="pre">Variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/ops.html#Variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.ops.Variable" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The representation of a variable with value and type.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.ops.get_variable">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.ops.</span></span><span class="sig-name descname"><span class="pre">get_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/ops.html#get_variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.ops.get_variable" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>i</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-mythril.analysis.potential_issues">
+<span id="mythril-analysis-potential-issues-module"></span><h2>mythril.analysis.potential_issues module<a class="headerlink" href="#module-mythril.analysis.potential_issues" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.analysis.potential_issues.PotentialIssue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.analysis.potential_issues.</span></span><span class="sig-name descname"><span class="pre">PotentialIssue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swc_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytecode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description_head</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description_tail</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/potential_issues.html#PotentialIssue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.potential_issues.PotentialIssue" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Representation of a potential issue</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.analysis.potential_issues.PotentialIssuesAnnotation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.analysis.potential_issues.</span></span><span class="sig-name descname"><span class="pre">PotentialIssuesAnnotation</span></span><a class="reference internal" href="_modules/mythril/analysis/potential_issues.html#PotentialIssuesAnnotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.potential_issues.PotentialIssuesAnnotation" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.annotation.StateAnnotation" title="mythril.laser.ethereum.state.annotation.StateAnnotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">StateAnnotation</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.analysis.potential_issues.PotentialIssuesAnnotation.search_importance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search_importance</span></span><a class="headerlink" href="#mythril.analysis.potential_issues.PotentialIssuesAnnotation.search_importance" title="Link to this definition">¶</a></dt>
+<dd><p>Used in estimating the priority of a state annotated with the corresponding annotation.
+Default is 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.potential_issues.check_potential_issues">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.potential_issues.</span></span><span class="sig-name descname"><span class="pre">check_potential_issues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/analysis/potential_issues.html#check_potential_issues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.potential_issues.check_potential_issues" title="Link to this definition">¶</a></dt>
+<dd><p>Called at the end of a transaction, checks potential issues, and
+adds valid issues to the detector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – The final global state of a transaction</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.potential_issues.get_potential_issues_annotation">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.potential_issues.</span></span><span class="sig-name descname"><span class="pre">get_potential_issues_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mythril.analysis.potential_issues.PotentialIssuesAnnotation" title="mythril.analysis.potential_issues.PotentialIssuesAnnotation"><span class="pre">PotentialIssuesAnnotation</span></a></span></span><a class="reference internal" href="_modules/mythril/analysis/potential_issues.html#get_potential_issues_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.potential_issues.get_potential_issues_annotation" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the potential issues annotation of the given global state, and creates one if
+one does not already exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – The global state</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-mythril.analysis.report">
+<span id="mythril-analysis-report-module"></span><h2>mythril.analysis.report module<a class="headerlink" href="#module-mythril.analysis.report" title="Link to this heading">¶</a></h2>
+<p>This module provides classes that make up an issue report.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.analysis.report.Issue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.analysis.report.</span></span><span class="sig-name descname"><span class="pre">Issue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swc_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytecode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gas_used</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description_head</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description_tail</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transaction_sequence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/report.html#Issue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.report.Issue" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Representation of an issue and its location.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.report.Issue.add_block_data">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_block_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transaction_sequence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/report.html#Issue.add_block_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.report.Issue.add_block_data" title="Link to this definition">¶</a></dt>
+<dd><p>Adds sane block data to a transaction_sequence</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.report.Issue.add_code_info">
+<span class="sig-name descname"><span class="pre">add_code_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/report.html#Issue.add_code_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.report.Issue.add_code_info" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contract</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.analysis.report.Issue.as_dict">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><a class="headerlink" href="#mythril.analysis.report.Issue.as_dict" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.report.Issue.decode_bytes">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">decode_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/report.html#Issue.decode_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.report.Issue.decode_bytes" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.report.Issue.resolve_function_names">
+<span class="sig-name descname"><span class="pre">resolve_function_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/report.html#Issue.resolve_function_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.report.Issue.resolve_function_names" title="Link to this definition">¶</a></dt>
+<dd><p>Resolves function names for each step</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.report.Issue.resolve_input">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">resolve_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/report.html#Issue.resolve_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.report.Issue.resolve_input" title="Link to this definition">¶</a></dt>
+<dd><p>Adds decoded calldate to the tx sequence.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.analysis.report.Issue.transaction_sequence_jsonv2">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">transaction_sequence_jsonv2</span></span><a class="headerlink" href="#mythril.analysis.report.Issue.transaction_sequence_jsonv2" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the transaction sequence as a json string with pre-generated block data</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.analysis.report.Issue.transaction_sequence_users">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">transaction_sequence_users</span></span><a class="headerlink" href="#mythril.analysis.report.Issue.transaction_sequence_users" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the transaction sequence without pre-generated block data</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.analysis.report.Report">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.analysis.report.</span></span><span class="sig-name descname"><span class="pre">Report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contracts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exceptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">execution_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mythril.laser.html#mythril.laser.execution_info.ExecutionInfo" title="mythril.laser.execution_info.ExecutionInfo"><span class="pre">ExecutionInfo</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/report.html#Report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.report.Report" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A report containing the content of multiple issues.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.report.Report.append_issue">
+<span class="sig-name descname"><span class="pre">append_issue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">issue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/report.html#Report.append_issue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.report.Report.append_issue" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>issue</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.report.Report.as_json">
+<span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/report.html#Report.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.report.Report.as_json" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.report.Report.as_markdown">
+<span class="sig-name descname"><span class="pre">as_markdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/report.html#Report.as_markdown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.report.Report.as_markdown" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.report.Report.as_swc_standard_format">
+<span class="sig-name descname"><span class="pre">as_swc_standard_format</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/report.html#Report.as_swc_standard_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.report.Report.as_swc_standard_format" title="Link to this definition">¶</a></dt>
+<dd><p>Format defined for integration and correlation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.report.Report.as_text">
+<span class="sig-name descname"><span class="pre">as_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/report.html#Report.as_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.report.Report.as_text" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.analysis.report.Report.environment">
+<span class="sig-name descname"><span class="pre">environment</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;jinja2.environment.Environment</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mythril.analysis.report.Report.environment" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.analysis.report.Report.sorted_issues">
+<span class="sig-name descname"><span class="pre">sorted_issues</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/report.html#Report.sorted_issues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.report.Report.sorted_issues" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.analysis.security">
+<span id="mythril-analysis-security-module"></span><h2>mythril.analysis.security module<a class="headerlink" href="#module-mythril.analysis.security" title="Link to this heading">¶</a></h2>
+<p>This module contains functionality for hooking in detection modules and
+executing them.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.security.fire_lasers">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.security.</span></span><span class="sig-name descname"><span class="pre">fire_lasers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">white_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#mythril.analysis.report.Issue" title="mythril.analysis.report.Issue"><span class="pre">Issue</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/analysis/security.html#fire_lasers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.security.fire_lasers" title="Link to this definition">¶</a></dt>
+<dd><p>Fire lasers at analysed statespace object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statespace</strong> – Symbolic statespace to analyze</p></li>
+<li><p><strong>white_list</strong> – Optionally whitelist modules to use for the analysis</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Discovered issues</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.security.retrieve_callback_issues">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.security.</span></span><span class="sig-name descname"><span class="pre">retrieve_callback_issues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">white_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#mythril.analysis.report.Issue" title="mythril.analysis.report.Issue"><span class="pre">Issue</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/analysis/security.html#retrieve_callback_issues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.security.retrieve_callback_issues" title="Link to this definition">¶</a></dt>
+<dd><p>Get the issues discovered by callback type detection modules</p>
+</dd></dl>
+
+</section>
+<section id="module-mythril.analysis.solver">
+<span id="mythril-analysis-solver-module"></span><h2>mythril.analysis.solver module<a class="headerlink" href="#module-mythril.analysis.solver" title="Link to this heading">¶</a></h2>
+<p>This module contains analysis module helpers to solve path constraints.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.solver.get_transaction_sequence">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.solver.</span></span><span class="sig-name descname"><span class="pre">get_transaction_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">global_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.constraints.Constraints" title="mythril.laser.ethereum.state.constraints.Constraints"><span class="pre">Constraints</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/analysis/solver.html#get_transaction_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.solver.get_transaction_sequence" title="Link to this definition">¶</a></dt>
+<dd><p>Generate concrete transaction sequence.
+Note: This function only considers the constraints in constraint argument,
+which in some cases is expected to differ from global_state’s constraints</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>global_state</strong> – GlobalState to generate transaction sequence for</p></li>
+<li><p><strong>constraints</strong> – list of constraints used to generate transaction sequence</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.solver.pretty_print_model">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.solver.</span></span><span class="sig-name descname"><span class="pre">pretty_print_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/solver.html#pretty_print_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.solver.pretty_print_model" title="Link to this definition">¶</a></dt>
+<dd><p>Pretty prints a z3 model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-mythril.analysis.swc_data">
+<span id="mythril-analysis-swc-data-module"></span><h2>mythril.analysis.swc_data module<a class="headerlink" href="#module-mythril.analysis.swc_data" title="Link to this heading">¶</a></h2>
+<p>This module maps SWC IDs to their registry equivalents.</p>
+</section>
+<section id="module-mythril.analysis.symbolic">
+<span id="mythril-analysis-symbolic-module"></span><h2>mythril.analysis.symbolic module<a class="headerlink" href="#module-mythril.analysis.symbolic" title="Link to this heading">¶</a></h2>
+<p>This module contains a wrapper around LASER for extended analysis
+purposes.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.analysis.symbolic.SymExecWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.analysis.symbolic.</span></span><span class="sig-name descname"><span class="pre">SymExecWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynloader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">22</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">execution_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop_bound</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transaction_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compulsory_statespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_dependency_pruning</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_analysis_modules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_modules_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/symbolic.html#SymExecWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.symbolic.SymExecWrapper" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Wrapper class for the LASER Symbolic virtual machine.</p>
+<p>Symbolically executes the code and does a bit of pre-analysis for
+convenience.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="mythril.analysis.symbolic.SymExecWrapper.execution_info">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">execution_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mythril.laser.html#mythril.laser.execution_info.ExecutionInfo" title="mythril.laser.execution_info.ExecutionInfo"><span class="pre">ExecutionInfo</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#mythril.analysis.symbolic.SymExecWrapper.execution_info" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.analysis.traceexplore">
+<span id="mythril-analysis-traceexplore-module"></span><h2>mythril.analysis.traceexplore module<a class="headerlink" href="#module-mythril.analysis.traceexplore" title="Link to this heading">¶</a></h2>
+<p>This module provides a function to convert a state space into a set of state
+nodes and transition edges.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.analysis.traceexplore.get_serializable_statespace">
+<span class="sig-prename descclassname"><span class="pre">mythril.analysis.traceexplore.</span></span><span class="sig-name descname"><span class="pre">get_serializable_statespace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/analysis/traceexplore.html#get_serializable_statespace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.analysis.traceexplore.get_serializable_statespace" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>statespace</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-mythril.analysis">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mythril.analysis" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="mythril.html">mythril package</a><ul>
+      <li>Previous: <a href="mythril.html" title="previous chapter">mythril package</a></li>
+      <li>Next: <a href="mythril.analysis.module.html" title="next chapter">mythril.analysis.module package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/mythril.analysis.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

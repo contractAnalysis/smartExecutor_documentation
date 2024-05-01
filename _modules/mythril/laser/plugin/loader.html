@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mythril.laser.plugin.loader &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../../../about.html" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for mythril.laser.plugin.loader</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.svm</span> <span class="kn">import</span> <span class="n">LaserEVM</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.plugin.interface</span> <span class="kn">import</span> <span class="n">LaserPlugin</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.plugin.builder</span> <span class="kn">import</span> <span class="n">PluginBuilder</span>
+<span class="kn">from</span> <span class="nn">mythril.support.support_utils</span> <span class="kn">import</span> <span class="n">Singleton</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="LaserPluginLoader">
+<a class="viewcode-back" href="../../../../mythril.laser.plugin.html#mythril.laser.plugin.loader.LaserPluginLoader">[docs]</a>
+<span class="k">class</span> <span class="nc">LaserPluginLoader</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">Singleton</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The LaserPluginLoader is used to abstract the logic relating to plugins.</span>
+<span class="sd">    Components outside of laser thus don&#39;t have to be aware of the interface that plugins provide</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the plugin loader&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">laser_plugin_builders</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># type: Dict[str, PluginBuilder]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_args</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># type: Dict[str, Dict]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_list</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># type: Dict[str, LaserPlugin]</span>
+
+<div class="viewcode-block" id="LaserPluginLoader.add_args">
+<a class="viewcode-back" href="../../../../mythril.laser.plugin.html#mythril.laser.plugin.loader.LaserPluginLoader.add_args">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_args</span><span class="p">[</span><span class="n">plugin_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span></div>
+
+
+<div class="viewcode-block" id="LaserPluginLoader.load">
+<a class="viewcode-back" href="../../../../mythril.laser.plugin.html#mythril.laser.plugin.loader.LaserPluginLoader.load">[docs]</a>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_builder</span><span class="p">:</span> <span class="n">PluginBuilder</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Enables a Laser Plugin</span>
+
+<span class="sd">        :param plugin_builder: Builder that constructs the plugin</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading laser plugin: </span><span class="si">{</span><span class="n">plugin_builder</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">plugin_builder</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">laser_plugin_builders</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Laser plugin with name </span><span class="si">{</span><span class="n">plugin_builder</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> was already loaded, skipping...&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">laser_plugin_builders</span><span class="p">[</span><span class="n">plugin_builder</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin_builder</span></div>
+
+
+<div class="viewcode-block" id="LaserPluginLoader.is_enabled">
+<a class="viewcode-back" href="../../../../mythril.laser.plugin.html#mythril.laser.plugin.loader.LaserPluginLoader.is_enabled">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns whether the plugin is loaded in the symbolic_vm</span>
+
+<span class="sd">        :param plugin_name: Name of the plugin to check</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">plugin_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">laser_plugin_builders</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">laser_plugin_builders</span><span class="p">[</span><span class="n">plugin_name</span><span class="p">]</span><span class="o">.</span><span class="n">enabled</span></div>
+
+
+<div class="viewcode-block" id="LaserPluginLoader.enable">
+<a class="viewcode-back" href="../../../../mythril.laser.plugin.html#mythril.laser.plugin.loader.LaserPluginLoader.enable">[docs]</a>
+    <span class="k">def</span> <span class="nf">enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">plugin_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">laser_plugin_builders</span><span class="p">:</span>
+            <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin with name: </span><span class="si">{</span><span class="n">plugin_name</span><span class="si">}</span><span class="s2"> was not loaded&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">laser_plugin_builders</span><span class="p">[</span><span class="n">plugin_name</span><span class="p">]</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="LaserPluginLoader.instrument_virtual_machine">
+<a class="viewcode-back" href="../../../../mythril.laser.plugin.html#mythril.laser.plugin.loader.LaserPluginLoader.instrument_virtual_machine">[docs]</a>
+    <span class="k">def</span> <span class="nf">instrument_virtual_machine</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">symbolic_vm</span><span class="p">:</span> <span class="n">LaserEVM</span><span class="p">,</span> <span class="n">with_plugins</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load enabled plugins into the passed symbolic virtual machine</span>
+<span class="sd">        :param symbolic_vm: The virtual machine to instrument the plugins with</span>
+<span class="sd">        :param with_plugins: Override the globally enabled/disabled builders and load all plugins in the list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">plugin_builder</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">laser_plugin_builders</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">enabled</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">plugin_builder</span><span class="o">.</span><span class="n">enabled</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">with_plugins</span>
+                <span class="k">else</span> <span class="n">plugin_name</span> <span class="ow">in</span> <span class="n">with_plugins</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">enabled</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># log.info(f&quot;Instrumenting symbolic vm with plugin: {plugin_name}&quot;)</span>
+            <span class="c1"># plugin = plugin_builder(**self.plugin_args.get(plugin_name, {}))</span>
+            <span class="c1"># plugin.initialize(symbolic_vm)</span>
+            <span class="c1"># self.plugin_list[plugin_name] = plugin</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Instrumenting symbolic vm with plugin: </span><span class="si">{</span><span class="n">plugin_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">plugin_name</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="s2">&quot;fdg-pruner&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">plugin_name</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="s2">&quot;sse-support sequence execution&quot;</span><span class="p">):</span> <span class="c1">#@wei take the coverage plugin instance as a parameter to get the fdg-pruner instance</span>
+                <span class="c1"># assume that the coverage plugin is initialized before the fdg-pruner</span>
+                <span class="n">plugin</span> <span class="o">=</span> <span class="n">plugin_builder</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;instructionCoveragePlugin&quot;</span><span class="p">:</span><span class="n">coveragePlugin</span><span class="p">}))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">plugin</span> <span class="o">=</span> <span class="n">plugin_builder</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">,</span> <span class="p">{}))</span>
+            <span class="n">plugin</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">symbolic_vm</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">plugin_name</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="s2">&quot;coverage&quot;</span><span class="p">):</span> <span class="c1">#@wei save the instance of the coverage plguin instance</span>
+                <span class="n">coveragePlugin</span><span class="o">=</span><span class="n">plugin</span></div>
+</div>
+
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

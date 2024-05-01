@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>fdg package &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="fdg.control package" href="fdg.control.html" />
+    <link rel="prev" title="mythril.support package" href="mythril.support.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="fdg-package">
+<h1>fdg package<a class="headerlink" href="#fdg-package" title="Link to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fdg.control.html">fdg.control package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fdg.control.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.control.html#fdg-control-ftn-search-strategy-module">fdg.control.ftn_search_strategy module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.BFS"><code class="docutils literal notranslate"><span class="pre">BFS</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.BFS.assign_states"><code class="docutils literal notranslate"><span class="pre">BFS.assign_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.BFS.initialize"><code class="docutils literal notranslate"><span class="pre">BFS.initialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.BFS.termination"><code class="docutils literal notranslate"><span class="pre">BFS.termination()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.DFS"><code class="docutils literal notranslate"><span class="pre">DFS</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.DFS.assign_states"><code class="docutils literal notranslate"><span class="pre">DFS.assign_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.DFS.initialize"><code class="docutils literal notranslate"><span class="pre">DFS.initialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.DFS.termination"><code class="docutils literal notranslate"><span class="pre">DFS.termination()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.FunctionSearchStrategy"><code class="docutils literal notranslate"><span class="pre">FunctionSearchStrategy</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.FunctionSearchStrategy.assign_states"><code class="docutils literal notranslate"><span class="pre">FunctionSearchStrategy.assign_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.FunctionSearchStrategy.delete_state"><code class="docutils literal notranslate"><span class="pre">FunctionSearchStrategy.delete_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.FunctionSearchStrategy.get_states"><code class="docutils literal notranslate"><span class="pre">FunctionSearchStrategy.get_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.FunctionSearchStrategy.save_states"><code class="docutils literal notranslate"><span class="pre">FunctionSearchStrategy.save_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.FunctionSearchStrategy.termination"><code class="docutils literal notranslate"><span class="pre">FunctionSearchStrategy.termination()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.RandomBaseline"><code class="docutils literal notranslate"><span class="pre">RandomBaseline</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.RandomBaseline.assign_states"><code class="docutils literal notranslate"><span class="pre">RandomBaseline.assign_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.RandomBaseline.initialize"><code class="docutils literal notranslate"><span class="pre">RandomBaseline.initialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.RandomBaseline.termination"><code class="docutils literal notranslate"><span class="pre">RandomBaseline.termination()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.Seq"><code class="docutils literal notranslate"><span class="pre">Seq</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.Seq.assign_states"><code class="docutils literal notranslate"><span class="pre">Seq.assign_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.Seq.initialize"><code class="docutils literal notranslate"><span class="pre">Seq.initialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.ftn_search_strategy.Seq.termination"><code class="docutils literal notranslate"><span class="pre">Seq.termination()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.control.html#fdg-control-function-assignment-module">fdg.control.function_assignment module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fdg.control.html#fdg.control.function_assignment.FunctionAssignment"><code class="docutils literal notranslate"><span class="pre">FunctionAssignment</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.function_assignment.FunctionAssignment.assign_all_functions"><code class="docutils literal notranslate"><span class="pre">FunctionAssignment.assign_all_functions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.function_assignment.FunctionAssignment.assign_functions"><code class="docutils literal notranslate"><span class="pre">FunctionAssignment.assign_functions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.function_assignment.FunctionAssignment.assign_functions_for_baseline"><code class="docutils literal notranslate"><span class="pre">FunctionAssignment.assign_functions_for_baseline()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.function_assignment.FunctionAssignment.assign_functions_timeout"><code class="docutils literal notranslate"><span class="pre">FunctionAssignment.assign_functions_timeout()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.function_assignment.FunctionAssignment.assign_functions_timeout_mine"><code class="docutils literal notranslate"><span class="pre">FunctionAssignment.assign_functions_timeout_mine()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.function_assignment.FunctionAssignment.can_reach_targets"><code class="docutils literal notranslate"><span class="pre">FunctionAssignment.can_reach_targets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.function_assignment.FunctionAssignment.consider_dk_functions_not_reachable"><code class="docutils literal notranslate"><span class="pre">FunctionAssignment.consider_dk_functions_not_reachable()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.function_assignment.FunctionAssignment.fallback_case"><code class="docutils literal notranslate"><span class="pre">FunctionAssignment.fallback_case()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.function_assignment.FunctionAssignment.get_targets_be_reached"><code class="docutils literal notranslate"><span class="pre">FunctionAssignment.get_targets_be_reached()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.function_assignment.FunctionAssignment.record_assignment"><code class="docutils literal notranslate"><span class="pre">FunctionAssignment.record_assignment()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.function_assignment.FunctionAssignment.select_functions_randomly"><code class="docutils literal notranslate"><span class="pre">FunctionAssignment.select_functions_randomly()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.function_assignment.FunctionAssignment.when_no_children_assigned"><code class="docutils literal notranslate"><span class="pre">FunctionAssignment.when_no_children_assigned()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.control.html#module-fdg.control.guider">fdg.control.guider module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fdg.control.html#fdg.control.guider.Guider"><code class="docutils literal notranslate"><span class="pre">Guider</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.guider.Guider.end_iteration"><code class="docutils literal notranslate"><span class="pre">Guider.end_iteration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.guider.Guider.get_start_sequence"><code class="docutils literal notranslate"><span class="pre">Guider.get_start_sequence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.guider.Guider.init"><code class="docutils literal notranslate"><span class="pre">Guider.init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.guider.Guider.organize_states"><code class="docutils literal notranslate"><span class="pre">Guider.organize_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.guider.Guider.should_terminate"><code class="docutils literal notranslate"><span class="pre">Guider.should_terminate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.guider.Guider.start_iteration"><code class="docutils literal notranslate"><span class="pre">Guider.start_iteration()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.control.html#module-fdg.control.mine">fdg.control.mine module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fdg.control.html#fdg.control.mine.Mine"><code class="docutils literal notranslate"><span class="pre">Mine</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.mine.Mine.assign_states"><code class="docutils literal notranslate"><span class="pre">Mine.assign_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.mine.Mine.assign_states_normal"><code class="docutils literal notranslate"><span class="pre">Mine.assign_states_normal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.mine.Mine.assign_states_timeout"><code class="docutils literal notranslate"><span class="pre">Mine.assign_states_timeout()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.mine.Mine.break_a_tie"><code class="docutils literal notranslate"><span class="pre">Mine.break_a_tie()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.mine.Mine.filter_states"><code class="docutils literal notranslate"><span class="pre">Mine.filter_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.mine.Mine.get_written_slots_in_depth_str"><code class="docutils literal notranslate"><span class="pre">Mine.get_written_slots_in_depth_str()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.mine.Mine.initialize"><code class="docutils literal notranslate"><span class="pre">Mine.initialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.mine.Mine.pickup_a_state"><code class="docutils literal notranslate"><span class="pre">Mine.pickup_a_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.mine.Mine.termination"><code class="docutils literal notranslate"><span class="pre">Mine.termination()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.control.html#fdg.control.mine.Mine.update_states"><code class="docutils literal notranslate"><span class="pre">Mine.update_states()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.control.html#fdg-control-weight-computation-module">fdg.control.weight_computation module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fdg.control.html#fdg.control.weight_computation.compute"><code class="docutils literal notranslate"><span class="pre">compute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fdg.control.html#fdg.control.weight_computation.compute_mine"><code class="docutils literal notranslate"><span class="pre">compute_mine()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fdg.control.html#fdg.control.weight_computation.simple_mean"><code class="docutils literal notranslate"><span class="pre">simple_mean()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fdg.control.html#fdg.control.weight_computation.turn_write_features_to_a_value"><code class="docutils literal notranslate"><span class="pre">turn_write_features_to_a_value()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fdg.control.html#fdg.control.weight_computation.weighted_mean"><code class="docutils literal notranslate"><span class="pre">weighted_mean()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.control.html#module-fdg.control">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.preprocessing.html">fdg.preprocessing package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fdg.preprocessing.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.preprocessing.html#fdg-preprocessing-address-collection-module">fdg.preprocessing.address_collection module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.address_collection.collect_addresses_in_constructor"><code class="docutils literal notranslate"><span class="pre">collect_addresses_in_constructor()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.address_collection.collect_value_for_sender"><code class="docutils literal notranslate"><span class="pre">collect_value_for_sender()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.preprocessing.html#fdg-preprocessing-instruction-coverage-module">fdg.preprocessing.instruction_coverage module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.instruction_coverage.InstructionCoverage"><code class="docutils literal notranslate"><span class="pre">InstructionCoverage</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.instruction_coverage.InstructionCoverage.call_at_end_of_preprocessing"><code class="docutils literal notranslate"><span class="pre">InstructionCoverage.call_at_end_of_preprocessing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.instruction_coverage.InstructionCoverage.collect_function_instructions"><code class="docutils literal notranslate"><span class="pre">InstructionCoverage.collect_function_instructions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.instruction_coverage.InstructionCoverage.compute_coverage"><code class="docutils literal notranslate"><span class="pre">InstructionCoverage.compute_coverage()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.instruction_coverage.InstructionCoverage.print_state_info"><code class="docutils literal notranslate"><span class="pre">InstructionCoverage.print_state_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.instruction_coverage.InstructionCoverage.update_coverage"><code class="docutils literal notranslate"><span class="pre">InstructionCoverage.update_coverage()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.preprocessing.html#module-fdg.preprocessing.preprocess">fdg.preprocessing.preprocess module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.preprocess.Preprocessing"><code class="docutils literal notranslate"><span class="pre">Preprocessing</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.preprocess.Preprocessing.main_preprocessing_end"><code class="docutils literal notranslate"><span class="pre">Preprocessing.main_preprocessing_end()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.preprocess.Preprocessing.main_preprocessing_start"><code class="docutils literal notranslate"><span class="pre">Preprocessing.main_preprocessing_start()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.preprocess.execute_preprocessing"><code class="docutils literal notranslate"><span class="pre">execute_preprocessing()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.preprocess.log"><code class="docutils literal notranslate"><span class="pre">log</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.preprocessing.html#fdg-preprocessing-read-in-conditions-module">fdg.preprocessing.read_in_conditions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.read_in_conditions.ReadInCondition"><code class="docutils literal notranslate"><span class="pre">ReadInCondition</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.read_in_conditions.ReadInCondition.add_conditions"><code class="docutils literal notranslate"><span class="pre">ReadInCondition.add_conditions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.read_in_conditions.ReadInCondition.collect_conditions"><code class="docutils literal notranslate"><span class="pre">ReadInCondition.collect_conditions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.read_in_conditions.ReadInCondition.extract_read_slots_in_conditions"><code class="docutils literal notranslate"><span class="pre">ReadInCondition.extract_read_slots_in_conditions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.read_in_conditions.ReadInCondition.print_read_slot_info"><code class="docutils literal notranslate"><span class="pre">ReadInCondition.print_read_slot_info()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.preprocessing.html#fdg-preprocessing-write-read-info-module">fdg.preprocessing.write_read_info module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.write_read_info.Function_Write_Read_Info"><code class="docutils literal notranslate"><span class="pre">Function_Write_Read_Info</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.write_read_info.Function_Write_Read_Info.print_write_read_info"><code class="docutils literal notranslate"><span class="pre">Function_Write_Read_Info.print_write_read_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.write_read_info.Function_Write_Read_Info.refine_read_write_slots"><code class="docutils literal notranslate"><span class="pre">Function_Write_Read_Info.refine_read_write_slots()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.write_read_info.Function_Write_Read_Info.update_sload"><code class="docutils literal notranslate"><span class="pre">Function_Write_Read_Info.update_sload()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.write_read_info.Function_Write_Read_Info.update_sstore"><code class="docutils literal notranslate"><span class="pre">Function_Write_Read_Info.update_sstore()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.preprocessing.html#module-fdg.preprocessing">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-fdg.fdg_pruner">
+<span id="fdg-fdg-pruner-module"></span><h2>fdg.fdg_pruner module<a class="headerlink" href="#module-fdg.fdg_pruner" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="fdg.fdg_pruner.FDG_pruner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.fdg_pruner.</span></span><span class="sig-name descname"><span class="pre">FDG_pruner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instructionCoveragePlugin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.plugin.plugins.coverage.html#mythril.laser.plugin.plugins.coverage.coverage_plugin.InstructionCoveragePlugin" title="mythril.laser.plugin.plugins.coverage.coverage_plugin.InstructionCoveragePlugin"><span class="pre">InstructionCoveragePlugin</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fdg_pruner.html#FDG_pruner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fdg_pruner.FDG_pruner" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.interface.LaserPlugin" title="mythril.laser.plugin.interface.LaserPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LaserPlugin</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fdg_pruner.FDG_pruner.get_depth_k_functions">
+<span class="sig-name descname"><span class="pre">get_depth_k_functions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fdg_pruner.html#FDG_pruner.get_depth_k_functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fdg_pruner.FDG_pruner.get_depth_k_functions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fdg_pruner.FDG_pruner.get_runtime_bytecode">
+<span class="sig-name descname"><span class="pre">get_runtime_bytecode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.world_state.WorldState" title="mythril.laser.ethereum.state.world_state.WorldState"><span class="pre">WorldState</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract_address</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fdg_pruner.html#FDG_pruner.get_runtime_bytecode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fdg_pruner.FDG_pruner.get_runtime_bytecode" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fdg_pruner.FDG_pruner.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbolic_vm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM" title="mythril.laser.ethereum.svm.LaserEVM"><span class="pre">LaserEVM</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/fdg/fdg_pruner.html#FDG_pruner.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fdg_pruner.FDG_pruner.initialize" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the FDG_pruner
+:param symbolic_vm</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="fdg.fdg_pruner.FDG_prunerBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.fdg_pruner.</span></span><span class="sig-name descname"><span class="pre">FDG_prunerBuilder</span></span><a class="reference internal" href="_modules/fdg/fdg_pruner.html#FDG_prunerBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fdg_pruner.FDG_prunerBuilder" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.builder.PluginBuilder" title="mythril.laser.plugin.builder.PluginBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">PluginBuilder</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fdg.fdg_pruner.FDG_prunerBuilder.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'fdg-pruner'</span></em><a class="headerlink" href="#fdg.fdg_pruner.FDG_prunerBuilder.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-fdg.fwrg_manager">
+<span id="fdg-fwrg-manager-module"></span><h2>fdg.fwrg_manager module<a class="headerlink" href="#module-fdg.fwrg_manager" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.AcyclicPath">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.fwrg_manager.</span></span><span class="sig-name descname"><span class="pre">AcyclicPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dk_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwrg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#fdg.fwrg_manager.FWRG" title="fdg.fwrg_manager.FWRG"><span class="pre">FWRG</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#AcyclicPath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.AcyclicPath" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.AcyclicPath.organize_paths">
+<span class="sig-name descname"><span class="pre">organize_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#AcyclicPath.organize_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.AcyclicPath.organize_paths" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.FWRG">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.fwrg_manager.</span></span><span class="sig-name descname"><span class="pre">FWRG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftn_reads_in_condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftn_writes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#FWRG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.FWRG" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.FWRG.get_reads_in_conditions">
+<span class="sig-name descname"><span class="pre">get_reads_in_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftn_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#FWRG.get_reads_in_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.FWRG.get_reads_in_conditions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.FWRG_manager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.fwrg_manager.</span></span><span class="sig-name descname"><span class="pre">FWRG_manager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dk_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocess</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.preprocess.Preprocessing" title="fdg.preprocessing.preprocess.Preprocessing"><span class="pre">Preprocessing</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#FWRG_manager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.FWRG_manager" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.FWRG_manager.generate_graph_all_reads">
+<span class="sig-name descname"><span class="pre">generate_graph_all_reads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">writes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_reads</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#FWRG_manager.generate_graph_all_reads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.FWRG_manager.generate_graph_all_reads" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.FWRG_manager.get_children_all_reads">
+<span class="sig-name descname"><span class="pre">get_children_all_reads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#FWRG_manager.get_children_all_reads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.FWRG_manager.get_children_all_reads" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.FWRG_manager.get_children_bf_update">
+<span class="sig-name descname"><span class="pre">get_children_bf_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#FWRG_manager.get_children_bf_update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.FWRG_manager.get_children_bf_update" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.FWRG_manager.get_children_fwrg">
+<span class="sig-name descname"><span class="pre">get_children_fwrg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#FWRG_manager.get_children_fwrg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.FWRG_manager.get_children_fwrg" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.FWRG_manager.get_children_fwrg_T_A">
+<span class="sig-name descname"><span class="pre">get_children_fwrg_T_A</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#FWRG_manager.get_children_fwrg_T_A"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.FWRG_manager.get_children_fwrg_T_A" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.FWRG_manager.get_parents_frwg">
+<span class="sig-name descname"><span class="pre">get_parents_frwg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#FWRG_manager.get_parents_frwg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.FWRG_manager.get_parents_frwg" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.UpdateFWRG">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.fwrg_manager.</span></span><span class="sig-name descname"><span class="pre">UpdateFWRG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fdg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#fdg.fwrg_manager.FWRG" title="fdg.fwrg_manager.FWRG"><span class="pre">FWRG</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#fdg.fwrg_manager.AcyclicPath" title="fdg.fwrg_manager.AcyclicPath"><span class="pre">AcyclicPath</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#UpdateFWRG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.UpdateFWRG" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.UpdateFWRG.add_edge_to_graph">
+<span class="sig-name descname"><span class="pre">add_edge_to_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#UpdateFWRG.add_edge_to_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.UpdateFWRG.add_edge_to_graph" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.UpdateFWRG.add_edges_1">
+<span class="sig-name descname"><span class="pre">add_edges_1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#UpdateFWRG.add_edges_1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.UpdateFWRG.add_edges_1" title="Link to this definition">¶</a></dt>
+<dd><p>for each deep function, add edges to connect some of its paths</p>
+<p>for each deep function, try to find a combined path
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.UpdateFWRG.construct_fwrg_targets">
+<span class="sig-name descname"><span class="pre">construct_fwrg_targets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#UpdateFWRG.construct_fwrg_targets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.UpdateFWRG.construct_fwrg_targets" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.UpdateFWRG.identity_dk_function_not_reachable">
+<span class="sig-name descname"><span class="pre">identity_dk_function_not_reachable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#UpdateFWRG.identity_dk_function_not_reachable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.UpdateFWRG.identity_dk_function_not_reachable" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.UpdateFWRG.print_graphs">
+<span class="sig-name descname"><span class="pre">print_graphs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#UpdateFWRG.print_graphs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.UpdateFWRG.print_graphs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.test_1">
+<span class="sig-prename descclassname"><span class="pre">fdg.fwrg_manager.</span></span><span class="sig-name descname"><span class="pre">test_1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#test_1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.test_1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fdg.fwrg_manager.test_2">
+<span class="sig-prename descclassname"><span class="pre">fdg.fwrg_manager.</span></span><span class="sig-name descname"><span class="pre">test_2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/fwrg_manager.html#test_2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.fwrg_manager.test_2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="fdg-function-coverage-module">
+<h2>fdg.function_coverage module<a class="headerlink" href="#fdg-function-coverage-module" title="Link to this heading">¶</a></h2>
+<dl class="py class" id="module-fdg.function_coverage">
+<dt class="sig sig-object py" id="fdg.function_coverage.FunctionCoverage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.function_coverage.</span></span><span class="sig-name descname"><span class="pre">FunctionCoverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coveragePlugin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.plugin.plugins.coverage.html#mythril.laser.plugin.plugins.coverage.coverage_plugin.InstructionCoveragePlugin" title="mythril.laser.plugin.plugins.coverage.coverage_plugin.InstructionCoveragePlugin"><span class="pre">InstructionCoveragePlugin</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/function_coverage.html#FunctionCoverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.function_coverage.FunctionCoverage" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.function_coverage.FunctionCoverage.compute_contract_coverage">
+<span class="sig-name descname"><span class="pre">compute_contract_coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">runtime_bytecode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/function_coverage.html#FunctionCoverage.compute_contract_coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.function_coverage.FunctionCoverage.compute_contract_coverage" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.function_coverage.FunctionCoverage.compute_coverage">
+<span class="sig-name descname"><span class="pre">compute_coverage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/function_coverage.html#FunctionCoverage.compute_coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.function_coverage.FunctionCoverage.compute_coverage" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.function_coverage.FunctionCoverage.compute_deep_functions">
+<span class="sig-name descname"><span class="pre">compute_deep_functions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/function_coverage.html#FunctionCoverage.compute_deep_functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.function_coverage.FunctionCoverage.compute_deep_functions" title="Link to this definition">¶</a></dt>
+<dd><p>get a deep functions based the code coverage of each functions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.function_coverage.FunctionCoverage.feed_function_intruction_indices">
+<span class="sig-name descname"><span class="pre">feed_function_intruction_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function_instruction_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/function_coverage.html#FunctionCoverage.feed_function_intruction_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.function_coverage.FunctionCoverage.feed_function_intruction_indices" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.function_coverage.FunctionCoverage.get_contract_coverage">
+<span class="sig-name descname"><span class="pre">get_contract_coverage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/function_coverage.html#FunctionCoverage.get_contract_coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.function_coverage.FunctionCoverage.get_contract_coverage" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.function_coverage.FunctionCoverage.get_coverage_for_a_function">
+<span class="sig-name descname"><span class="pre">get_coverage_for_a_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftn_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/function_coverage.html#FunctionCoverage.get_coverage_for_a_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.function_coverage.FunctionCoverage.get_coverage_for_a_function" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.function_coverage.FunctionCoverage.get_deep_functions">
+<span class="sig-name descname"><span class="pre">get_deep_functions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/function_coverage.html#FunctionCoverage.get_deep_functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.function_coverage.FunctionCoverage.get_deep_functions" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a list of numbers indicating deep functions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.function_coverage.FunctionCoverage.get_deep_functions_1st_time">
+<span class="sig-name descname"><span class="pre">get_deep_functions_1st_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/function_coverage.html#FunctionCoverage.get_deep_functions_1st_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.function_coverage.FunctionCoverage.get_deep_functions_1st_time" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.function_coverage.FunctionCoverage.print_coverage">
+<span class="sig-name descname"><span class="pre">print_coverage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/function_coverage.html#FunctionCoverage.print_coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.function_coverage.FunctionCoverage.print_coverage" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.function_coverage.FunctionCoverage.print_not_covered_instructions">
+<span class="sig-name descname"><span class="pre">print_not_covered_instructions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftn_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instruction_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/function_coverage.html#FunctionCoverage.print_not_covered_instructions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.function_coverage.FunctionCoverage.print_not_covered_instructions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.function_coverage.FunctionCoverage.set_runtime_bytecode">
+<span class="sig-name descname"><span class="pre">set_runtime_bytecode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">runtime_bytecode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/function_coverage.html#FunctionCoverage.set_runtime_bytecode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.function_coverage.FunctionCoverage.set_runtime_bytecode" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="fdg-instruction-modification-module">
+<h2>fdg.instruction_modification module<a class="headerlink" href="#fdg-instruction-modification-module" title="Link to this heading">¶</a></h2>
+<dl class="py class" id="module-fdg.instruction_modification">
+<dt class="sig sig-object py" id="fdg.instruction_modification.InstructionModification">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.instruction_modification.</span></span><span class="sig-name descname"><span class="pre">InstructionModification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftn_identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/instruction_modification.html#InstructionModification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.instruction_modification.InstructionModification" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>change the function dispatcher at the beginning part of the instruction list</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.instruction_modification.InstructionModification.feed_instructions">
+<span class="sig-name descname"><span class="pre">feed_instructions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.world_state.WorldState" title="mythril.laser.ethereum.state.world_state.WorldState"><span class="pre">WorldState</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract_address</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/instruction_modification.html#InstructionModification.feed_instructions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.instruction_modification.InstructionModification.feed_instructions" title="Link to this definition">¶</a></dt>
+<dd><p>new way to group instructions.
+:argument</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.instruction_modification.InstructionModification.modify_no_modification">
+<span class="sig-name descname"><span class="pre">modify_no_modification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.world_state.WorldState" title="mythril.laser.ethereum.state.world_state.WorldState"><span class="pre">WorldState</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/instruction_modification.html#InstructionModification.modify_no_modification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.instruction_modification.InstructionModification.modify_no_modification" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.instruction_modification.InstructionModification.modify_on_a_state__str">
+<span class="sig-name descname"><span class="pre">modify_on_a_state__str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.world_state.WorldState" title="mythril.laser.ethereum.state.world_state.WorldState"><span class="pre">WorldState</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/instruction_modification.html#InstructionModification.modify_on_a_state__str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.instruction_modification.InstructionModification.modify_on_a_state__str" title="Link to this definition">¶</a></dt>
+<dd><p>update the instructions on multiple states</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.instruction_modification.InstructionModification.modity_on_multiple_states">
+<span class="sig-name descname"><span class="pre">modity_on_multiple_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">states:</span> <span class="pre">[&lt;class</span> <span class="pre">'mythril.laser.ethereum.state.world_state.WorldState'&gt;],</span> <span class="pre">functions:</span> <span class="pre">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/instruction_modification.html#InstructionModification.modity_on_multiple_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.instruction_modification.InstructionModification.modity_on_multiple_states" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-fdg.global_config">
+<span id="fdg-global-config-module"></span><h2>fdg.global_config module<a class="headerlink" href="#module-fdg.global_config" title="Link to this heading">¶</a></h2>
+<p>Important parameters</p>
+</section>
+<section id="module-fdg">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-fdg" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="mythril.support.html" title="previous chapter">mythril.support package</a></li>
+      <li>Next: <a href="fdg.control.html" title="next chapter">fdg.control package</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/fdg.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

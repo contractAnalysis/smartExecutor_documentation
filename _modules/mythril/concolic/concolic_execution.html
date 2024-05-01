@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mythril.concolic.concolic_execution &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for mythril.concolic.concolic_execution</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">binascii</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">from</span> <span class="nn">mythril.concolic.concrete_data</span> <span class="kn">import</span> <span class="n">ConcreteData</span>
+<span class="kn">from</span> <span class="nn">mythril.concolic.find_trace</span> <span class="kn">import</span> <span class="n">concrete_execution</span>
+<span class="kn">from</span> <span class="nn">mythril.disassembler.disassembly</span> <span class="kn">import</span> <span class="n">Disassembly</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.strategy.concolic</span> <span class="kn">import</span> <span class="n">ConcolicStrategy</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.svm</span> <span class="kn">import</span> <span class="n">LaserEVM</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.state.world_state</span> <span class="kn">import</span> <span class="n">WorldState</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.state.account</span> <span class="kn">import</span> <span class="n">Account</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.transaction.symbolic</span> <span class="kn">import</span> <span class="n">execute_transaction</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.transaction.transaction_models</span> <span class="kn">import</span> <span class="n">tx_id_manager</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.smt</span> <span class="kn">import</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">,</span> <span class="n">symbol_factory</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.time_handler</span> <span class="kn">import</span> <span class="n">time_handler</span>
+<span class="kn">from</span> <span class="nn">mythril.support.support_args</span> <span class="kn">import</span> <span class="n">args</span>
+
+
+<div class="viewcode-block" id="flip_branches">
+<a class="viewcode-back" href="../../../mythril.concolic.html#mythril.concolic.concolic_execution.flip_branches">[docs]</a>
+<span class="k">def</span> <span class="nf">flip_branches</span><span class="p">(</span>
+    <span class="n">init_state</span><span class="p">:</span> <span class="n">WorldState</span><span class="p">,</span>
+    <span class="n">concrete_data</span><span class="p">:</span> <span class="n">ConcreteData</span><span class="p">,</span>
+    <span class="n">jump_addresses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">trace</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flips branches and prints the input required for branch flip</span>
+
+<span class="sd">    :param concrete_data: Concrete data</span>
+<span class="sd">    :param jump_addresses: Jump addresses to flip</span>
+<span class="sd">    :param trace: trace to follow</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tx_id_manager</span><span class="o">.</span><span class="n">restart_counter</span><span class="p">()</span>
+    <span class="n">output_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">laser_evm</span> <span class="o">=</span> <span class="n">LaserEVM</span><span class="p">(</span>
+        <span class="n">execution_timeout</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">use_reachability_check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">transaction_count</span><span class="o">=</span><span class="mi">10</span>
+    <span class="p">)</span>
+    <span class="n">laser_evm</span><span class="o">.</span><span class="n">open_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">init_state</span><span class="p">)]</span>
+    <span class="n">laser_evm</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">ConcolicStrategy</span><span class="p">(</span>
+        <span class="n">work_list</span><span class="o">=</span><span class="n">laser_evm</span><span class="o">.</span><span class="n">work_list</span><span class="p">,</span>
+        <span class="n">max_depth</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span>
+        <span class="n">flip_branch_addresses</span><span class="o">=</span><span class="n">jump_addresses</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">time_handler</span><span class="o">.</span><span class="n">start_execution</span><span class="p">(</span><span class="n">laser_evm</span><span class="o">.</span><span class="n">execution_timeout</span><span class="p">)</span>
+    <span class="n">laser_evm</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">transaction</span> <span class="ow">in</span> <span class="n">concrete_data</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]:</span>
+        <span class="n">execute_transaction</span><span class="p">(</span>
+            <span class="n">laser_evm</span><span class="p">,</span>
+            <span class="n">callee_address</span><span class="o">=</span><span class="n">transaction</span><span class="p">[</span><span class="s2">&quot;address&quot;</span><span class="p">],</span>
+            <span class="n">caller_address</span><span class="o">=</span><span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">transaction</span><span class="p">[</span><span class="s2">&quot;origin&quot;</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="mi">256</span>
+            <span class="p">),</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">transaction</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">:],</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">laser_evm</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">addr</span> <span class="ow">in</span> <span class="n">jump_addresses</span><span class="p">:</span>
+            <span class="n">output_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">laser_evm</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="n">addr</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">output_list</span></div>
+
+
+
+<div class="viewcode-block" id="concolic_execution">
+<a class="viewcode-back" href="../../../mythril.concolic.html#mythril.concolic.concolic_execution.concolic_execution">[docs]</a>
+<span class="k">def</span> <span class="nf">concolic_execution</span><span class="p">(</span>
+    <span class="n">concrete_data</span><span class="p">:</span> <span class="n">ConcreteData</span><span class="p">,</span> <span class="n">jump_addresses</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">solver_timeout</span><span class="o">=</span><span class="mi">100000</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Executes codes and prints input required to cover the branch flips</span>
+<span class="sd">    :param input_file: Input file</span>
+<span class="sd">    :param jump_addresses: Jump addresses to flip</span>
+<span class="sd">    :param solver_timeout: Solver timeout</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">init_state</span><span class="p">,</span> <span class="n">trace</span> <span class="o">=</span> <span class="n">concrete_execution</span><span class="p">(</span><span class="n">concrete_data</span><span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">solver_timeout</span> <span class="o">=</span> <span class="n">solver_timeout</span>
+    <span class="n">output_list</span> <span class="o">=</span> <span class="n">flip_branches</span><span class="p">(</span>
+        <span class="n">init_state</span><span class="o">=</span><span class="n">init_state</span><span class="p">,</span>
+        <span class="n">concrete_data</span><span class="o">=</span><span class="n">concrete_data</span><span class="p">,</span>
+        <span class="n">jump_addresses</span><span class="o">=</span><span class="n">jump_addresses</span><span class="p">,</span>
+        <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_list</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

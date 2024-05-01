@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mythril.support.signatures &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for mythril.support.signatures</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The Mythril function signature database.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">DefaultDict</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">from</span> <span class="nn">mythril.ethereum.util</span> <span class="kn">import</span> <span class="n">get_solc_json</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">lock</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="synchronized">
+<a class="viewcode-back" href="../../../mythril.support.html#mythril.support.signatures.synchronized">[docs]</a>
+<span class="k">def</span> <span class="nf">synchronized</span><span class="p">(</span><span class="n">sync_lock</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator synchronizing multi-process access to a resource.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The decorator&#39;s core function.</span>
+
+<span class="sd">        :param f:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">inner_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">            :param args:</span>
+<span class="sd">            :param kw:</span>
+<span class="sd">            :return:</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">with</span> <span class="n">sync_lock</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">inner_wrapper</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="Singleton">
+<a class="viewcode-back" href="../../../mythril.support.html#mythril.support.signatures.Singleton">[docs]</a>
+<span class="k">class</span> <span class="nc">Singleton</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A metaclass type implementing the singleton pattern.&quot;&quot;&quot;</span>
+
+    <span class="n">_instances</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># type: Dict[Singleton, Singleton]</span>
+
+    <span class="nd">@synchronized</span><span class="p">(</span><span class="n">lock</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delegate the call to an existing resource or a a new one.</span>
+
+<span class="sd">        This is not thread- or process-safe by default. It must be protected with</span>
+<span class="sd">        a lock.</span>
+
+<span class="sd">        :param args:</span>
+<span class="sd">        :param kwargs:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">cls</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="bp">cls</span><span class="p">]</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Singleton</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="bp">cls</span><span class="p">]</span></div>
+
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># load if available but do not fail</span>
+    <span class="kn">import</span> <span class="nn">ethereum_input_decoder</span>
+    <span class="kn">from</span> <span class="nn">ethereum_input_decoder.decoder</span> <span class="kn">import</span> <span class="n">FourByteDirectoryOnlineLookupError</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="c1"># fake it :)</span>
+    <span class="n">ethereum_input_decoder</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">FourByteDirectoryOnlineLookupError</span> <span class="o">=</span> <span class="ne">Exception</span>
+
+
+<div class="viewcode-block" id="SQLiteDB">
+<a class="viewcode-back" href="../../../mythril.support.html#mythril.support.signatures.SQLiteDB">[docs]</a>
+<span class="k">class</span> <span class="nc">SQLiteDB</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple context manager for sqlite3 databases.</span>
+
+<span class="sd">    Commits everything at exit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param path:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">OperationalError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">OperationalError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unable to Connect to path </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_class</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param exc_class:</span>
+<span class="sd">        :param exc:</span>
+<span class="sd">        :param traceback:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;SQLiteDB path=</span><span class="si">{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SignatureDB">
+<a class="viewcode-back" href="../../../mythril.support.html#mythril.support.signatures.SignatureDB">[docs]</a>
+<span class="k">class</span> <span class="nc">SignatureDB</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">Singleton</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable_online_lookup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param enable_online_lookup:</span>
+<span class="sd">        :param path:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enable_online_lookup</span> <span class="o">=</span> <span class="n">enable_online_lookup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">online_lookup_miss</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># type: Set[str]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">online_lookup_timeout</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># if we&#39;re analysing a Solidity file, store its hashes</span>
+        <span class="c1"># here to prevent unnecessary lookups</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solidity_sigs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>  <span class="c1"># type: DefaultDict[str, List[str]]</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MYTHRIL_DIR&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">),</span> <span class="s2">&quot;.mythril&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;signatures.db&quot;</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using signature database at </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="c1"># NOTE: Creates a new DB file if it doesn&#39;t exist already</span>
+        <span class="k">with</span> <span class="n">SQLiteDB</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="s2">&quot;CREATE TABLE IF NOT EXISTS signatures&quot;</span>
+                    <span class="s2">&quot;(byte_sig VARCHAR(10), text_sig VARCHAR(255),&quot;</span>
+                    <span class="s2">&quot;PRIMARY KEY (byte_sig, text_sig))&quot;</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Provide dict interface db[sighash]</span>
+
+<span class="sd">        :param item: 4-byte signature string</span>
+<span class="sd">        :return: list of matching text signature strings</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">byte_sig</span><span class="o">=</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_normalize_byte_sig</span><span class="p">(</span><span class="n">byte_sig</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a leading 0x to the byte signature if it&#39;s not already there.</span>
+
+<span class="sd">        :param byte_sig: 4-byte signature string</span>
+<span class="sd">        :return: normalized byte signature string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">byte_sig</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;0x&quot;</span><span class="p">):</span>
+            <span class="n">byte_sig</span> <span class="o">=</span> <span class="s2">&quot;0x&quot;</span> <span class="o">+</span> <span class="n">byte_sig</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">byte_sig</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Invalid byte signature </span><span class="si">%s</span><span class="s2">, must have 10 characters&quot;</span><span class="p">,</span> <span class="n">byte_sig</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">byte_sig</span>
+
+<div class="viewcode-block" id="SignatureDB.add">
+<a class="viewcode-back" href="../../../mythril.support.html#mythril.support.signatures.SignatureDB.add">[docs]</a>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_sig</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text_sig</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a new byte - text signature pair to the database.</span>
+<span class="sd">        :param byte_sig: 4-byte signature string</span>
+<span class="sd">        :param text_sig: resolved text signature</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">byte_sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_byte_sig</span><span class="p">(</span><span class="n">byte_sig</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">SQLiteDB</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="c1"># ignore new row if it&#39;s already in the DB (and would cause a unique constraint error)</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="s2">&quot;INSERT OR IGNORE INTO signatures (byte_sig, text_sig) VALUES (?,?)&quot;</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">byte_sig</span><span class="p">,</span> <span class="n">text_sig</span><span class="p">),</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SignatureDB.get">
+<a class="viewcode-back" href="../../../mythril.support.html#mythril.support.signatures.SignatureDB.get">[docs]</a>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_sig</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">online_timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a function text signature for a byte signature 1) try local</span>
+<span class="sd">        cache 2) try online lookup (if enabled; if not flagged as unavailable)</span>
+
+<span class="sd">        :param byte_sig: function signature hash as hexstr</span>
+<span class="sd">        :param online_timeout: online lookup timeout</span>
+<span class="sd">        :return: list of matching function text signatures</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">byte_sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_byte_sig</span><span class="p">(</span><span class="n">byte_sig</span><span class="p">)</span>
+
+        <span class="c1"># check if we have any Solidity signatures to look up</span>
+        <span class="n">text_sigs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solidity_sigs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">byte_sig</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">text_sigs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">text_sigs</span>
+
+        <span class="c1"># try lookup in the local DB</span>
+        <span class="k">with</span> <span class="n">SQLiteDB</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT text_sig FROM signatures WHERE byte_sig=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">byte_sig</span><span class="p">,))</span>
+            <span class="n">text_sigs</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">text_sigs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">text_sigs</span><span class="p">]</span>
+
+        <span class="c1"># abort if we&#39;re not allowed to check 4byte or we already missed</span>
+        <span class="c1"># the signature, or we&#39;re on a timeout</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_online_lookup</span>
+            <span class="ow">or</span> <span class="n">byte_sig</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_lookup_miss</span>
+            <span class="ow">or</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_lookup_timeout</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">text_sigs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_online</span><span class="p">(</span><span class="n">byte_sig</span><span class="o">=</span><span class="n">byte_sig</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">online_timeout</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">text_sigs</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">online_lookup_miss</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">byte_sig</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">[]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">resolved</span> <span class="ow">in</span> <span class="n">text_sigs</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">byte_sig</span><span class="p">,</span> <span class="n">resolved</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">text_sigs</span>
+        <span class="k">except</span> <span class="n">FourByteDirectoryOnlineLookupError</span> <span class="k">as</span> <span class="n">fbdole</span><span class="p">:</span>
+            <span class="c1"># wait at least 2 mins to try again</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">online_lookup_timeout</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">60</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Online lookup failed, not retrying for 2min: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fbdole</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="SignatureDB.import_solidity_file">
+<a class="viewcode-back" href="../../../mythril.support.html#mythril.support.signatures.SignatureDB.import_solidity_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">import_solidity_file</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">solc_binary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;solc&quot;</span><span class="p">,</span> <span class="n">solc_settings_json</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import Function Signatures from solidity source files.</span>
+
+<span class="sd">        :param solc_binary:</span>
+<span class="sd">        :param solc_settings_json:</span>
+<span class="sd">        :param file_path: solidity source code file path</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">solc_json</span> <span class="o">=</span> <span class="n">get_solc_json</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">solc_binary</span><span class="p">,</span> <span class="n">solc_settings_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_sigs</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">solc_json</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SignatureDB.add_sigs">
+<a class="viewcode-back" href="../../../mythril.support.html#mythril.support.signatures.SignatureDB.add_sigs">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_sigs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">solc_json</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">contract</span> <span class="ow">in</span> <span class="n">solc_json</span><span class="p">[</span><span class="s2">&quot;contracts&quot;</span><span class="p">][</span><span class="n">file_path</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;methodIdentifiers&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">contract</span><span class="p">[</span><span class="s2">&quot;evm&quot;</span><span class="p">]:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">hash_</span> <span class="ow">in</span> <span class="n">contract</span><span class="p">[</span><span class="s2">&quot;evm&quot;</span><span class="p">][</span><span class="s2">&quot;methodIdentifiers&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">sig</span> <span class="o">=</span> <span class="s2">&quot;0x</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hash_</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">sig</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">solidity_sigs</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">solidity_sigs</span><span class="p">[</span><span class="n">sig</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">solidity_sigs</span><span class="p">[</span><span class="n">sig</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SignatureDB.lookup_online">
+<a class="viewcode-back" href="../../../mythril.support.html#mythril.support.signatures.SignatureDB.lookup_online">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">lookup_online</span><span class="p">(</span><span class="n">byte_sig</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">proxies</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Lookup function signatures from 4byte.directory.</span>
+
+<span class="sd">        :param byte_sig: function signature hash as hexstr</span>
+<span class="sd">        :param timeout: optional timeout for online lookup</span>
+<span class="sd">        :param proxies: optional proxy servers for online lookup</span>
+<span class="sd">        :return: a list of matching function signatures for this hash</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ethereum_input_decoder</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">ethereum_input_decoder</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">FourByteDirectory</span><span class="o">.</span><span class="n">lookup_signatures</span><span class="p">(</span>
+                <span class="n">byte_sig</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">proxies</span><span class="o">=</span><span class="n">proxies</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;SignatureDB path=&#39;</span><span class="si">{}</span><span class="s2">&#39; enable_online_lookup=</span><span class="si">{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_online_lookup</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mythril.laser.ethereum.strategy.basic &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../../../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../../../../about.html" />
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for mythril.laser.ethereum.strategy.basic</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module implements basic symbolic execution search strategies.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">randrange</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.state.global_state</span> <span class="kn">import</span> <span class="n">GlobalState</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BasicSearchStrategy</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choices</span>
+
+
+<div class="viewcode-block" id="DepthFirstSearchStrategy">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.basic.DepthFirstSearchStrategy">[docs]</a>
+<span class="k">class</span> <span class="nc">DepthFirstSearchStrategy</span><span class="p">(</span><span class="n">BasicSearchStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implements a depth first search strategy I.E.</span>
+
+<span class="sd">    Follow one path to a leaf, and then continue to the next one</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DepthFirstSearchStrategy.get_strategic_global_state">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.basic.DepthFirstSearchStrategy.get_strategic_global_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_strategic_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GlobalState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DepthFirstSearchStrategy.view_strategic_global_state">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.basic.DepthFirstSearchStrategy.view_strategic_global_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">view_strategic_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GlobalState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="BreadthFirstSearchStrategy">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.basic.BreadthFirstSearchStrategy">[docs]</a>
+<span class="k">class</span> <span class="nc">BreadthFirstSearchStrategy</span><span class="p">(</span><span class="n">BasicSearchStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implements a breadth first search strategy I.E.</span>
+
+<span class="sd">    Execute all states of a &quot;level&quot; before continuing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BreadthFirstSearchStrategy.get_strategic_global_state">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.basic.BreadthFirstSearchStrategy.get_strategic_global_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_strategic_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GlobalState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BreadthFirstSearchStrategy.view_strategic_global_state">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.basic.BreadthFirstSearchStrategy.view_strategic_global_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">view_strategic_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GlobalState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ReturnRandomNaivelyStrategy">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.basic.ReturnRandomNaivelyStrategy">[docs]</a>
+<span class="k">class</span> <span class="nc">ReturnRandomNaivelyStrategy</span><span class="p">(</span><span class="n">BasicSearchStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;chooses a random state from the worklist with equal likelihood.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">work_list</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">work_list</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_random_value</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+<div class="viewcode-block" id="ReturnRandomNaivelyStrategy.get_strategic_global_state">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.basic.ReturnRandomNaivelyStrategy.get_strategic_global_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_strategic_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GlobalState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_random_value</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">randrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_random_value</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">previous_random_value</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">return</span> <span class="n">new_state</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span></div>
+
+
+<div class="viewcode-block" id="ReturnRandomNaivelyStrategy.view_strategic_global_state">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.basic.ReturnRandomNaivelyStrategy.view_strategic_global_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">view_strategic_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GlobalState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">previous_random_value</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="p">))</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_random_value</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ReturnWeightedRandomStrategy">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.basic.ReturnWeightedRandomStrategy">[docs]</a>
+<span class="k">class</span> <span class="nc">ReturnWeightedRandomStrategy</span><span class="p">(</span><span class="n">BasicSearchStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;chooses a random state from the worklist with likelihood based on</span>
+<span class="sd">    inverse proportion to depth.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">work_list</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">work_list</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_random_value</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+<div class="viewcode-block" id="ReturnWeightedRandomStrategy.get_strategic_global_state">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.basic.ReturnWeightedRandomStrategy.get_strategic_global_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_strategic_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GlobalState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">probability_distribution</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">global_state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_random_value</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">ns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_random_value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">previous_random_value</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">return</span> <span class="n">ns</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+                <span class="n">choices</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="p">)),</span> <span class="n">probability_distribution</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ReturnWeightedRandomStrategy.view_strategic_global_state">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.basic.ReturnWeightedRandomStrategy.view_strategic_global_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">view_strategic_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GlobalState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">probability_distribution</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">global_state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">global_state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_random_value</span> <span class="o">=</span> <span class="n">choices</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="p">)),</span> <span class="n">probability_distribution</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_random_value</span><span class="p">]</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../../index.html">Module code</a><ul>
+  <li><a href="../strategy.html">mythril.laser.ethereum.strategy</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

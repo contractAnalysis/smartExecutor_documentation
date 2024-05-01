@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>fdg.function_coverage &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for fdg.function_coverage</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+
+<span class="kn">import</span> <span class="nn">fdg.global_config</span>
+<span class="kn">from</span> <span class="nn">fdg.output_data</span> <span class="kn">import</span> <span class="n">print_coverage</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.plugin.plugins.coverage</span> <span class="kn">import</span> <span class="n">InstructionCoveragePlugin</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="FunctionCoverage">
+<a class="viewcode-back" href="../../fdg.html#fdg.function_coverage.FunctionCoverage">[docs]</a>
+<span class="k">class</span> <span class="nc">FunctionCoverage</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">coveragePlugin</span><span class="p">:</span><span class="n">InstructionCoveragePlugin</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coverage_plugin</span><span class="o">=</span><span class="n">coveragePlugin</span> <span class="c1"># the plugin that record the instructions visited.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">function_instruction_indices</span><span class="o">=</span> <span class="p">{}</span> <span class="c1"># key: function pure name(only pure name is available from SolidityContract), value: the indices of instructions belonging to the function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contract_bytecode</span><span class="o">=</span><span class="s1">&#39;&#39;</span> <span class="c1"># the bytecode of the contract that is used to retrieve the instruction coverage status from the coverage plugin</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">function_coverage</span><span class="o">=</span><span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coverage</span><span class="o">=</span><span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deep_functions</span><span class="o">=</span><span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deep_functions_1st_time</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># record how many deep functions are there</span>
+
+<div class="viewcode-block" id="FunctionCoverage.feed_function_intruction_indices">
+<a class="viewcode-back" href="../../fdg.html#fdg.function_coverage.FunctionCoverage.feed_function_intruction_indices">[docs]</a>
+    <span class="k">def</span> <span class="nf">feed_function_intruction_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function_instruction_indices</span><span class="p">:</span><span class="nb">dict</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">function_instruction_indices</span><span class="o">=</span><span class="n">function_instruction_indices</span>
+        <span class="c1"># initialize coverage for each function except constructor</span>
+        <span class="k">for</span> <span class="n">ftn</span><span class="p">,</span> <span class="n">ftn_instr_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_instruction_indices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># if ftn==&#39;constructor&#39; or ftn==&#39;fallback&#39;:continue</span>
+            <span class="k">if</span> <span class="n">ftn</span> <span class="o">==</span> <span class="s1">&#39;constructor&#39;</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ftn_instr_list</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span><span class="k">continue</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">function_coverage</span><span class="p">[</span><span class="n">ftn</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">ftn_instr_list</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FunctionCoverage.set_runtime_bytecode">
+<a class="viewcode-back" href="../../fdg.html#fdg.function_coverage.FunctionCoverage.set_runtime_bytecode">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_runtime_bytecode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">runtime_bytecode</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contract_bytecode</span><span class="o">=</span><span class="n">runtime_bytecode</span></div>
+
+
+<div class="viewcode-block" id="FunctionCoverage.print_coverage">
+<a class="viewcode-back" href="../../fdg.html#fdg.function_coverage.FunctionCoverage.print_coverage">[docs]</a>
+    <span class="k">def</span> <span class="nf">print_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">print_coverage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coverage</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">function_coverage</span><span class="p">,</span><span class="s1">&#39;coverage&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FunctionCoverage.get_deep_functions_1st_time">
+<a class="viewcode-back" href="../../fdg.html#fdg.function_coverage.FunctionCoverage.get_deep_functions_1st_time">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_deep_functions_1st_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">ftn</span> <span class="k">for</span> <span class="n">ftn</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">deep_functions_1st_time</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="FunctionCoverage.compute_contract_coverage">
+<a class="viewcode-back" href="../../fdg.html#fdg.function_coverage.FunctionCoverage.compute_contract_coverage">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_contract_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">runtime_bytecode</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">runtime_bytecode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverage_plugin</span><span class="o">.</span><span class="n">coverage</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># get the instruction list belonging to the contract</span>
+            <span class="n">code_cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverage_plugin</span><span class="o">.</span><span class="n">coverage</span><span class="p">[</span><span class="n">runtime_bytecode</span> <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coverage</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">code_cov</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">code_cov</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span></div>
+
+
+
+<div class="viewcode-block" id="FunctionCoverage.compute_coverage">
+<a class="viewcode-back" href="../../fdg.html#fdg.function_coverage.FunctionCoverage.compute_coverage">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">contract_bytecode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverage_plugin</span><span class="o">.</span><span class="n">coverage</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">code_cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverage_plugin</span><span class="o">.</span><span class="n">coverage</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">contract_bytecode</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coverage</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">code_cov</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">code_cov</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span> <span class="c1"># get contract coverage</span>
+
+            <span class="c1"># compute coverage for each function</span>
+            <span class="n">instructions_cover_record</span> <span class="o">=</span> <span class="n">code_cov</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">instructions_cover_record</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">instr_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">instructions_cover_record</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">ftn</span><span class="p">,</span><span class="n">cov</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_coverage</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">cov</span><span class="o">==</span><span class="mi">100</span><span class="p">:</span><span class="k">continue</span>
+                    <span class="n">ftn_instruction_indices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">function_instruction_indices</span><span class="p">[</span><span class="n">ftn</span><span class="p">]</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">status</span> <span class="o">=</span> <span class="n">instr_array</span><span class="p">[</span><span class="n">ftn_instruction_indices</span><span class="p">]</span>
+                        <span class="n">cov_instr</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+                        <span class="n">cov</span> <span class="o">=</span> <span class="n">cov_instr</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">status</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">function_coverage</span><span class="p">[</span><span class="n">ftn</span><span class="p">]</span><span class="o">=</span><span class="n">cov</span>
+                    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The instructions of </span><span class="si">{</span><span class="n">ftn</span><span class="si">}</span><span class="s1"> are not all in the target contract.&#39;</span><span class="p">)</span>
+                        <span class="k">continue</span></div>
+
+
+<div class="viewcode-block" id="FunctionCoverage.get_contract_coverage">
+<a class="viewcode-back" href="../../fdg.html#fdg.function_coverage.FunctionCoverage.get_contract_coverage">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_contract_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverage</span></div>
+
+
+
+<div class="viewcode-block" id="FunctionCoverage.get_coverage_for_a_function">
+<a class="viewcode-back" href="../../fdg.html#fdg.function_coverage.FunctionCoverage.get_coverage_for_a_function">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_coverage_for_a_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ftn_name</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ftn_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_coverage</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_coverage</span><span class="p">[</span><span class="n">ftn_name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="FunctionCoverage.compute_deep_functions">
+<a class="viewcode-back" href="../../fdg.html#fdg.function_coverage.FunctionCoverage.compute_deep_functions">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_deep_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get a deep functions based the code coverage of each functions</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">deep_ftn_coverage</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ftn_name</span><span class="p">,</span> <span class="n">coverage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_coverage</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">coverage</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ftn_name</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">coverage</span><span class="si">}</span><span class="s1"> is not considered&#39;</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">coverage</span><span class="o">&lt;</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">function_coverage_threshold</span><span class="p">:</span>
+                <span class="n">deep_ftn_coverage</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ftn_name</span><span class="p">,</span><span class="n">coverage</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">deep_functions</span><span class="o">=</span><span class="n">deep_ftn_coverage</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deep_functions_1st_time</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deep_functions_1st_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">deep_functions</span>
+        <span class="c1"># order functions based on coverage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deep_functions</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">deep_functions</span></div>
+
+
+<div class="viewcode-block" id="FunctionCoverage.get_deep_functions">
+<a class="viewcode-back" href="../../fdg.html#fdg.function_coverage.FunctionCoverage.get_deep_functions">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_deep_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: a list of numbers indicating deep functions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">deep_functions</span></div>
+
+
+
+
+<div class="viewcode-block" id="FunctionCoverage.print_not_covered_instructions">
+<a class="viewcode-back" href="../../fdg.html#fdg.function_coverage.FunctionCoverage.print_not_covered_instructions">[docs]</a>
+    <span class="k">def</span> <span class="nf">print_not_covered_instructions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ftn_name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span><span class="n">instruction_list</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">contract_bytecode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverage_plugin</span><span class="o">.</span><span class="n">coverage</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">code_cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverage_plugin</span><span class="o">.</span><span class="n">coverage</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">contract_bytecode</span><span class="p">]</span>
+             <span class="c1"># compute coverage for each function</span>
+            <span class="n">instructions_cover_record</span> <span class="o">=</span> <span class="n">code_cov</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">instructions_cover_record</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">instr_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">instructions_cover_record</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ftn_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_instruction_indices</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">ftn_instr_indices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">function_instruction_indices</span><span class="p">[</span><span class="n">ftn_name</span><span class="p">]</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;== all instructions for </span><span class="si">{</span><span class="n">ftn_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">instr_idx</span> <span class="ow">in</span> <span class="n">ftn_instr_indices</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  </span><span class="si">{</span><span class="n">instruction_list</span><span class="p">[</span><span class="n">instr_idx</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;== uncoverd instructions for </span><span class="si">{</span><span class="n">ftn_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">instr_idx</span> <span class="ow">in</span> <span class="n">ftn_instr_indices</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">instr_array</span><span class="p">[</span><span class="n">instr_idx</span><span class="p">]:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  </span><span class="si">{</span><span class="n">instruction_list</span><span class="p">[</span><span class="n">instr_idx</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+</div>
+
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">a</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">[[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

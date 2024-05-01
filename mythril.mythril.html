@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mythril.mythril package &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mythril.plugin package" href="mythril.plugin.html" />
+    <link rel="prev" title="mythril.laser.smt.solver package" href="mythril.laser.smt.solver.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mythril-mythril-package">
+<h1>mythril.mythril package<a class="headerlink" href="#mythril-mythril-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-mythril.mythril.mythril_analyzer">
+<span id="mythril-mythril-mythril-analyzer-module"></span><h2>mythril.mythril.mythril_analyzer module<a class="headerlink" href="#module-mythril.mythril.mythril_analyzer" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_analyzer.MythrilAnalyzer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.mythril.mythril_analyzer.</span></span><span class="sig-name descname"><span class="pre">MythrilAnalyzer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">disassembler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.mythril.mythril_disassembler.MythrilDisassembler" title="mythril.mythril.mythril_disassembler.MythrilDisassembler"><span class="pre">MythrilDisassembler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmd_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dfs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/mythril/mythril_analyzer.html#MythrilAnalyzer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_analyzer.MythrilAnalyzer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The Mythril Analyzer class
+Responsible for the analysis of the smart contracts</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_analyzer.MythrilAnalyzer.dump_statespace">
+<span class="sig-name descname"><span class="pre">dump_statespace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.ethereum.html#mythril.ethereum.evmcontract.EVMContract" title="mythril.ethereum.evmcontract.EVMContract"><span class="pre">EVMContract</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/mythril/mythril/mythril_analyzer.html#MythrilAnalyzer.dump_statespace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_analyzer.MythrilAnalyzer.dump_statespace" title="Link to this definition">¶</a></dt>
+<dd><p>Returns serializable statespace of the contract
+:param contract: The Contract on which the analysis should be done
+:return: The serialized state space</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_analyzer.MythrilAnalyzer.fire_lasers">
+<span class="sig-name descname"><span class="pre">fire_lasers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transaction_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mythril.analysis.html#mythril.analysis.report.Report" title="mythril.analysis.report.Report"><span class="pre">Report</span></a></span></span><a class="reference internal" href="_modules/mythril/mythril/mythril_analyzer.html#MythrilAnalyzer.fire_lasers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_analyzer.MythrilAnalyzer.fire_lasers" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modules</strong> – The analysis modules which should be executed</p></li>
+<li><p><strong>transaction_count</strong> – The amount of transactions to be executed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Report class which contains the all the issues/vulnerabilities</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_analyzer.MythrilAnalyzer.graph_html">
+<span class="sig-name descname"><span class="pre">graph_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.ethereum.html#mythril.ethereum.evmcontract.EVMContract" title="mythril.ethereum.evmcontract.EVMContract"><span class="pre">EVMContract</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_physics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phrackify</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transaction_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/mythril/mythril/mythril_analyzer.html#MythrilAnalyzer.graph_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_analyzer.MythrilAnalyzer.graph_html" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contract</strong> – The Contract on which the analysis should be done</p></li>
+<li><p><strong>enable_physics</strong> – If true then enables the graph physics simulation</p></li>
+<li><p><strong>phrackify</strong> – If true generates Phrack-style call graph</p></li>
+<li><p><strong>transaction_count</strong> – The amount of transactions to be executed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated graph in html format</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.mythril.mythril_config">
+<span id="mythril-mythril-mythril-config-module"></span><h2>mythril.mythril.mythril_config module<a class="headerlink" href="#module-mythril.mythril.mythril_config" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_config.MythrilConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.mythril.mythril_config.</span></span><span class="sig-name descname"><span class="pre">MythrilConfig</span></span><a class="reference internal" href="_modules/mythril/mythril/mythril_config.html#MythrilConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_config.MythrilConfig" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The Mythril Analyzer class
+Responsible for setup of the mythril environment</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_config.MythrilConfig.init_mythril_dir">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_mythril_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/mythril/mythril/mythril_config.html#MythrilConfig.init_mythril_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_config.MythrilConfig.init_mythril_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the mythril dir and config.ini file
+:return: The mythril dir’s path</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_config.MythrilConfig.set_api_from_config_path">
+<span class="sig-name descname"><span class="pre">set_api_from_config_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/mythril/mythril_config.html#MythrilConfig.set_api_from_config_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_config.MythrilConfig.set_api_from_config_path" title="Link to this definition">¶</a></dt>
+<dd><p>Set the RPC mode based on a given config file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_config.MythrilConfig.set_api_infura_id">
+<span class="sig-name descname"><span class="pre">set_api_infura_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/mythril/mythril_config.html#MythrilConfig.set_api_infura_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_config.MythrilConfig.set_api_infura_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_config.MythrilConfig.set_api_rpc">
+<span class="sig-name descname"><span class="pre">set_api_rpc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rpc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rpctls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/mythril/mythril_config.html#MythrilConfig.set_api_rpc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_config.MythrilConfig.set_api_rpc" title="Link to this definition">¶</a></dt>
+<dd><p>Sets the RPC mode to either of ganache or infura
+:param rpc: either of the strings - ganache, infura-mainnet, infura-rinkeby, infura-kovan, infura-ropsten,
+infura-goerli, avalanche, arbitrum, bsc, optimism, polygon</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_config.MythrilConfig.set_api_rpc_infura">
+<span class="sig-name descname"><span class="pre">set_api_rpc_infura</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/mythril/mythril_config.html#MythrilConfig.set_api_rpc_infura"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_config.MythrilConfig.set_api_rpc_infura" title="Link to this definition">¶</a></dt>
+<dd><p>Set the RPC mode to INFURA on Mainnet.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_config.MythrilConfig.set_api_rpc_localhost">
+<span class="sig-name descname"><span class="pre">set_api_rpc_localhost</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/mythril/mythril_config.html#MythrilConfig.set_api_rpc_localhost"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_config.MythrilConfig.set_api_rpc_localhost" title="Link to this definition">¶</a></dt>
+<dd><p>Set the RPC mode to a local instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.mythril.mythril_disassembler">
+<span id="mythril-mythril-mythril-disassembler-module"></span><h2>mythril.mythril.mythril_disassembler module<a class="headerlink" href="#module-mythril.mythril.mythril_disassembler" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_disassembler.MythrilDisassembler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.mythril.mythril_disassembler.</span></span><span class="sig-name descname"><span class="pre">MythrilDisassembler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.ethereum.interface.rpc.html#mythril.ethereum.interface.rpc.client.EthJsonRpc" title="mythril.ethereum.interface.rpc.client.EthJsonRpc"><span class="pre">EthJsonRpc</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solc_version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solc_settings_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_online_lookup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solc_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/mythril/mythril_disassembler.html#MythrilDisassembler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_disassembler.MythrilDisassembler" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The Mythril Disassembler class
+Responsible for generating disassembly of smart contracts:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Compiles solc code from file/onchain</p></li>
+<li><p>Can also be used to access onchain storage data</p></li>
+</ul>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_disassembler.MythrilDisassembler.get_state_variable_from_storage">
+<span class="sig-name descname"><span class="pre">get_state_variable_from_storage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/mythril/mythril/mythril_disassembler.html#MythrilDisassembler.get_state_variable_from_storage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_disassembler.MythrilDisassembler.get_state_variable_from_storage" title="Link to this definition">¶</a></dt>
+<dd><p>Get variables from the storage
+:param address: The contract address
+:param params: The list of parameters param types: [position, length] or [“mapping”, position, key1, key2, …  ]</p>
+<blockquote>
+<div><p>or [position, length, array]</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The corresponding storage slot and its value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_disassembler.MythrilDisassembler.hash_for_function_signature">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hash_for_function_signature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/mythril/mythril/mythril_disassembler.html#MythrilDisassembler.hash_for_function_signature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_disassembler.MythrilDisassembler.hash_for_function_signature" title="Link to this definition">¶</a></dt>
+<dd><p>Return function nadmes corresponding signature hash
+:param func: function name
+:return: Its hash signature</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_disassembler.MythrilDisassembler.load_from_address">
+<span class="sig-name descname"><span class="pre">load_from_address</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="mythril.ethereum.html#mythril.ethereum.evmcontract.EVMContract" title="mythril.ethereum.evmcontract.EVMContract"><span class="pre">EVMContract</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/mythril/mythril_disassembler.html#MythrilDisassembler.load_from_address"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_disassembler.MythrilDisassembler.load_from_address" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the contract given it’s on chain address
+:param address: The on chain address of a contract
+:return: tuple(address, contract)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_disassembler.MythrilDisassembler.load_from_bytecode">
+<span class="sig-name descname"><span class="pre">load_from_bytecode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_runtime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="mythril.ethereum.html#mythril.ethereum.evmcontract.EVMContract" title="mythril.ethereum.evmcontract.EVMContract"><span class="pre">EVMContract</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/mythril/mythril_disassembler.html#MythrilDisassembler.load_from_bytecode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_disassembler.MythrilDisassembler.load_from_bytecode" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the address and the contract class for the given bytecode
+:param code: Bytecode
+:param bin_runtime: Whether the code is runtime code or creation code
+:param address: address of contract
+:return: tuple(address, Contract class)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_disassembler.MythrilDisassembler.load_from_foundry">
+<span class="sig-name descname"><span class="pre">load_from_foundry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/mythril/mythril_disassembler.html#MythrilDisassembler.load_from_foundry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_disassembler.MythrilDisassembler.load_from_foundry" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_disassembler.MythrilDisassembler.load_from_solidity">
+<span class="sig-name descname"><span class="pre">load_from_solidity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solidity_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mythril.solidity.html#mythril.solidity.soliditycontract.SolidityContract" title="mythril.solidity.soliditycontract.SolidityContract"><span class="pre">SolidityContract</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/mythril/mythril_disassembler.html#MythrilDisassembler.load_from_solidity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_disassembler.MythrilDisassembler.load_from_solidity" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>solidity_files</strong> – List of solidity_files</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple of address, contract class list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.mythril.mythril_disassembler.format_Warning">
+<span class="sig-prename descclassname"><span class="pre">mythril.mythril.mythril_disassembler.</span></span><span class="sig-name descname"><span class="pre">format_Warning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lineno</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/mythril/mythril_disassembler.html#format_Warning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.mythril.mythril_disassembler.format_Warning" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-mythril.mythril">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mythril.mythril" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="mythril.html">mythril package</a><ul>
+      <li>Previous: <a href="mythril.laser.smt.solver.html" title="previous chapter">mythril.laser.smt.solver package</a></li>
+      <li>Next: <a href="mythril.plugin.html" title="next chapter">mythril.plugin package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/mythril.mythril.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

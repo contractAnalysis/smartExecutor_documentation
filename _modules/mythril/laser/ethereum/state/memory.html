@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mythril.laser.ethereum.state.memory &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../../../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../../../../about.html" />
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for mythril.laser.ethereum.state.memory</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module contains a representation of a smart contract&#39;s memory.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">overload</span>
+<span class="kn">from</span> <span class="nn">z3</span> <span class="kn">import</span> <span class="n">Z3Exception</span>
+
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum</span> <span class="kn">import</span> <span class="n">util</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.smt</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BitVec</span><span class="p">,</span>
+    <span class="n">Bool</span><span class="p">,</span>
+    <span class="n">Concat</span><span class="p">,</span>
+    <span class="n">Extract</span><span class="p">,</span>
+    <span class="n">If</span><span class="p">,</span>
+    <span class="n">simplify</span><span class="p">,</span>
+    <span class="n">symbol_factory</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">import</span> <span class="nn">fdg</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.smt.expression</span> <span class="kn">import</span> <span class="n">simplify_yes</span>
+
+<div class="viewcode-block" id="convert_bv">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.memory.convert_bv">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_bv</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">BitVec</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">val</span>
+    <span class="k">return</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># No of iterations to perform when iteration size is symbolic</span>
+<span class="n">APPROX_ITR</span> <span class="o">=</span> <span class="mi">100</span>
+
+
+<div class="viewcode-block" id="Memory">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.memory.Memory">[docs]</a>
+<span class="k">class</span> <span class="nc">Memory</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class representing contract memory with random access.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_msize</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># type: Dict[BitVec, Union[int, BitVec]]</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_msize</span>
+
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">new_memory</span> <span class="o">=</span> <span class="n">Memory</span><span class="p">()</span>
+        <span class="n">new_memory</span><span class="o">.</span><span class="n">_memory</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="p">)</span>
+        <span class="n">new_memory</span><span class="o">.</span><span class="n">_msize</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_msize</span>
+        <span class="k">return</span> <span class="n">new_memory</span>
+
+<div class="viewcode-block" id="Memory.extend">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.memory.Memory.extend">[docs]</a>
+    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param size:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_msize</span> <span class="o">+=</span> <span class="n">size</span></div>
+
+
+    <span class="c1"># def get_word_at(self, index: int) -&gt; Union[int, BitVec]:</span>
+    <span class="c1">#     &quot;&quot;&quot;Access a word from a specified memory index.</span>
+    <span class="c1">#</span>
+    <span class="c1">#     :param index: integer representing the index to access</span>
+    <span class="c1">#     :return: 32 byte word at the specified index</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     try:</span>
+    <span class="c1">#         return symbol_factory.BitVecVal(</span>
+    <span class="c1">#             util.concrete_int_from_bytes(</span>
+    <span class="c1">#                 bytes([util.get_concrete_int(b) for b in self[index : index + 32]]),</span>
+    <span class="c1">#                 0,</span>
+    <span class="c1">#             ),</span>
+    <span class="c1">#             256,</span>
+    <span class="c1">#         )</span>
+    <span class="c1">#     except TypeError:</span>
+    <span class="c1">#         result = simplify(</span>
+    <span class="c1">#             Concat(</span>
+    <span class="c1">#                 [</span>
+    <span class="c1">#                     b if isinstance(b, BitVec) else symbol_factory.BitVecVal(b, 8)</span>
+    <span class="c1">#                     for b in cast(</span>
+    <span class="c1">#                         List[Union[int, BitVec]], self[index : index + 32]</span>
+    <span class="c1">#                     )</span>
+    <span class="c1">#                 ]</span>
+    <span class="c1">#             )</span>
+    <span class="c1">#         )</span>
+    <span class="c1">#         assert result.size() == 256</span>
+    <span class="c1">#         return result</span>
+<div class="viewcode-block" id="Memory.get_word_at">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.memory.Memory.get_word_at">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_word_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access a word from a specified memory index.</span>
+
+<span class="sd">        :param index: integer representing the index to access</span>
+<span class="sd">        :return: 32 byte word at the specified index</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span>
+                <span class="n">util</span><span class="o">.</span><span class="n">concrete_int_from_bytes</span><span class="p">(</span>
+                    <span class="nb">bytes</span><span class="p">([</span><span class="n">util</span><span class="o">.</span><span class="n">get_concrete_int</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="n">index</span> <span class="p">:</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">32</span><span class="p">]]),</span>
+                    <span class="mi">0</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="mi">256</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="c1">#@wei address the error in preprocessing</span>
+            <span class="k">if</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">flag_preprocessing</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">simplify_yes</span><span class="p">(</span>
+                        <span class="n">Concat</span><span class="p">(</span>
+                            <span class="p">[</span>
+                                <span class="n">b</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">)</span> <span class="k">else</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">cast</span><span class="p">(</span>
+                                <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">]],</span> <span class="bp">self</span><span class="p">[</span><span class="n">index</span><span class="p">:</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">32</span><span class="p">]</span>
+                            <span class="p">)</span>
+                            <span class="p">]</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">preprocessing_exception</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;memory.py in preprocessing: has exception&#39;</span><span class="p">)</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">simplify_yes</span><span class="p">(</span>
+                        <span class="n">Concat</span><span class="p">(</span>
+                            <span class="p">[</span>
+                                <span class="n">b</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">)</span> <span class="k">else</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">cast</span><span class="p">(</span>
+                                <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">]],</span> <span class="bp">self</span><span class="p">[</span><span class="n">index</span><span class="p">:</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">32</span><span class="p">]</span>
+                            <span class="p">)</span>
+                            <span class="p">]</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;memory.py: has exception&#39;</span><span class="p">)</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+
+            <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">256</span>
+            <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="Memory.write_word_at">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.memory.Memory.write_word_at">[docs]</a>
+    <span class="k">def</span> <span class="nf">write_word_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes a 32 byte word to memory at the specified index`</span>
+
+<span class="sd">        :param index: index to write to</span>
+<span class="sd">        :param value: the value to write to memory</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Attempt to concretize value</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="n">_bytes</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="s2">&quot;big&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">value</span>
+                    <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="s2">&quot;big&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_bytes</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">concrete_int_to_bytes</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">_bytes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">32</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">index</span> <span class="p">:</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">32</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">(</span><span class="n">_bytes</span><span class="p">))</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">Z3Exception</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>  <span class="c1"># BitVector or BoolRef</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Union</span><span class="p">[</span><span class="n">BitVec</span><span class="p">,</span> <span class="n">Bool</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Bool</span><span class="p">):</span>
+                <span class="n">value_to_write</span> <span class="o">=</span> <span class="n">If</span><span class="p">(</span>
+                    <span class="n">value</span><span class="p">,</span>
+                    <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+                    <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">value_to_write</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">assert</span> <span class="n">value_to_write</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">256</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">value_to_write</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="mi">8</span><span class="p">):</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">31</span> <span class="o">-</span> <span class="p">(</span><span class="n">i</span> <span class="o">//</span> <span class="mi">8</span><span class="p">)]</span> <span class="o">=</span> <span class="n">Extract</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">7</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">value_to_write</span><span class="p">)</span></div>
+
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">BitVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">]]:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BitVec</span><span class="p">,</span> <span class="nb">slice</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">BitVec</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param item:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">stop</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">step</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">stop</span>
+            <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">stop</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># 2**256 is just a bit too big</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Invalid Memory Slice&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">step</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">bvstart</span><span class="p">,</span> <span class="n">bvstop</span><span class="p">,</span> <span class="n">bvstep</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">convert_bv</span><span class="p">(</span><span class="n">start</span><span class="p">),</span>
+                <span class="n">convert_bv</span><span class="p">(</span><span class="n">stop</span><span class="p">),</span>
+                <span class="n">convert_bv</span><span class="p">(</span><span class="n">step</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">ret_lis</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">symbolic_len</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">itr</span> <span class="o">=</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">bvstop</span> <span class="o">-</span> <span class="n">bvstart</span><span class="p">)</span><span class="o">.</span><span class="n">symbolic</span><span class="p">:</span>
+                <span class="n">symbolic_len</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">while</span> <span class="n">simplify_yes</span><span class="p">(</span><span class="n">bvstep</span> <span class="o">*</span> <span class="n">itr</span> <span class="o">!=</span> <span class="n">simplify_yes</span><span class="p">(</span><span class="n">bvstop</span> <span class="o">-</span> <span class="n">bvstart</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="ow">not</span> <span class="n">symbolic_len</span> <span class="ow">or</span> <span class="n">itr</span> <span class="o">&lt;=</span> <span class="n">APPROX_ITR</span>
+            <span class="p">):</span>
+                <span class="n">ret_lis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">bvstart</span> <span class="o">+</span> <span class="n">bvstep</span> <span class="o">*</span> <span class="n">itr</span><span class="p">])</span>
+                <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">ret_lis</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">simplify_yes</span><span class="p">(</span><span class="n">convert_bv</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">,</span> <span class="nb">slice</span><span class="p">],</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BitVec</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">]]],</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param key:</span>
+<span class="sd">        :param value:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">stop</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">step</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">stop</span>
+
+            <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">stop</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Invalid Memory Slice&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">step</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Currently mentioning step size is not supported&quot;</span>
+            <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span>
+            <span class="n">bvstart</span><span class="p">,</span> <span class="n">bvstop</span><span class="p">,</span> <span class="n">bvstep</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">convert_bv</span><span class="p">(</span><span class="n">start</span><span class="p">),</span>
+                <span class="n">convert_bv</span><span class="p">(</span><span class="n">stop</span><span class="p">),</span>
+                <span class="n">convert_bv</span><span class="p">(</span><span class="n">step</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">symbolic_len</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">itr</span> <span class="o">=</span> <span class="n">symbol_factory</span><span class="o">.</span><span class="n">BitVecVal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">bvstop</span> <span class="o">-</span> <span class="n">bvstart</span><span class="p">)</span><span class="o">.</span><span class="n">symbolic</span><span class="p">:</span>
+                <span class="n">symbolic_len</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">while</span> <span class="n">simplify_yes</span><span class="p">(</span><span class="n">bvstep</span> <span class="o">*</span> <span class="n">itr</span> <span class="o">!=</span> <span class="n">simplify_yes</span><span class="p">(</span><span class="n">bvstop</span> <span class="o">-</span> <span class="n">bvstart</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="ow">not</span> <span class="n">symbolic_len</span> <span class="ow">or</span> <span class="n">itr</span> <span class="o">&lt;=</span> <span class="n">APPROX_ITR</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">bvstart</span> <span class="o">+</span> <span class="n">itr</span> <span class="o">*</span> <span class="n">bvstep</span><span class="p">]</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">]],</span> <span class="n">value</span><span class="p">)[</span>
+                    <span class="n">itr</span><span class="o">.</span><span class="n">value</span>
+                <span class="p">]</span>
+                <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bv_key</span> <span class="o">=</span> <span class="n">simplify_yes</span><span class="p">(</span><span class="n">convert_bv</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">bv_key</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="k">return</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mh">0xFF</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">value</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">8</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="p">[</span><span class="n">bv_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BitVec</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

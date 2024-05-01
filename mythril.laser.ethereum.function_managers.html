@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mythril.laser.ethereum.function_managers package &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mythril.laser.ethereum.state package" href="mythril.laser.ethereum.state.html" />
+    <link rel="prev" title="mythril.laser.ethereum package" href="mythril.laser.ethereum.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mythril-laser-ethereum-function-managers-package">
+<h1>mythril.laser.ethereum.function_managers package<a class="headerlink" href="#mythril-laser-ethereum-function-managers-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-mythril.laser.ethereum.function_managers.exponent_function_manager">
+<span id="mythril-laser-ethereum-function-managers-exponent-function-manager-module"></span><h2>mythril.laser.ethereum.function_managers.exponent_function_manager module<a class="headerlink" href="#module-mythril.laser.ethereum.function_managers.exponent_function_manager" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.function_managers.exponent_function_manager.ExponentFunctionManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.function_managers.exponent_function_manager.</span></span><span class="sig-name descname"><span class="pre">ExponentFunctionManager</span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/function_managers/exponent_function_manager.html#ExponentFunctionManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.function_managers.exponent_function_manager.ExponentFunctionManager" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Uses an uninterpreted function for exponentiation with the following properties:
+1) power(a, b) &gt; 0
+2) if a = 256 =&gt; forall i if b = i then power(a, b) = (256 ^ i) % (2^256)</p>
+<p>Only these two properties are added as to handle indexing of boolean arrays.
+Caution should be exercised when increasing the conditions since it severely affects
+the solving time.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.function_managers.exponent_function_manager.ExponentFunctionManager.create_condition">
+<span class="sig-name descname"><span class="pre">create_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">exponent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/function_managers/exponent_function_manager.html#ExponentFunctionManager.create_condition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.function_managers.exponent_function_manager.ExponentFunctionManager.create_condition" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a condition for exponentiation
+:param base: The base of exponentiation
+:param exponent: The exponent of the exponentiation
+:return: Tuple of condition and the exponentiation result</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.ethereum.function_managers.keccak_function_manager">
+<span id="mythril-laser-ethereum-function-managers-keccak-function-manager-module"></span><h2>mythril.laser.ethereum.function_managers.keccak_function_manager module<a class="headerlink" href="#module-mythril.laser.ethereum.function_managers.keccak_function_manager" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.ethereum.function_managers.keccak_function_manager.</span></span><span class="sig-name descname"><span class="pre">KeccakFunctionManager</span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/function_managers/keccak_function_manager.html#KeccakFunctionManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A bunch of uninterpreted functions are considered like keccak256_160 ,…
+where keccak256_160 means the input of keccak256() is 160 bit number.
+the range of these functions are constrained to some mutually disjoint intervals
+All the hashes modulo 64 are 0 as we need a spread among hashes for array type data structures
+All the functions are kind of one to one due to constraint of the existence of inverse
+for each encountered input.
+For more info <a class="reference external" href="https://files.sri.inf.ethz.ch/website/papers/sp20-verx.pdf">https://files.sri.inf.ethz.ch/website/papers/sp20-verx.pdf</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.create_conditions">
+<span class="sig-name descname"><span class="pre">create_conditions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Bool" title="mythril.laser.smt.bool.Bool"><span class="pre">Bool</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/function_managers/keccak_function_manager.html#KeccakFunctionManager.create_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.create_conditions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.create_keccak">
+<span class="sig-name descname"><span class="pre">create_keccak</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/function_managers/keccak_function_manager.html#KeccakFunctionManager.create_keccak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.create_keccak" title="Link to this definition">¶</a></dt>
+<dd><p>Creates Keccak of the data
+:param data: input
+:return: Tuple of keccak and the condition it should satisfy</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.find_concrete_keccak">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_concrete_keccak</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/function_managers/keccak_function_manager.html#KeccakFunctionManager.find_concrete_keccak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.find_concrete_keccak" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates concrete keccak
+:param data: input bitvecval
+:return: concrete keccak output</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.get_concrete_hash_data">
+<span class="sig-name descname"><span class="pre">get_concrete_hash_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/function_managers/keccak_function_manager.html#KeccakFunctionManager.get_concrete_hash_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.get_concrete_hash_data" title="Link to this definition">¶</a></dt>
+<dd><p>returns concrete values of hashes in the self.hash_result_store
+:param model: The z3 model to query for concrete values
+:return: A dictionary with concrete hashes { &lt;hash_input_size&gt; : [&lt;concrete_hash&gt;, &lt;concrete_hash&gt;]}</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.get_empty_keccak_hash">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_empty_keccak_hash</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/function_managers/keccak_function_manager.html#KeccakFunctionManager.get_empty_keccak_hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.get_empty_keccak_hash" title="Link to this definition">¶</a></dt>
+<dd><p>returns sha3(“”)
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.get_function">
+<span class="sig-name descname"><span class="pre">get_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.function.Function" title="mythril.laser.smt.function.Function"><span class="pre">Function</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.function.Function" title="mythril.laser.smt.function.Function"><span class="pre">Function</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/laser/ethereum/function_managers/keccak_function_manager.html#KeccakFunctionManager.get_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.get_function" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the keccak functions for the corresponding length
+:param length: input size
+:return: tuple of keccak and it’s inverse</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.hash_matcher">
+<span class="sig-name descname"><span class="pre">hash_matcher</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'fffffff'</span></em><a class="headerlink" href="#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.hash_matcher" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/function_managers/keccak_function_manager.html#KeccakFunctionManager.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.reset" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.set_data">
+<span class="sig-name descname"><span class="pre">set_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/ethereum/function_managers/keccak_function_manager.html#KeccakFunctionManager.set_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.ethereum.function_managers.keccak_function_manager.KeccakFunctionManager.set_data" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser.ethereum.function_managers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mythril.laser.ethereum.function_managers" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="mythril.html">mythril package</a><ul>
+  <li><a href="mythril.laser.html">mythril.laser package</a><ul>
+  <li><a href="mythril.laser.ethereum.html">mythril.laser.ethereum package</a><ul>
+      <li>Previous: <a href="mythril.laser.ethereum.html" title="previous chapter">mythril.laser.ethereum package</a></li>
+      <li>Next: <a href="mythril.laser.ethereum.state.html" title="next chapter">mythril.laser.ethereum.state package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/mythril.laser.ethereum.function_managers.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mythril &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mythril">
+<h1>mythril<a class="headerlink" href="#mythril" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mythril.html">mythril package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mythril.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.html">mythril.analysis package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#module-mythril.analysis.analysis_args">mythril.analysis.analysis_args module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#module-mythril.analysis.call_helpers">mythril.analysis.call_helpers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#module-mythril.analysis.callgraph">mythril.analysis.callgraph module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#module-mythril.analysis.issue_annotation">mythril.analysis.issue_annotation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#module-mythril.analysis.ops">mythril.analysis.ops module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#module-mythril.analysis.potential_issues">mythril.analysis.potential_issues module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#module-mythril.analysis.report">mythril.analysis.report module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#module-mythril.analysis.security">mythril.analysis.security module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#module-mythril.analysis.solver">mythril.analysis.solver module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#module-mythril.analysis.swc_data">mythril.analysis.swc_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#module-mythril.analysis.symbolic">mythril.analysis.symbolic module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#module-mythril.analysis.traceexplore">mythril.analysis.traceexplore module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.analysis.html#module-mythril.analysis">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.concolic.html">mythril.concolic package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.concolic.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.concolic.html#module-mythril.concolic.concolic_execution">mythril.concolic.concolic_execution module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.concolic.html#module-mythril.concolic.concrete_data">mythril.concolic.concrete_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.concolic.html#module-mythril.concolic.find_trace">mythril.concolic.find_trace module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.concolic.html#module-mythril.concolic">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.disassembler.html">mythril.disassembler package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.disassembler.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.disassembler.html#module-mythril.disassembler.asm">mythril.disassembler.asm module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.disassembler.html#module-mythril.disassembler.disassembly">mythril.disassembler.disassembly module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.disassembler.html#module-mythril.disassembler">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.ethereum.html">mythril.ethereum package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.ethereum.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.ethereum.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.ethereum.html#module-mythril.ethereum.evmcontract">mythril.ethereum.evmcontract module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.ethereum.html#module-mythril.ethereum.util">mythril.ethereum.util module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.ethereum.html#module-mythril.ethereum">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.interfaces.html">mythril.interfaces package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.interfaces.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.interfaces.html#module-mythril.interfaces.cli">mythril.interfaces.cli module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.interfaces.html#module-mythril.interfaces.epic">mythril.interfaces.epic module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.interfaces.html#module-mythril.interfaces">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.html">mythril.laser package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.html#module-mythril.laser.execution_info">mythril.laser.execution_info module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.html#module-mythril.laser">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.mythril.html">mythril.mythril package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.mythril.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.mythril.html#module-mythril.mythril.mythril_analyzer">mythril.mythril.mythril_analyzer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.mythril.html#module-mythril.mythril.mythril_config">mythril.mythril.mythril_config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.mythril.html#module-mythril.mythril.mythril_disassembler">mythril.mythril.mythril_disassembler module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.mythril.html#module-mythril.mythril">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.plugin.html">mythril.plugin package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.plugin.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.plugin.html#module-mythril.plugin.discovery">mythril.plugin.discovery module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.plugin.html#module-mythril.plugin.interface">mythril.plugin.interface module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.plugin.html#module-mythril.plugin.loader">mythril.plugin.loader module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.plugin.html#module-mythril.plugin">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.solidity.html">mythril.solidity package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.solidity.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.solidity.html#module-mythril.solidity.soliditycontract">mythril.solidity.soliditycontract module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.solidity.html#module-mythril.solidity">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.support.html">mythril.support package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.support.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.support.html#module-mythril.support.loader">mythril.support.loader module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.support.html#module-mythril.support.lock">mythril.support.lock module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.support.html#module-mythril.support.model">mythril.support.model module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.support.html#module-mythril.support.opcodes">mythril.support.opcodes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.support.html#module-mythril.support.signatures">mythril.support.signatures module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.support.html#module-mythril.support.source_support">mythril.support.source_support module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.support.html#module-mythril.support.start_time">mythril.support.start_time module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.support.html#module-mythril.support.support_args">mythril.support.support_args module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.support.html#module-mythril.support.support_utils">mythril.support.support_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.support.html#module-mythril.support">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.html#module-mythril.exceptions">mythril.exceptions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.html#mythril.exceptions.CompilerError"><code class="docutils literal notranslate"><span class="pre">CompilerError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.html#mythril.exceptions.CriticalError"><code class="docutils literal notranslate"><span class="pre">CriticalError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.html#mythril.exceptions.DetectorNotFoundError"><code class="docutils literal notranslate"><span class="pre">DetectorNotFoundError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.html#mythril.exceptions.IllegalArgumentError"><code class="docutils literal notranslate"><span class="pre">IllegalArgumentError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.html#mythril.exceptions.MythrilBaseException"><code class="docutils literal notranslate"><span class="pre">MythrilBaseException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.html#mythril.exceptions.NoContractFoundError"><code class="docutils literal notranslate"><span class="pre">NoContractFoundError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.html#mythril.exceptions.SolverTimeOutException"><code class="docutils literal notranslate"><span class="pre">SolverTimeOutException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.html#mythril.exceptions.UnsatError"><code class="docutils literal notranslate"><span class="pre">UnsatError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.html#module-mythril">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

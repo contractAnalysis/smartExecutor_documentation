@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mythril.laser.ethereum.strategy.concolic &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../../../../_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="../../../../../about.html" />
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for mythril.laser.ethereum.strategy.concolic</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mythril.laser.ethereum.state.global_state</span> <span class="kn">import</span> <span class="n">GlobalState</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.state.constraints</span> <span class="kn">import</span> <span class="n">Constraints</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.strategy.basic</span> <span class="kn">import</span> <span class="n">BasicSearchStrategy</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.state.annotation</span> <span class="kn">import</span> <span class="n">StateAnnotation</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.transaction</span> <span class="kn">import</span> <span class="n">ContractCreationTransaction</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.ethereum.util</span> <span class="kn">import</span> <span class="n">get_instruction_index</span>
+<span class="kn">from</span> <span class="nn">mythril.analysis.solver</span> <span class="kn">import</span> <span class="n">get_transaction_sequence</span>
+<span class="kn">from</span> <span class="nn">mythril.laser.smt</span> <span class="kn">import</span> <span class="n">Not</span>
+<span class="kn">from</span> <span class="nn">mythril.exceptions</span> <span class="kn">import</span> <span class="n">UnsatError</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">CriterionSearchStrategy</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="TraceAnnotation">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.concolic.TraceAnnotation">[docs]</a>
+<span class="k">class</span> <span class="nc">TraceAnnotation</span><span class="p">(</span><span class="n">StateAnnotation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the annotation used by the ConcolicStrategy to store concolic traces.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trace</span> <span class="o">=</span> <span class="n">trace</span> <span class="ow">or</span> <span class="p">[]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">persist_over_calls</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">TraceAnnotation</span><span class="p">(</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="ConcolicStrategy">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.concolic.ConcolicStrategy">[docs]</a>
+<span class="k">class</span> <span class="nc">ConcolicStrategy</span><span class="p">(</span><span class="n">CriterionSearchStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Executes program concolically using the input trace till a specific branch</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">work_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">GlobalState</span><span class="p">],</span>
+        <span class="n">max_depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">trace</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]],</span>
+        <span class="n">flip_branch_addresses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        work_list: The work-list of states</span>
+<span class="sd">        max_depth: The maximum depth for the strategy to go through</span>
+<span class="sd">        trace: This is the trace to be followed, each element is of the type Tuple(program counter, tx_id)</span>
+<span class="sd">        flip_branch_addresses: Branch addresses to be flipped.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">work_list</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">iconcat</span><span class="p">,</span> <span class="n">trace</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_tx_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flip_branch_addresses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">flip_branch_addresses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="ConcolicStrategy.check_completion_criterion">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.concolic.ConcolicStrategy.check_completion_criterion">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_completion_criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flip_branch_addresses</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_criterion_satisfied</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ConcolicStrategy.get_strategic_global_state">
+<a class="viewcode-back" href="../../../../../mythril.laser.ethereum.strategy.html#mythril.laser.ethereum.strategy.concolic.ConcolicStrategy.get_strategic_global_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_strategic_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GlobalState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function does the following:-</span>
+<span class="sd">        1) Choose the states by following the concolic trace.</span>
+<span class="sd">        2) In case we have an executed JUMPI that is in flip_branch_addresses, flip that branch.</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="n">seq_id</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">transaction_sequence</span><span class="p">)</span>
+
+            <span class="n">trace_annotations</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+                <span class="n">List</span><span class="p">[</span><span class="n">TraceAnnotation</span><span class="p">],</span>
+                <span class="nb">list</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">get_annotations</span><span class="p">(</span><span class="n">TraceAnnotation</span><span class="p">)),</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trace_annotations</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">annotation</span> <span class="o">=</span> <span class="n">TraceAnnotation</span><span class="p">()</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">annotation</span> <span class="o">=</span> <span class="n">trace_annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Appends trace</span>
+            <span class="n">annotation</span><span class="o">.</span><span class="n">trace</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">state</span><span class="o">.</span><span class="n">mstate</span><span class="o">.</span><span class="n">pc</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">current_transaction</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+
+            <span class="c1"># If length of trace is 1 then it is not a JUMPI</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">trace</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># If trace does not follow the specified path, ignore the state</span>
+                <span class="k">if</span> <span class="n">annotation</span><span class="o">.</span><span class="n">trace</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">trace</span><span class="p">)]:</span>
+                    <span class="k">continue</span>
+                <span class="k">return</span> <span class="n">state</span>
+
+            <span class="c1"># Get the address of the previous pc</span>
+            <span class="n">addr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">instruction_list</span><span class="p">[</span><span class="n">annotation</span><span class="o">.</span><span class="n">trace</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]][</span>
+                    <span class="s2">&quot;address&quot;</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">annotation</span><span class="o">.</span><span class="n">trace</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">trace</span><span class="p">)]</span>
+                <span class="ow">and</span> <span class="n">seq_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_tx_count</span>
+                <span class="ow">and</span> <span class="n">addr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">flip_branch_addresses</span>
+                <span class="ow">and</span> <span class="n">addr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span>
+            <span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">state</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">instruction_list</span><span class="p">[</span><span class="n">annotation</span><span class="o">.</span><span class="n">trace</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]][</span>
+                        <span class="s2">&quot;opcode&quot;</span>
+                    <span class="p">]</span>
+                    <span class="o">!=</span> <span class="s2">&quot;JUMPI&quot;</span>
+                <span class="p">):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The branch </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2"> does not lead &quot;</span>
+                        <span class="s2">&quot;to a jump address, skipping this branch&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="n">constraints</span> <span class="o">=</span> <span class="n">Constraints</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">constraints</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Not</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">world_state</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="n">addr</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_transaction_sequence</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">constraints</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">UnsatError</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="n">addr</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="n">annotation</span><span class="o">.</span><span class="n">trace</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">trace</span><span class="p">)]:</span>
+                <span class="k">continue</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_completion_criterion</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">state</span>
+        <span class="k">raise</span> <span class="ne">StopIteration</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../../index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../../index.html">Module code</a><ul>
+  <li><a href="../strategy.html">mythril.laser.ethereum.strategy</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

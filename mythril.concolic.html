@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mythril.concolic package &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mythril.disassembler package" href="mythril.disassembler.html" />
+    <link rel="prev" title="mythril.analysis.module.modules package" href="mythril.analysis.module.modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mythril-concolic-package">
+<h1>mythril.concolic package<a class="headerlink" href="#mythril-concolic-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-mythril.concolic.concolic_execution">
+<span id="mythril-concolic-concolic-execution-module"></span><h2>mythril.concolic.concolic_execution module<a class="headerlink" href="#module-mythril.concolic.concolic_execution" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.concolic.concolic_execution.concolic_execution">
+<span class="sig-prename descclassname"><span class="pre">mythril.concolic.concolic_execution.</span></span><span class="sig-name descname"><span class="pre">concolic_execution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concrete_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.concolic.concrete_data.ConcreteData" title="mythril.concolic.concrete_data.ConcreteData"><span class="pre">ConcreteData</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">jump_addresses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/concolic/concolic_execution.html#concolic_execution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.concolic.concolic_execution.concolic_execution" title="Link to this definition">¶</a></dt>
+<dd><p>Executes codes and prints input required to cover the branch flips
+:param input_file: Input file
+:param jump_addresses: Jump addresses to flip
+:param solver_timeout: Solver timeout</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.concolic.concolic_execution.flip_branches">
+<span class="sig-prename descclassname"><span class="pre">mythril.concolic.concolic_execution.</span></span><span class="sig-name descname"><span class="pre">flip_branches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.world_state.WorldState" title="mythril.laser.ethereum.state.world_state.WorldState"><span class="pre">WorldState</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">concrete_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.concolic.concrete_data.ConcreteData" title="mythril.concolic.concrete_data.ConcreteData"><span class="pre">ConcreteData</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">jump_addresses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/concolic/concolic_execution.html#flip_branches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.concolic.concolic_execution.flip_branches" title="Link to this definition">¶</a></dt>
+<dd><p>Flips branches and prints the input required for branch flip</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>concrete_data</strong> – Concrete data</p></li>
+<li><p><strong>jump_addresses</strong> – Jump addresses to flip</p></li>
+<li><p><strong>trace</strong> – trace to follow</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-mythril.concolic.concrete_data">
+<span id="mythril-concolic-concrete-data-module"></span><h2>mythril.concolic.concrete_data module<a class="headerlink" href="#module-mythril.concolic.concrete_data" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.AccountData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.concolic.concrete_data.</span></span><span class="sig-name descname"><span class="pre">AccountData</span></span><a class="reference internal" href="_modules/mythril/concolic/concrete_data.html#AccountData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.concolic.concrete_data.AccountData" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.AccountData.balance">
+<span class="sig-name descname"><span class="pre">balance</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.AccountData.balance" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.AccountData.code">
+<span class="sig-name descname"><span class="pre">code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.AccountData.code" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.AccountData.nonce">
+<span class="sig-name descname"><span class="pre">nonce</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.AccountData.nonce" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.AccountData.storage">
+<span class="sig-name descname"><span class="pre">storage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.AccountData.storage" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.ConcreteData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.concolic.concrete_data.</span></span><span class="sig-name descname"><span class="pre">ConcreteData</span></span><a class="reference internal" href="_modules/mythril/concolic/concrete_data.html#ConcreteData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.concolic.concrete_data.ConcreteData" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.ConcreteData.initialState">
+<span class="sig-name descname"><span class="pre">initialState</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#mythril.concolic.concrete_data.InitialState" title="mythril.concolic.concrete_data.InitialState"><span class="pre">InitialState</span></a></em><a class="headerlink" href="#mythril.concolic.concrete_data.ConcreteData.initialState" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.ConcreteData.steps">
+<span class="sig-name descname"><span class="pre">steps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#mythril.concolic.concrete_data.TransactionData" title="mythril.concolic.concrete_data.TransactionData"><span class="pre">TransactionData</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#mythril.concolic.concrete_data.ConcreteData.steps" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.InitialState">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.concolic.concrete_data.</span></span><span class="sig-name descname"><span class="pre">InitialState</span></span><a class="reference internal" href="_modules/mythril/concolic/concrete_data.html#InitialState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.concolic.concrete_data.InitialState" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.InitialState.accounts">
+<span class="sig-name descname"><span class="pre">accounts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#mythril.concolic.concrete_data.AccountData" title="mythril.concolic.concrete_data.AccountData"><span class="pre">AccountData</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#mythril.concolic.concrete_data.InitialState.accounts" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.TransactionData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.concolic.concrete_data.</span></span><span class="sig-name descname"><span class="pre">TransactionData</span></span><a class="reference internal" href="_modules/mythril/concolic/concrete_data.html#TransactionData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.concolic.concrete_data.TransactionData" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.TransactionData.address">
+<span class="sig-name descname"><span class="pre">address</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.TransactionData.address" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.TransactionData.blockCoinbase">
+<span class="sig-name descname"><span class="pre">blockCoinbase</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.TransactionData.blockCoinbase" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.TransactionData.blockDifficulty">
+<span class="sig-name descname"><span class="pre">blockDifficulty</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.TransactionData.blockDifficulty" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.TransactionData.blockGasLimit">
+<span class="sig-name descname"><span class="pre">blockGasLimit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.TransactionData.blockGasLimit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.TransactionData.blockNumber">
+<span class="sig-name descname"><span class="pre">blockNumber</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.TransactionData.blockNumber" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.TransactionData.blockTime">
+<span class="sig-name descname"><span class="pre">blockTime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.TransactionData.blockTime" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.TransactionData.calldata">
+<span class="sig-name descname"><span class="pre">calldata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.TransactionData.calldata" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.TransactionData.gasLimit">
+<span class="sig-name descname"><span class="pre">gasLimit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.TransactionData.gasLimit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.TransactionData.gasPrice">
+<span class="sig-name descname"><span class="pre">gasPrice</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.TransactionData.gasPrice" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.TransactionData.input">
+<span class="sig-name descname"><span class="pre">input</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.TransactionData.input" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.TransactionData.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.TransactionData.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.TransactionData.origin">
+<span class="sig-name descname"><span class="pre">origin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.TransactionData.origin" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mythril.concolic.concrete_data.TransactionData.value">
+<span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mythril.concolic.concrete_data.TransactionData.value" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.concolic.find_trace">
+<span id="mythril-concolic-find-trace-module"></span><h2>mythril.concolic.find_trace module<a class="headerlink" href="#module-mythril.concolic.find_trace" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.concolic.find_trace.concrete_execution">
+<span class="sig-prename descclassname"><span class="pre">mythril.concolic.find_trace.</span></span><span class="sig-name descname"><span class="pre">concrete_execution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concrete_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.concolic.concrete_data.ConcreteData" title="mythril.concolic.concrete_data.ConcreteData"><span class="pre">ConcreteData</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.world_state.WorldState" title="mythril.laser.ethereum.state.world_state.WorldState"><span class="pre">WorldState</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mythril/concolic/find_trace.html#concrete_execution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.concolic.find_trace.concrete_execution" title="Link to this definition">¶</a></dt>
+<dd><p>Executes code concretely to find the path to be followed by concolic executor
+:param concrete_data: Concrete data
+:return: path trace</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mythril.concolic.find_trace.setup_concrete_initial_state">
+<span class="sig-prename descclassname"><span class="pre">mythril.concolic.find_trace.</span></span><span class="sig-name descname"><span class="pre">setup_concrete_initial_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concrete_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mythril.concolic.concrete_data.ConcreteData" title="mythril.concolic.concrete_data.ConcreteData"><span class="pre">ConcreteData</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.world_state.WorldState" title="mythril.laser.ethereum.state.world_state.WorldState"><span class="pre">WorldState</span></a></span></span><a class="reference internal" href="_modules/mythril/concolic/find_trace.html#setup_concrete_initial_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.concolic.find_trace.setup_concrete_initial_state" title="Link to this definition">¶</a></dt>
+<dd><p>Sets up concrete initial state
+:param concrete_data: Concrete data
+:return: initialised world state</p>
+</dd></dl>
+
+</section>
+<section id="module-mythril.concolic">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mythril.concolic" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="mythril.html">mythril package</a><ul>
+      <li>Previous: <a href="mythril.analysis.module.modules.html" title="previous chapter">mythril.analysis.module.modules package</a></li>
+      <li>Next: <a href="mythril.disassembler.html" title="next chapter">mythril.disassembler package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/mythril.concolic.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

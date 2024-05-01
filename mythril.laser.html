@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mythril.laser package &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mythril.laser.ethereum package" href="mythril.laser.ethereum.html" />
+    <link rel="prev" title="mythril.interfaces package" href="mythril.interfaces.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mythril-laser-package">
+<h1>mythril.laser package<a class="headerlink" href="#mythril-laser-package" title="Link to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mythril.laser.ethereum.html">mythril.laser.ethereum package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.ethereum.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.function_managers.html">mythril.laser.ethereum.function_managers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.function_managers.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.function_managers.html#module-mythril.laser.ethereum.function_managers.exponent_function_manager">mythril.laser.ethereum.function_managers.exponent_function_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.function_managers.html#module-mythril.laser.ethereum.function_managers.keccak_function_manager">mythril.laser.ethereum.function_managers.keccak_function_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.function_managers.html#module-mythril.laser.ethereum.function_managers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.state.html">mythril.laser.ethereum.state package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.state.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.state.html#module-mythril.laser.ethereum.state.account">mythril.laser.ethereum.state.account module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.state.html#module-mythril.laser.ethereum.state.annotation">mythril.laser.ethereum.state.annotation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.state.html#module-mythril.laser.ethereum.state.calldata">mythril.laser.ethereum.state.calldata module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.state.html#module-mythril.laser.ethereum.state.constraints">mythril.laser.ethereum.state.constraints module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.state.html#module-mythril.laser.ethereum.state.environment">mythril.laser.ethereum.state.environment module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.state.html#module-mythril.laser.ethereum.state.global_state">mythril.laser.ethereum.state.global_state module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.state.html#module-mythril.laser.ethereum.state.machine_state">mythril.laser.ethereum.state.machine_state module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.state.html#module-mythril.laser.ethereum.state.memory">mythril.laser.ethereum.state.memory module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.state.html#module-mythril.laser.ethereum.state.return_data">mythril.laser.ethereum.state.return_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.state.html#module-mythril.laser.ethereum.state.world_state">mythril.laser.ethereum.state.world_state module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.state.html#module-mythril.laser.ethereum.state">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.strategy.html">mythril.laser.ethereum.strategy package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.strategy.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.strategy.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.strategy.html#module-mythril.laser.ethereum.strategy.basic">mythril.laser.ethereum.strategy.basic module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.strategy.html#module-mythril.laser.ethereum.strategy.beam">mythril.laser.ethereum.strategy.beam module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.strategy.html#module-mythril.laser.ethereum.strategy.concolic">mythril.laser.ethereum.strategy.concolic module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.strategy.html#module-mythril.laser.ethereum.strategy">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.transaction.html">mythril.laser.ethereum.transaction package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.transaction.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.transaction.html#module-mythril.laser.ethereum.transaction.concolic">mythril.laser.ethereum.transaction.concolic module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.transaction.html#module-mythril.laser.ethereum.transaction.symbolic">mythril.laser.ethereum.transaction.symbolic module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.transaction.html#module-mythril.laser.ethereum.transaction.transaction_models">mythril.laser.ethereum.transaction.transaction_models module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.transaction.html#module-mythril.laser.ethereum.transaction">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.ethereum.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.ethereum.html#module-mythril.laser.ethereum.call">mythril.laser.ethereum.call module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.call.get_call_data"><code class="docutils literal notranslate"><span class="pre">get_call_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.call.get_call_parameters"><code class="docutils literal notranslate"><span class="pre">get_call_parameters()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.call.get_callee_account"><code class="docutils literal notranslate"><span class="pre">get_callee_account()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.call.get_callee_address"><code class="docutils literal notranslate"><span class="pre">get_callee_address()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.call.native_call"><code class="docutils literal notranslate"><span class="pre">native_call()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.ethereum.html#module-mythril.laser.ethereum.cfg">mythril.laser.ethereum.cfg module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.cfg.Edge"><code class="docutils literal notranslate"><span class="pre">Edge</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.cfg.Edge.as_dict"><code class="docutils literal notranslate"><span class="pre">Edge.as_dict</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.cfg.JumpType"><code class="docutils literal notranslate"><span class="pre">JumpType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.cfg.JumpType.CALL"><code class="docutils literal notranslate"><span class="pre">JumpType.CALL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.cfg.JumpType.CONDITIONAL"><code class="docutils literal notranslate"><span class="pre">JumpType.CONDITIONAL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.cfg.JumpType.RETURN"><code class="docutils literal notranslate"><span class="pre">JumpType.RETURN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.cfg.JumpType.Transaction"><code class="docutils literal notranslate"><span class="pre">JumpType.Transaction</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.cfg.JumpType.UNCONDITIONAL"><code class="docutils literal notranslate"><span class="pre">JumpType.UNCONDITIONAL</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.cfg.Node"><code class="docutils literal notranslate"><span class="pre">Node</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.cfg.Node.get_cfg_dict"><code class="docutils literal notranslate"><span class="pre">Node.get_cfg_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.cfg.NodeFlags"><code class="docutils literal notranslate"><span class="pre">NodeFlags</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.ethereum.html#module-mythril.laser.ethereum.evm_exceptions">mythril.laser.ethereum.evm_exceptions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.evm_exceptions.InvalidInstruction"><code class="docutils literal notranslate"><span class="pre">InvalidInstruction</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.evm_exceptions.InvalidJumpDestination"><code class="docutils literal notranslate"><span class="pre">InvalidJumpDestination</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.evm_exceptions.OutOfGasException"><code class="docutils literal notranslate"><span class="pre">OutOfGasException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.evm_exceptions.StackOverflowException"><code class="docutils literal notranslate"><span class="pre">StackOverflowException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.evm_exceptions.StackUnderflowException"><code class="docutils literal notranslate"><span class="pre">StackUnderflowException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.evm_exceptions.VmException"><code class="docutils literal notranslate"><span class="pre">VmException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.evm_exceptions.WriteProtection"><code class="docutils literal notranslate"><span class="pre">WriteProtection</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.ethereum.html#module-mythril.laser.ethereum.instruction_data">mythril.laser.ethereum.instruction_data module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instruction_data.calculate_native_gas"><code class="docutils literal notranslate"><span class="pre">calculate_native_gas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instruction_data.calculate_sha3_gas"><code class="docutils literal notranslate"><span class="pre">calculate_sha3_gas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instruction_data.get_opcode_gas"><code class="docutils literal notranslate"><span class="pre">get_opcode_gas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instruction_data.get_required_stack_elements"><code class="docutils literal notranslate"><span class="pre">get_required_stack_elements()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.ethereum.html#module-mythril.laser.ethereum.instructions">mythril.laser.ethereum.instructions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction"><code class="docutils literal notranslate"><span class="pre">Instruction</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.add_"><code class="docutils literal notranslate"><span class="pre">Instruction.add_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.addmod_"><code class="docutils literal notranslate"><span class="pre">Instruction.addmod_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.address_"><code class="docutils literal notranslate"><span class="pre">Instruction.address_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.and_"><code class="docutils literal notranslate"><span class="pre">Instruction.and_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.assert_fail_"><code class="docutils literal notranslate"><span class="pre">Instruction.assert_fail_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.balance_"><code class="docutils literal notranslate"><span class="pre">Instruction.balance_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.basefee_"><code class="docutils literal notranslate"><span class="pre">Instruction.basefee_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.beginsub_"><code class="docutils literal notranslate"><span class="pre">Instruction.beginsub_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.blockhash_"><code class="docutils literal notranslate"><span class="pre">Instruction.blockhash_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.byte_"><code class="docutils literal notranslate"><span class="pre">Instruction.byte_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.call_"><code class="docutils literal notranslate"><span class="pre">Instruction.call_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.call_post"><code class="docutils literal notranslate"><span class="pre">Instruction.call_post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.callcode_"><code class="docutils literal notranslate"><span class="pre">Instruction.callcode_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.callcode_post"><code class="docutils literal notranslate"><span class="pre">Instruction.callcode_post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.calldatacopy_"><code class="docutils literal notranslate"><span class="pre">Instruction.calldatacopy_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.calldataload_"><code class="docutils literal notranslate"><span class="pre">Instruction.calldataload_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.calldatasize_"><code class="docutils literal notranslate"><span class="pre">Instruction.calldatasize_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.caller_"><code class="docutils literal notranslate"><span class="pre">Instruction.caller_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.callvalue_"><code class="docutils literal notranslate"><span class="pre">Instruction.callvalue_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.chainid_"><code class="docutils literal notranslate"><span class="pre">Instruction.chainid_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.codecopy_"><code class="docutils literal notranslate"><span class="pre">Instruction.codecopy_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.codesize_"><code class="docutils literal notranslate"><span class="pre">Instruction.codesize_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.coinbase_"><code class="docutils literal notranslate"><span class="pre">Instruction.coinbase_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.create2_"><code class="docutils literal notranslate"><span class="pre">Instruction.create2_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.create2_post"><code class="docutils literal notranslate"><span class="pre">Instruction.create2_post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.create_"><code class="docutils literal notranslate"><span class="pre">Instruction.create_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.create_post"><code class="docutils literal notranslate"><span class="pre">Instruction.create_post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.delegatecall_"><code class="docutils literal notranslate"><span class="pre">Instruction.delegatecall_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.delegatecall_post"><code class="docutils literal notranslate"><span class="pre">Instruction.delegatecall_post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.difficulty_"><code class="docutils literal notranslate"><span class="pre">Instruction.difficulty_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.div_"><code class="docutils literal notranslate"><span class="pre">Instruction.div_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.dup_"><code class="docutils literal notranslate"><span class="pre">Instruction.dup_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.empty_"><code class="docutils literal notranslate"><span class="pre">Instruction.empty_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.eq_"><code class="docutils literal notranslate"><span class="pre">Instruction.eq_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.evaluate"><code class="docutils literal notranslate"><span class="pre">Instruction.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.exp_"><code class="docutils literal notranslate"><span class="pre">Instruction.exp_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.extcodecopy_"><code class="docutils literal notranslate"><span class="pre">Instruction.extcodecopy_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.extcodehash_"><code class="docutils literal notranslate"><span class="pre">Instruction.extcodehash_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.extcodesize_"><code class="docutils literal notranslate"><span class="pre">Instruction.extcodesize_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.gas_"><code class="docutils literal notranslate"><span class="pre">Instruction.gas_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.gaslimit_"><code class="docutils literal notranslate"><span class="pre">Instruction.gaslimit_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.gasprice_"><code class="docutils literal notranslate"><span class="pre">Instruction.gasprice_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.gt_"><code class="docutils literal notranslate"><span class="pre">Instruction.gt_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.invalid_"><code class="docutils literal notranslate"><span class="pre">Instruction.invalid_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.iszero_"><code class="docutils literal notranslate"><span class="pre">Instruction.iszero_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.jump_"><code class="docutils literal notranslate"><span class="pre">Instruction.jump_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.jumpdest_"><code class="docutils literal notranslate"><span class="pre">Instruction.jumpdest_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.jumpi_"><code class="docutils literal notranslate"><span class="pre">Instruction.jumpi_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.jumpsub_"><code class="docutils literal notranslate"><span class="pre">Instruction.jumpsub_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.log_"><code class="docutils literal notranslate"><span class="pre">Instruction.log_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.lt_"><code class="docutils literal notranslate"><span class="pre">Instruction.lt_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.mload_"><code class="docutils literal notranslate"><span class="pre">Instruction.mload_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.mod_"><code class="docutils literal notranslate"><span class="pre">Instruction.mod_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.msize_"><code class="docutils literal notranslate"><span class="pre">Instruction.msize_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.mstore8_"><code class="docutils literal notranslate"><span class="pre">Instruction.mstore8_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.mstore_"><code class="docutils literal notranslate"><span class="pre">Instruction.mstore_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.mul_"><code class="docutils literal notranslate"><span class="pre">Instruction.mul_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.mulmod_"><code class="docutils literal notranslate"><span class="pre">Instruction.mulmod_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.not_"><code class="docutils literal notranslate"><span class="pre">Instruction.not_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.number_"><code class="docutils literal notranslate"><span class="pre">Instruction.number_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.or_"><code class="docutils literal notranslate"><span class="pre">Instruction.or_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.origin_"><code class="docutils literal notranslate"><span class="pre">Instruction.origin_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.pc_"><code class="docutils literal notranslate"><span class="pre">Instruction.pc_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.pop_"><code class="docutils literal notranslate"><span class="pre">Instruction.pop_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.post_handler"><code class="docutils literal notranslate"><span class="pre">Instruction.post_handler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.push_"><code class="docutils literal notranslate"><span class="pre">Instruction.push_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.return_"><code class="docutils literal notranslate"><span class="pre">Instruction.return_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.returndatacopy_"><code class="docutils literal notranslate"><span class="pre">Instruction.returndatacopy_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.returndatasize_"><code class="docutils literal notranslate"><span class="pre">Instruction.returndatasize_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.returnsub_"><code class="docutils literal notranslate"><span class="pre">Instruction.returnsub_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.revert_"><code class="docutils literal notranslate"><span class="pre">Instruction.revert_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.sar_"><code class="docutils literal notranslate"><span class="pre">Instruction.sar_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.sdiv_"><code class="docutils literal notranslate"><span class="pre">Instruction.sdiv_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.selfbalance_"><code class="docutils literal notranslate"><span class="pre">Instruction.selfbalance_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.selfdestruct_"><code class="docutils literal notranslate"><span class="pre">Instruction.selfdestruct_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.sgt_"><code class="docutils literal notranslate"><span class="pre">Instruction.sgt_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.sha3_"><code class="docutils literal notranslate"><span class="pre">Instruction.sha3_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.shl_"><code class="docutils literal notranslate"><span class="pre">Instruction.shl_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.shr_"><code class="docutils literal notranslate"><span class="pre">Instruction.shr_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.signextend_"><code class="docutils literal notranslate"><span class="pre">Instruction.signextend_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.sload_"><code class="docutils literal notranslate"><span class="pre">Instruction.sload_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.slt_"><code class="docutils literal notranslate"><span class="pre">Instruction.slt_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.smod_"><code class="docutils literal notranslate"><span class="pre">Instruction.smod_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.sstore_"><code class="docutils literal notranslate"><span class="pre">Instruction.sstore_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.staticcall_"><code class="docutils literal notranslate"><span class="pre">Instruction.staticcall_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.staticcall_post"><code class="docutils literal notranslate"><span class="pre">Instruction.staticcall_post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.stop_"><code class="docutils literal notranslate"><span class="pre">Instruction.stop_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.sub_"><code class="docutils literal notranslate"><span class="pre">Instruction.sub_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.swap_"><code class="docutils literal notranslate"><span class="pre">Instruction.swap_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.timestamp_"><code class="docutils literal notranslate"><span class="pre">Instruction.timestamp_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.Instruction.xor_"><code class="docutils literal notranslate"><span class="pre">Instruction.xor_()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.StateTransition"><code class="docutils literal notranslate"><span class="pre">StateTransition</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.StateTransition.accumulate_gas"><code class="docutils literal notranslate"><span class="pre">StateTransition.accumulate_gas()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.StateTransition.call_on_state_copy"><code class="docutils literal notranslate"><span class="pre">StateTransition.call_on_state_copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.StateTransition.check_gas_usage_limit"><code class="docutils literal notranslate"><span class="pre">StateTransition.check_gas_usage_limit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.StateTransition.increment_states_pc"><code class="docutils literal notranslate"><span class="pre">StateTransition.increment_states_pc()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.instructions.transfer_ether"><code class="docutils literal notranslate"><span class="pre">transfer_ether()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.ethereum.html#module-mythril.laser.ethereum.natives">mythril.laser.ethereum.natives module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.NativeContractException"><code class="docutils literal notranslate"><span class="pre">NativeContractException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.blake2b_fcompress"><code class="docutils literal notranslate"><span class="pre">blake2b_fcompress()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.ec_add"><code class="docutils literal notranslate"><span class="pre">ec_add()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.ec_mul"><code class="docutils literal notranslate"><span class="pre">ec_mul()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.ec_pair"><code class="docutils literal notranslate"><span class="pre">ec_pair()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.ecrecover"><code class="docutils literal notranslate"><span class="pre">ecrecover()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.ecrecover_to_pub"><code class="docutils literal notranslate"><span class="pre">ecrecover_to_pub()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.encode_int32"><code class="docutils literal notranslate"><span class="pre">encode_int32()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.identity"><code class="docutils literal notranslate"><span class="pre">identity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.int_to_32bytearray"><code class="docutils literal notranslate"><span class="pre">int_to_32bytearray()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.mod_exp"><code class="docutils literal notranslate"><span class="pre">mod_exp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.native_contracts"><code class="docutils literal notranslate"><span class="pre">native_contracts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.ripemd160"><code class="docutils literal notranslate"><span class="pre">ripemd160()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.safe_ord"><code class="docutils literal notranslate"><span class="pre">safe_ord()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.natives.sha256"><code class="docutils literal notranslate"><span class="pre">sha256()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.ethereum.html#module-mythril.laser.ethereum.svm">mythril.laser.ethereum.svm module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM"><code class="docutils literal notranslate"><span class="pre">LaserEVM</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.exec"><code class="docutils literal notranslate"><span class="pre">LaserEVM.exec()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.exec_preprocessing"><code class="docutils literal notranslate"><span class="pre">LaserEVM.exec_preprocessing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.execute_state"><code class="docutils literal notranslate"><span class="pre">LaserEVM.execute_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.execute_state_preprocessing"><code class="docutils literal notranslate"><span class="pre">LaserEVM.execute_state_preprocessing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.execute_transactions"><code class="docutils literal notranslate"><span class="pre">LaserEVM.execute_transactions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.extend_strategy"><code class="docutils literal notranslate"><span class="pre">LaserEVM.extend_strategy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.handle_vm_exception"><code class="docutils literal notranslate"><span class="pre">LaserEVM.handle_vm_exception()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.instr_hook"><code class="docutils literal notranslate"><span class="pre">LaserEVM.instr_hook()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.laser_hook"><code class="docutils literal notranslate"><span class="pre">LaserEVM.laser_hook()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.manage_cfg"><code class="docutils literal notranslate"><span class="pre">LaserEVM.manage_cfg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.post_hook"><code class="docutils literal notranslate"><span class="pre">LaserEVM.post_hook()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.pre_hook"><code class="docutils literal notranslate"><span class="pre">LaserEVM.pre_hook()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.preprocessing_pre_hook"><code class="docutils literal notranslate"><span class="pre">LaserEVM.preprocessing_pre_hook()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.register_hooks"><code class="docutils literal notranslate"><span class="pre">LaserEVM.register_hooks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.register_instr_hooks"><code class="docutils literal notranslate"><span class="pre">LaserEVM.register_instr_hooks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.register_laser_hooks"><code class="docutils literal notranslate"><span class="pre">LaserEVM.register_laser_hooks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM.sym_exec"><code class="docutils literal notranslate"><span class="pre">LaserEVM.sym_exec()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.SVMError"><code class="docutils literal notranslate"><span class="pre">SVMError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.ethereum.html#module-mythril.laser.ethereum.time_handler">mythril.laser.ethereum.time_handler module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.time_handler.TimeHandler"><code class="docutils literal notranslate"><span class="pre">TimeHandler</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.time_handler.TimeHandler.start_execution"><code class="docutils literal notranslate"><span class="pre">TimeHandler.start_execution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.time_handler.TimeHandler.time_remaining"><code class="docutils literal notranslate"><span class="pre">TimeHandler.time_remaining()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.ethereum.html#module-mythril.laser.ethereum.util">mythril.laser.ethereum.util module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.util.bytearray_to_int"><code class="docutils literal notranslate"><span class="pre">bytearray_to_int()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.util.concrete_int_from_bytes"><code class="docutils literal notranslate"><span class="pre">concrete_int_from_bytes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.util.concrete_int_to_bytes"><code class="docutils literal notranslate"><span class="pre">concrete_int_to_bytes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.util.extract32"><code class="docutils literal notranslate"><span class="pre">extract32()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.util.extract_copy"><code class="docutils literal notranslate"><span class="pre">extract_copy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.util.get_concrete_int"><code class="docutils literal notranslate"><span class="pre">get_concrete_int()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.util.get_instruction_index"><code class="docutils literal notranslate"><span class="pre">get_instruction_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.util.get_trace_line"><code class="docutils literal notranslate"><span class="pre">get_trace_line()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.util.insert_ret_val"><code class="docutils literal notranslate"><span class="pre">insert_ret_val()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.util.pop_bitvec"><code class="docutils literal notranslate"><span class="pre">pop_bitvec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.util.safe_decode"><code class="docutils literal notranslate"><span class="pre">safe_decode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.util.to_signed"><code class="docutils literal notranslate"><span class="pre">to_signed()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.ethereum.html#module-mythril.laser.ethereum">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mythril.laser.plugin.html">mythril.laser.plugin package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.plugins.html">mythril.laser.plugin.plugins package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#module-mythril.laser.plugin.plugins.benchmark">mythril.laser.plugin.plugins.benchmark module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#module-mythril.laser.plugin.plugins.call_depth_limiter">mythril.laser.plugin.plugins.call_depth_limiter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#module-mythril.laser.plugin.plugins.dependency_pruner">mythril.laser.plugin.plugins.dependency_pruner module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#module-mythril.laser.plugin.plugins.instruction_profiler">mythril.laser.plugin.plugins.instruction_profiler module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#module-mythril.laser.plugin.plugins.mutation_pruner">mythril.laser.plugin.plugins.mutation_pruner module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#module-mythril.laser.plugin.plugins.plugin_annotations">mythril.laser.plugin.plugins.plugin_annotations module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.plugins.html#module-mythril.laser.plugin.plugins">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.html#module-mythril.laser.plugin.builder">mythril.laser.plugin.builder module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.builder.PluginBuilder"><code class="docutils literal notranslate"><span class="pre">PluginBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.builder.PluginBuilder.name"><code class="docutils literal notranslate"><span class="pre">PluginBuilder.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.html#module-mythril.laser.plugin.interface">mythril.laser.plugin.interface module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.interface.LaserPlugin"><code class="docutils literal notranslate"><span class="pre">LaserPlugin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.interface.LaserPlugin.initialize"><code class="docutils literal notranslate"><span class="pre">LaserPlugin.initialize()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.html#module-mythril.laser.plugin.loader">mythril.laser.plugin.loader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.loader.LaserPluginLoader"><code class="docutils literal notranslate"><span class="pre">LaserPluginLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.loader.LaserPluginLoader.add_args"><code class="docutils literal notranslate"><span class="pre">LaserPluginLoader.add_args()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.loader.LaserPluginLoader.enable"><code class="docutils literal notranslate"><span class="pre">LaserPluginLoader.enable()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.loader.LaserPluginLoader.instrument_virtual_machine"><code class="docutils literal notranslate"><span class="pre">LaserPluginLoader.instrument_virtual_machine()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.loader.LaserPluginLoader.is_enabled"><code class="docutils literal notranslate"><span class="pre">LaserPluginLoader.is_enabled()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.loader.LaserPluginLoader.load"><code class="docutils literal notranslate"><span class="pre">LaserPluginLoader.load()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.html#module-mythril.laser.plugin.signals">mythril.laser.plugin.signals module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.signals.PluginSignal"><code class="docutils literal notranslate"><span class="pre">PluginSignal</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.signals.PluginSkipState"><code class="docutils literal notranslate"><span class="pre">PluginSkipState</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.plugin.html#mythril.laser.plugin.signals.PluginSkipWorldState"><code class="docutils literal notranslate"><span class="pre">PluginSkipWorldState</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.plugin.html#module-mythril.laser.plugin">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mythril.laser.smt.html">mythril.laser.smt package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.solver.html">mythril.laser.smt.solver package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#module-mythril.laser.smt.solver.independence_solver">mythril.laser.smt.solver.independence_solver module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#module-mythril.laser.smt.solver.solver">mythril.laser.smt.solver.solver module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#module-mythril.laser.smt.solver.solver_statistics">mythril.laser.smt.solver.solver_statistics module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.solver.html#module-mythril.laser.smt.solver">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.html#module-mythril.laser.smt.array">mythril.laser.smt.array module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.array.Array"><code class="docutils literal notranslate"><span class="pre">Array</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.array.BaseArray"><code class="docutils literal notranslate"><span class="pre">BaseArray</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.array.BaseArray.substitute"><code class="docutils literal notranslate"><span class="pre">BaseArray.substitute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.array.K"><code class="docutils literal notranslate"><span class="pre">K</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.html#module-mythril.laser.smt.bitvec">mythril.laser.smt.bitvec module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec"><code class="docutils literal notranslate"><span class="pre">BitVec</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec.size"><code class="docutils literal notranslate"><span class="pre">BitVec.size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec.symbolic"><code class="docutils literal notranslate"><span class="pre">BitVec.symbolic</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec.value"><code class="docutils literal notranslate"><span class="pre">BitVec.value</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.html#module-mythril.laser.smt.bitvec_helper">mythril.laser.smt.bitvec_helper module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.BVAddNoOverflow"><code class="docutils literal notranslate"><span class="pre">BVAddNoOverflow()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.BVMulNoOverflow"><code class="docutils literal notranslate"><span class="pre">BVMulNoOverflow()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.BVSubNoUnderflow"><code class="docutils literal notranslate"><span class="pre">BVSubNoUnderflow()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.Concat"><code class="docutils literal notranslate"><span class="pre">Concat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.Extract"><code class="docutils literal notranslate"><span class="pre">Extract()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.If"><code class="docutils literal notranslate"><span class="pre">If()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.LShR"><code class="docutils literal notranslate"><span class="pre">LShR()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.SRem"><code class="docutils literal notranslate"><span class="pre">SRem()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.Sum"><code class="docutils literal notranslate"><span class="pre">Sum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.UDiv"><code class="docutils literal notranslate"><span class="pre">UDiv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.UGE"><code class="docutils literal notranslate"><span class="pre">UGE()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.UGT"><code class="docutils literal notranslate"><span class="pre">UGT()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.ULE"><code class="docutils literal notranslate"><span class="pre">ULE()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.ULT"><code class="docutils literal notranslate"><span class="pre">ULT()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec_helper.URem"><code class="docutils literal notranslate"><span class="pre">URem()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.html#module-mythril.laser.smt.bool">mythril.laser.smt.bool module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.And"><code class="docutils literal notranslate"><span class="pre">And()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Bool"><code class="docutils literal notranslate"><span class="pre">Bool</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Bool.is_false"><code class="docutils literal notranslate"><span class="pre">Bool.is_false</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Bool.is_true"><code class="docutils literal notranslate"><span class="pre">Bool.is_true</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Bool.substitute"><code class="docutils literal notranslate"><span class="pre">Bool.substitute()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Bool.value"><code class="docutils literal notranslate"><span class="pre">Bool.value</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Not"><code class="docutils literal notranslate"><span class="pre">Not()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Or"><code class="docutils literal notranslate"><span class="pre">Or()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.Xor"><code class="docutils literal notranslate"><span class="pre">Xor()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.is_false"><code class="docutils literal notranslate"><span class="pre">is_false()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bool.is_true"><code class="docutils literal notranslate"><span class="pre">is_true()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.html#module-mythril.laser.smt.expression">mythril.laser.smt.expression module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.expression.Expression"><code class="docutils literal notranslate"><span class="pre">Expression</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.expression.Expression.annotate"><code class="docutils literal notranslate"><span class="pre">Expression.annotate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.expression.Expression.annotations"><code class="docutils literal notranslate"><span class="pre">Expression.annotations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.expression.Expression.get_annotations"><code class="docutils literal notranslate"><span class="pre">Expression.get_annotations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.expression.Expression.simplify"><code class="docutils literal notranslate"><span class="pre">Expression.simplify()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.expression.Expression.simplify_yes"><code class="docutils literal notranslate"><span class="pre">Expression.simplify_yes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.expression.Expression.size"><code class="docutils literal notranslate"><span class="pre">Expression.size()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.expression.simplify"><code class="docutils literal notranslate"><span class="pre">simplify()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.expression.simplify_yes"><code class="docutils literal notranslate"><span class="pre">simplify_yes()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.html#module-mythril.laser.smt.function">mythril.laser.smt.function module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.function.Function"><code class="docutils literal notranslate"><span class="pre">Function</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.html#module-mythril.laser.smt.model">mythril.laser.smt.model module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.model.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.model.Model.decls"><code class="docutils literal notranslate"><span class="pre">Model.decls()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.model.Model.eval"><code class="docutils literal notranslate"><span class="pre">Model.eval()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.laser.smt.html#module-mythril.laser.smt">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.SymbolFactory"><code class="docutils literal notranslate"><span class="pre">SymbolFactory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.SymbolFactory.BitVecSym"><code class="docutils literal notranslate"><span class="pre">SymbolFactory.BitVecSym()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.SymbolFactory.BitVecVal"><code class="docutils literal notranslate"><span class="pre">SymbolFactory.BitVecVal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.SymbolFactory.Bool"><code class="docutils literal notranslate"><span class="pre">SymbolFactory.Bool()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.SymbolFactory.BoolSym"><code class="docutils literal notranslate"><span class="pre">SymbolFactory.BoolSym()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-mythril.laser.execution_info">
+<span id="mythril-laser-execution-info-module"></span><h2>mythril.laser.execution_info module<a class="headerlink" href="#module-mythril.laser.execution_info" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mythril.laser.execution_info.ExecutionInfo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.laser.execution_info.</span></span><span class="sig-name descname"><span class="pre">ExecutionInfo</span></span><a class="reference internal" href="_modules/mythril/laser/execution_info.html#ExecutionInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.execution_info.ExecutionInfo" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mythril.laser.execution_info.ExecutionInfo.as_dict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/laser/execution_info.html#ExecutionInfo.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.laser.execution_info.ExecutionInfo.as_dict" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a dictionary with the execution info contained in this object</p>
+<p>The returned dictionary only uses primitive types.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mythril.laser">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mythril.laser" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="mythril.html">mythril package</a><ul>
+      <li>Previous: <a href="mythril.interfaces.html" title="previous chapter">mythril.interfaces package</a></li>
+      <li>Next: <a href="mythril.laser.ethereum.html" title="next chapter">mythril.laser.ethereum package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/mythril.laser.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

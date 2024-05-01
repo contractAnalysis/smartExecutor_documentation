@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>fdg.control package &#8212; SmartExecutor v4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8c91dc42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="fdg.preprocessing package" href="fdg.preprocessing.html" />
+    <link rel="prev" title="fdg package" href="fdg.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="fdg-control-package">
+<h1>fdg.control package<a class="headerlink" href="#fdg-control-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="fdg-control-ftn-search-strategy-module">
+<h2>fdg.control.ftn_search_strategy module<a class="headerlink" href="#fdg-control-ftn-search-strategy-module" title="Link to this heading">¶</a></h2>
+<dl class="py class" id="module-fdg.control.ftn_search_strategy">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.BFS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.control.ftn_search_strategy.</span></span><span class="sig-name descname"><span class="pre">BFS</span></span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#BFS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.BFS" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fdg.control.ftn_search_strategy.FunctionSearchStrategy" title="fdg.control.ftn_search_strategy.FunctionSearchStrategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">FunctionSearchStrategy</span></code></a></p>
+<p>no need to save states</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.BFS.assign_states">
+<span class="sig-name descname"><span class="pre">assign_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dk_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_state_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwrg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="fdg.html#fdg.fwrg_manager.FWRG_manager" title="fdg.fwrg_manager.FWRG_manager"><span class="pre">FWRG_manager</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#BFS.assign_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.BFS.assign_states" title="Link to this definition">¶</a></dt>
+<dd><p>assign functions for multiple states at the same time.
+:param deep_functions:
+:param current_state_key:
+:param fwrg:
+:param states_dict:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.BFS.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag_one_start_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocess_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocess_coverage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwrg_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="fdg.html#fdg.fwrg_manager.FWRG_manager" title="fdg.fwrg_manager.FWRG_manager"><span class="pre">FWRG_manager</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#BFS.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.BFS.initialize" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.BFS.termination">
+<span class="sig-name descname"><span class="pre">termination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_seq_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequence_depth_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#BFS.termination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.BFS.termination" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.DFS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.control.ftn_search_strategy.</span></span><span class="sig-name descname"><span class="pre">DFS</span></span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#DFS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.DFS" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fdg.control.ftn_search_strategy.FunctionSearchStrategy" title="fdg.control.ftn_search_strategy.FunctionSearchStrategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">FunctionSearchStrategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.DFS.assign_states">
+<span class="sig-name descname"><span class="pre">assign_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#DFS.assign_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.DFS.assign_states" title="Link to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>save states, push state keys to the stack
+select a state by poping an item from the stack
+assign functions to be executed on the selected state</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>deep_functions</strong></p></li>
+<li><p><strong>current_state_key</strong></p></li>
+<li><p><strong>fdfg</strong></p></li>
+<li><p><strong>states_dict</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.DFS.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag_one_start_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocess_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocess_coverage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwrg_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="fdg.html#fdg.fwrg_manager.FWRG_manager" title="fdg.fwrg_manager.FWRG_manager"><span class="pre">FWRG_manager</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#DFS.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.DFS.initialize" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.DFS.termination">
+<span class="sig-name descname"><span class="pre">termination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_seq_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequence_depth_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#DFS.termination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.DFS.termination" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.FunctionSearchStrategy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.control.ftn_search_strategy.</span></span><span class="sig-name descname"><span class="pre">FunctionSearchStrategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strategy_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#FunctionSearchStrategy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.FunctionSearchStrategy" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.FunctionSearchStrategy.assign_states">
+<span class="sig-name descname"><span class="pre">assign_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_state_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fdfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="fdg.html#fdg.fwrg_manager.FWRG_manager" title="fdg.fwrg_manager.FWRG_manager"><span class="pre">FWRG_manager</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#FunctionSearchStrategy.assign_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.FunctionSearchStrategy.assign_states" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.FunctionSearchStrategy.delete_state">
+<span class="sig-name descname"><span class="pre">delete_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#FunctionSearchStrategy.delete_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.FunctionSearchStrategy.delete_state" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.FunctionSearchStrategy.get_states">
+<span class="sig-name descname"><span class="pre">get_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#FunctionSearchStrategy.get_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.FunctionSearchStrategy.get_states" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.FunctionSearchStrategy.save_states">
+<span class="sig-name descname"><span class="pre">save_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#FunctionSearchStrategy.save_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.FunctionSearchStrategy.save_states" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.FunctionSearchStrategy.termination">
+<span class="sig-name descname"><span class="pre">termination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_seq_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequence_depth_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#FunctionSearchStrategy.termination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.FunctionSearchStrategy.termination" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.RandomBaseline">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.control.ftn_search_strategy.</span></span><span class="sig-name descname"><span class="pre">RandomBaseline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percent_of_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#RandomBaseline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.RandomBaseline" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fdg.control.ftn_search_strategy.FunctionSearchStrategy" title="fdg.control.ftn_search_strategy.FunctionSearchStrategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">FunctionSearchStrategy</span></code></a></p>
+<p>no need to save states</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.RandomBaseline.assign_states">
+<span class="sig-name descname"><span class="pre">assign_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dk_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#RandomBaseline.assign_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.RandomBaseline.assign_states" title="Link to this definition">¶</a></dt>
+<dd><p>apply BFS
+:param dk_functions:
+:param current_state_key:
+:param fwrg:
+:param states_dict:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.RandomBaseline.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag_one_start_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#RandomBaseline.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.RandomBaseline.initialize" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.RandomBaseline.termination">
+<span class="sig-name descname"><span class="pre">termination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_seq_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequence_depth_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#RandomBaseline.termination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.RandomBaseline.termination" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.Seq">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.control.ftn_search_strategy.</span></span><span class="sig-name descname"><span class="pre">Seq</span></span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#Seq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.Seq" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fdg.control.ftn_search_strategy.FunctionSearchStrategy" title="fdg.control.ftn_search_strategy.FunctionSearchStrategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">FunctionSearchStrategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.Seq.assign_states">
+<span class="sig-name descname"><span class="pre">assign_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_state_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fdfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="fdg.html#fdg.fwrg_manager.FWRG_manager" title="fdg.fwrg_manager.FWRG_manager"><span class="pre">FWRG_manager</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#Seq.assign_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.Seq.assign_states" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>deep_functions</strong></p></li>
+<li><p><strong>current_state_key</strong></p></li>
+<li><p><strong>fdfg</strong></p></li>
+<li><p><strong>states_dict</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.Seq.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_path_sf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">main_path_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fdfg_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="fdg.html#fdg.fwrg_manager.FWRG_manager" title="fdg.fwrg_manager.FWRG_manager"><span class="pre">FWRG_manager</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#Seq.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.Seq.initialize" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.ftn_search_strategy.Seq.termination">
+<span class="sig-name descname"><span class="pre">termination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_seq_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequence_depth_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/fdg/control/ftn_search_strategy.html#Seq.termination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.ftn_search_strategy.Seq.termination" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="fdg-control-function-assignment-module">
+<h2>fdg.control.function_assignment module<a class="headerlink" href="#fdg-control-function-assignment-module" title="Link to this heading">¶</a></h2>
+<dl class="py class" id="module-fdg.control.function_assignment">
+<dt class="sig sig-object py" id="fdg.control.function_assignment.FunctionAssignment">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.control.function_assignment.</span></span><span class="sig-name descname"><span class="pre">FunctionAssignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwrg_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="fdg.html#fdg.fwrg_manager.FWRG_manager" title="fdg.fwrg_manager.FWRG_manager"><span class="pre">FWRG_manager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_percent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/function_assignment.html#FunctionAssignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.function_assignment.FunctionAssignment" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.function_assignment.FunctionAssignment.assign_all_functions">
+<span class="sig-name descname"><span class="pre">assign_all_functions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/function_assignment.html#FunctionAssignment.assign_all_functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.function_assignment.FunctionAssignment.assign_all_functions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.function_assignment.FunctionAssignment.assign_functions">
+<span class="sig-name descname"><span class="pre">assign_functions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dk_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_execute_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">not_to_execute</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/function_assignment.html#FunctionAssignment.assign_functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.function_assignment.FunctionAssignment.assign_functions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.function_assignment.FunctionAssignment.assign_functions_for_baseline">
+<span class="sig-name descname"><span class="pre">assign_functions_for_baseline</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/control/function_assignment.html#FunctionAssignment.assign_functions_for_baseline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.function_assignment.FunctionAssignment.assign_functions_for_baseline" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.function_assignment.FunctionAssignment.assign_functions_timeout">
+<span class="sig-name descname"><span class="pre">assign_functions_timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dk_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percent_of_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/function_assignment.html#FunctionAssignment.assign_functions_timeout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.function_assignment.FunctionAssignment.assign_functions_timeout" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.function_assignment.FunctionAssignment.assign_functions_timeout_mine">
+<span class="sig-name descname"><span class="pre">assign_functions_timeout_mine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dk_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">randomly_selected_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/function_assignment.html#FunctionAssignment.assign_functions_timeout_mine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.function_assignment.FunctionAssignment.assign_functions_timeout_mine" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.function_assignment.FunctionAssignment.can_reach_targets">
+<span class="sig-name descname"><span class="pre">can_reach_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/fdg/control/function_assignment.html#FunctionAssignment.can_reach_targets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.function_assignment.FunctionAssignment.can_reach_targets" title="Link to this definition">¶</a></dt>
+<dd><p>check there is a path from ftn to one of the targets
+the max length of such a path should be no larger than max_depth</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.function_assignment.FunctionAssignment.consider_dk_functions_not_reachable">
+<span class="sig-name descname"><span class="pre">consider_dk_functions_not_reachable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/control/function_assignment.html#FunctionAssignment.consider_dk_functions_not_reachable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.function_assignment.FunctionAssignment.consider_dk_functions_not_reachable" title="Link to this definition">¶</a></dt>
+<dd><p>unreachable: the reads in a condition are not recognized, or no reads in a condition.
+handle: consider all the reads in a function</p>
+<p>symbol(),name(),version() are functions that are not reachable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.function_assignment.FunctionAssignment.fallback_case">
+<span class="sig-name descname"><span class="pre">fallback_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftn_seq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/function_assignment.html#FunctionAssignment.fallback_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.function_assignment.FunctionAssignment.fallback_case" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.function_assignment.FunctionAssignment.get_targets_be_reached">
+<span class="sig-name descname"><span class="pre">get_targets_be_reached</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/fdg/control/function_assignment.html#FunctionAssignment.get_targets_be_reached"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.function_assignment.FunctionAssignment.get_targets_be_reached" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.function_assignment.FunctionAssignment.record_assignment">
+<span class="sig-name descname"><span class="pre">record_assignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assigned_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/function_assignment.html#FunctionAssignment.record_assignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.function_assignment.FunctionAssignment.record_assignment" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.function_assignment.FunctionAssignment.select_functions_randomly">
+<span class="sig-name descname"><span class="pre">select_functions_randomly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percentage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/control/function_assignment.html#FunctionAssignment.select_functions_randomly"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.function_assignment.FunctionAssignment.select_functions_randomly" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.function_assignment.FunctionAssignment.when_no_children_assigned">
+<span class="sig-name descname"><span class="pre">when_no_children_assigned</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dk_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/function_assignment.html#FunctionAssignment.when_no_children_assigned"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.function_assignment.FunctionAssignment.when_no_children_assigned" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-fdg.control.guider">
+<span id="fdg-control-guider-module"></span><h2>fdg.control.guider module<a class="headerlink" href="#module-fdg.control.guider" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="fdg.control.guider.Guider">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.control.guider.</span></span><span class="sig-name descname"><span class="pre">Guider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftn_search_strategy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#fdg.control.ftn_search_strategy.FunctionSearchStrategy" title="fdg.control.ftn_search_strategy.FunctionSearchStrategy"><span class="pre">FunctionSearchStrategy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/guider.html#Guider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.guider.Guider" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.guider.Guider.end_iteration">
+<span class="sig-name descname"><span class="pre">end_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">laserEVM</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM" title="mythril.laser.ethereum.svm.LaserEVM"><span class="pre">LaserEVM</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/guider.html#Guider.end_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.guider.Guider.end_iteration" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.guider.Guider.get_start_sequence">
+<span class="sig-name descname"><span class="pre">get_start_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">laserEVM</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM" title="mythril.laser.ethereum.svm.LaserEVM"><span class="pre">LaserEVM</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/guider.html#Guider.get_start_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.guider.Guider.get_start_sequence" title="Link to this definition">¶</a></dt>
+<dd><p>get the sequences used to annotate the states (world states) at the end of Phase 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.guider.Guider.init">
+<span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_k_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocess</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="fdg.preprocessing.html#fdg.preprocessing.preprocess.Preprocessing" title="fdg.preprocessing.preprocess.Preprocessing"><span class="pre">Preprocessing</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/guider.html#Guider.init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.guider.Guider.init" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.guider.Guider.organize_states">
+<span class="sig-name descname"><span class="pre">organize_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">states:</span> <span class="pre">[&lt;class</span> <span class="pre">'mythril.laser.ethereum.state.world_state.WorldState'&gt;]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/guider.html#Guider.organize_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.guider.Guider.organize_states" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.guider.Guider.should_terminate">
+<span class="sig-name descname"><span class="pre">should_terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/guider.html#Guider.should_terminate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.guider.Guider.should_terminate" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.guider.Guider.start_iteration">
+<span class="sig-name descname"><span class="pre">start_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">laserEVM</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.html#mythril.laser.ethereum.svm.LaserEVM" title="mythril.laser.ethereum.svm.LaserEVM"><span class="pre">LaserEVM</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deep_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/guider.html#Guider.start_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.guider.Guider.start_iteration" title="Link to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>prepare for states and functions to be executed on the states</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>laserEVM</strong></p></li>
+<li><p><strong>deep_function</strong></p></li>
+<li><p><strong>iteration</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-fdg.control.mine">
+<span id="fdg-control-mine-module"></span><h2>fdg.control.mine module<a class="headerlink" href="#module-fdg.control.mine" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="fdg.control.mine.Mine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.control.mine.</span></span><span class="sig-name descname"><span class="pre">Mine</span></span><a class="reference internal" href="_modules/fdg/control/mine.html#Mine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.mine.Mine" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fdg.control.ftn_search_strategy.FunctionSearchStrategy" title="fdg.control.ftn_search_strategy.FunctionSearchStrategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">FunctionSearchStrategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.mine.Mine.assign_states">
+<span class="sig-name descname"><span class="pre">assign_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dk_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/control/mine.html#Mine.assign_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.mine.Mine.assign_states" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dk_functions</strong></p></li>
+<li><p><strong>fwrg</strong></p></li>
+<li><p><strong>states_dict</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.mine.Mine.assign_states_normal">
+<span class="sig-name descname"><span class="pre">assign_states_normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dk_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/control/mine.html#Mine.assign_states_normal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.mine.Mine.assign_states_normal" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dk_functions</strong></p></li>
+<li><p><strong>fwrg</strong></p></li>
+<li><p><strong>states_dict</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a state and the functions to be executed on it</p>
+</dd>
+</dl>
+<p>a flag indicating whether this state can be deleted or not.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.mine.Mine.assign_states_timeout">
+<span class="sig-name descname"><span class="pre">assign_states_timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dk_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percent_of_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/control/mine.html#Mine.assign_states_timeout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.mine.Mine.assign_states_timeout" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dk_functions</strong></p></li>
+<li><p><strong>fwrg</strong></p></li>
+<li><p><strong>states_dict</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.mine.Mine.break_a_tie">
+<span class="sig-name descname"><span class="pre">break_a_tie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index_key_pairs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/fdg/control/mine.html#Mine.break_a_tie"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.mine.Mine.break_a_tie" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.mine.Mine.filter_states">
+<span class="sig-name descname"><span class="pre">filter_states</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/mine.html#Mine.filter_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.mine.Mine.filter_states" title="Link to this definition">¶</a></dt>
+<dd><p>for states generated from the same function sequence, only one is considered if two or more write the same state variables in the last step</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.mine.Mine.get_written_slots_in_depth_str">
+<span class="sig-name descname"><span class="pre">get_written_slots_in_depth_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/mine.html#Mine.get_written_slots_in_depth_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.mine.Mine.get_written_slots_in_depth_str" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.mine.Mine.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag_one_start_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocess_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocess_coverage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwrg_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="fdg.html#fdg.fwrg_manager.FWRG_manager" title="fdg.fwrg_manager.FWRG_manager"><span class="pre">FWRG_manager</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/mine.html#Mine.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.mine.Mine.initialize" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.mine.Mine.pickup_a_state">
+<span class="sig-name descname"><span class="pre">pickup_a_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/control/mine.html#Mine.pickup_a_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.mine.Mine.pickup_a_state" title="Link to this definition">¶</a></dt>
+<dd><p>order states in self.queue
+return the first state in self.queue</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.mine.Mine.termination">
+<span class="sig-name descname"><span class="pre">termination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_seq_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequence_depth_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/fdg/control/mine.html#Mine.termination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.mine.Mine.termination" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fdg.control.mine.Mine.update_states">
+<span class="sig-name descname"><span class="pre">update_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/fdg/control/mine.html#Mine.update_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.mine.Mine.update_states" title="Link to this definition">¶</a></dt>
+<dd><p>save states</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="fdg-control-weight-computation-module">
+<h2>fdg.control.weight_computation module<a class="headerlink" href="#fdg-control-weight-computation-module" title="Link to this heading">¶</a></h2>
+<dl class="py function" id="module-fdg.control.weight_computation">
+<dt class="sig sig-object py" id="fdg.control.weight_computation.compute">
+<span class="sig-prename descclassname"><span class="pre">fdg.control.weight_computation.</span></span><span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fdg/control/weight_computation.html#compute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.weight_computation.compute" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fdg.control.weight_computation.compute_mine">
+<span class="sig-prename descclassname"><span class="pre">fdg.control.weight_computation.</span></span><span class="sig-name descname"><span class="pre">compute_mine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fdg/control/weight_computation.html#compute_mine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.weight_computation.compute_mine" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fdg.control.weight_computation.simple_mean">
+<span class="sig-prename descclassname"><span class="pre">fdg.control.weight_computation.</span></span><span class="sig-name descname"><span class="pre">simple_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fdg/control/weight_computation.html#simple_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.weight_computation.simple_mean" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fdg.control.weight_computation.turn_write_features_to_a_value">
+<span class="sig-prename descclassname"><span class="pre">fdg.control.weight_computation.</span></span><span class="sig-name descname"><span class="pre">turn_write_features_to_a_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">data:</span> <span class="pre">[&lt;class</span> <span class="pre">'bool'&gt;]</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fdg/control/weight_computation.html#turn_write_features_to_a_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.weight_computation.turn_write_features_to_a_value" title="Link to this definition">¶</a></dt>
+<dd><p>three featues:[primitive type,concrete write, new write)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fdg.control.weight_computation.weighted_mean">
+<span class="sig-prename descclassname"><span class="pre">fdg.control.weight_computation.</span></span><span class="sig-name descname"><span class="pre">weighted_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fdg/control/weight_computation.html#weighted_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.control.weight_computation.weighted_mean" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-fdg.control">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-fdg.control" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="fdg.html">fdg package</a><ul>
+      <li>Previous: <a href="fdg.html" title="previous chapter">fdg package</a></li>
+      <li>Next: <a href="fdg.preprocessing.html" title="next chapter">fdg.preprocessing package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/fdg.control.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
