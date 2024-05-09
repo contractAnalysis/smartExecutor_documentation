@@ -1,50 +1,125 @@
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<html lang="en" data-content_root="./">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mythril.interfaces package &mdash; SmartExecutor v4.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
-    <title>mythril.interfaces package &#8212; SmartExecutor v4.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
-    <script src="_static/documentation_options.js?v=8c91dc42"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8c91dc42"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="mythril.laser package" href="mythril.laser.html" />
-    <link rel="prev" title="mythril.ethereum.interface.rpc package" href="mythril.ethereum.interface.rpc.html" />
-   
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
+    <link rel="prev" title="mythril.ethereum.interface.rpc package" href="mythril.ethereum.interface.rpc.html" /> 
+</head>
 
-  
-  
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
 
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
           
+          
+          <a href="index.html" class="icon icon-home">
+            SmartExecutor
+          </a>
+              <div class="version">
+                v4.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="mythril.html">mythril package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="mythril.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="mythril.analysis.html">mythril.analysis package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.concolic.html">mythril.concolic package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.disassembler.html">mythril.disassembler package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.ethereum.html">mythril.ethereum package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">mythril.interfaces package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-mythril.interfaces.cli">mythril.interfaces.cli module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-mythril.interfaces.epic">mythril.interfaces.epic module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-mythril.interfaces">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.laser.html">mythril.laser package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.mythril.html">mythril.mythril package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.plugin.html">mythril.plugin package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.solidity.html">mythril.solidity package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mythril.support.html">mythril.support package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.html#module-mythril.exceptions">mythril.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mythril.html#module-mythril">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
+</ul>
 
-          <div class="body" role="main">
-            
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartExecutor</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="mythril.html">mythril package</a></li>
+      <li class="breadcrumb-item active">mythril.interfaces package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/mythril.interfaces.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="mythril-interfaces-package">
-<h1>mythril.interfaces package<a class="headerlink" href="#mythril-interfaces-package" title="Link to this heading">¶</a></h1>
+<h1>mythril.interfaces package<a class="headerlink" href="#mythril-interfaces-package" title="Link to this heading"></a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
 <section id="module-mythril.interfaces.cli">
-<span id="mythril-interfaces-cli-module"></span><h2>mythril.interfaces.cli module<a class="headerlink" href="#module-mythril.interfaces.cli" title="Link to this heading">¶</a></h2>
+<span id="mythril-interfaces-cli-module"></span><h2>mythril.interfaces.cli module<a class="headerlink" href="#module-mythril.interfaces.cli" title="Link to this heading"></a></h2>
 <p>mythril.py: Bug hunting on the Ethereum blockchain</p>
 <p><a class="reference external" href="http://www.github.com/ConsenSys/mythril">http://www.github.com/ConsenSys/mythril</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.add_analysis_args">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">add_analysis_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#add_analysis_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.add_analysis_args" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">add_analysis_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#add_analysis_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.add_analysis_args" title="Link to this definition"></a></dt>
 <dd><p>Adds arguments for analysis</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -55,23 +130,23 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.add_fwrg_analysis_args">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">add_fwrg_analysis_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#add_fwrg_analysis_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.add_fwrg_analysis_args" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">add_fwrg_analysis_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#add_fwrg_analysis_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.add_fwrg_analysis_args" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.add_fwrg_arguments">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">add_fwrg_arguments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#add_fwrg_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.add_fwrg_arguments" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">add_fwrg_arguments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#add_fwrg_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.add_fwrg_arguments" title="Link to this definition"></a></dt>
 <dd><p>collect the values for the global parameters defined in fdg.global_config.py.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.add_graph_commands">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">add_graph_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#add_graph_commands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.add_graph_commands" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">add_graph_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#add_graph_commands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.add_graph_commands" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.contract_hash_to_address">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">contract_hash_to_address</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#contract_hash_to_address"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.contract_hash_to_address" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">contract_hash_to_address</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#contract_hash_to_address"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.contract_hash_to_address" title="Link to this definition"></a></dt>
 <dd><p>prints the hash from function signature
 :param args:
 :return:</p>
@@ -79,7 +154,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.create_analyzer_parser">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_analyzer_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analyzer_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_analyzer_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_analyzer_parser" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_analyzer_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analyzer_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_analyzer_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_analyzer_parser" title="Link to this definition"></a></dt>
 <dd><p>Modify parser to handle analyze command
 :param analyzer_parser:
 :return:</p>
@@ -87,13 +162,13 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.create_concolic_parser">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_concolic_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgumentParser</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_concolic_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_concolic_parser" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_concolic_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgumentParser</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_concolic_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_concolic_parser" title="Link to this definition"></a></dt>
 <dd><p>Get parser which handles arguments for concolic branch flipping</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.create_disassemble_parser">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_disassemble_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_disassemble_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_disassemble_parser" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_disassemble_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_disassemble_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_disassemble_parser" title="Link to this definition"></a></dt>
 <dd><p>Modify parser to handle disassembly
 :param parser:
 :return:</p>
@@ -101,12 +176,12 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.create_foundry_parser">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_foundry_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">foundry_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_foundry_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_foundry_parser" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_foundry_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">foundry_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_foundry_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_foundry_parser" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.create_func_to_hash_parser">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_func_to_hash_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_func_to_hash_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_func_to_hash_parser" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_func_to_hash_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_func_to_hash_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_func_to_hash_parser" title="Link to this definition"></a></dt>
 <dd><p>Modify parser to handle func_to_hash command
 :param parser:
 :return:</p>
@@ -114,7 +189,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.create_hash_to_addr_parser">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_hash_to_addr_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hash_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_hash_to_addr_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_hash_to_addr_parser" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_hash_to_addr_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hash_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_hash_to_addr_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_hash_to_addr_parser" title="Link to this definition"></a></dt>
 <dd><p>Modify parser to handle hash_to_addr command
 :param hash_parser:
 :return:</p>
@@ -122,7 +197,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.create_read_storage_parser">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_read_storage_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_storage_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_read_storage_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_read_storage_parser" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_read_storage_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_storage_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_read_storage_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_read_storage_parser" title="Link to this definition"></a></dt>
 <dd><p>Modify parser to handle storage slots
 :param read_storage_parser:
 :return:</p>
@@ -130,14 +205,14 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.create_safe_functions_parser">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_safe_functions_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_safe_functions_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_safe_functions_parser" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">create_safe_functions_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#create_safe_functions_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.create_safe_functions_parser" title="Link to this definition"></a></dt>
 <dd><p>The duplication exists between safe-functions and analyze as some of them have different default values.
 :param parser: Parser</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.execute_command">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">execute_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">disassembler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.mythril.html#mythril.mythril.mythril_disassembler.MythrilDisassembler" title="mythril.mythril.mythril_disassembler.MythrilDisassembler"><span class="pre">MythrilDisassembler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#execute_command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.execute_command" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">execute_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">disassembler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.mythril.html#mythril.mythril.mythril_disassembler.MythrilDisassembler" title="mythril.mythril.mythril_disassembler.MythrilDisassembler"><span class="pre">MythrilDisassembler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#execute_command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.execute_command" title="Link to this definition"></a></dt>
 <dd><p>Execute command
 :param disassembler:
 :param address:
@@ -148,7 +223,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.exit_with_error">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">exit_with_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#exit_with_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.exit_with_error" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">exit_with_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#exit_with_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.exit_with_error" title="Link to this definition"></a></dt>
 <dd><p>Exits with error
 :param <a href="#id1"><span class="problematic" id="id2">format_</span></a>: The format of the message
 :param message: message</p>
@@ -156,49 +231,49 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.get_creation_input_parser">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">get_creation_input_parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgumentParser</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#get_creation_input_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.get_creation_input_parser" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">get_creation_input_parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgumentParser</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#get_creation_input_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.get_creation_input_parser" title="Link to this definition"></a></dt>
 <dd><p>Returns Parser which handles input
 :return: Parser which handles input</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.get_output_parser">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">get_output_parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgumentParser</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#get_output_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.get_output_parser" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">get_output_parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgumentParser</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#get_output_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.get_output_parser" title="Link to this definition"></a></dt>
 <dd><p>Get parser which handles output
 :return: Parser which handles output</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.get_rpc_parser">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">get_rpc_parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgumentParser</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#get_rpc_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.get_rpc_parser" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">get_rpc_parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgumentParser</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#get_rpc_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.get_rpc_parser" title="Link to this definition"></a></dt>
 <dd><p>Get parser which handles RPC flags
 :return: Parser which handles rpc inputs</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.get_runtime_input_parser">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">get_runtime_input_parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgumentParser</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#get_runtime_input_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.get_runtime_input_parser" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">get_runtime_input_parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgumentParser</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#get_runtime_input_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.get_runtime_input_parser" title="Link to this definition"></a></dt>
 <dd><p>Returns Parser which handles input
 :return: Parser which handles input</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.get_safe_functions_parser">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">get_safe_functions_parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgumentParser</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#get_safe_functions_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.get_safe_functions_parser" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">get_safe_functions_parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgumentParser</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#get_safe_functions_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.get_safe_functions_parser" title="Link to this definition"></a></dt>
 <dd><p>Returns Parser which handles checking for safe functions
 :return: Parser which handles checking for safe functions</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.get_utilities_parser">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">get_utilities_parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgumentParser</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#get_utilities_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.get_utilities_parser" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">get_utilities_parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgumentParser</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#get_utilities_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.get_utilities_parser" title="Link to this definition"></a></dt>
 <dd><p>Get parser which handles utilities flags
 :return: Parser which handles utility flags</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.load_code">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">load_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">disassembler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.mythril.html#mythril.mythril.mythril_disassembler.MythrilDisassembler" title="mythril.mythril.mythril_disassembler.MythrilDisassembler"><span class="pre">MythrilDisassembler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#load_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.load_code" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">load_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">disassembler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.mythril.html#mythril.mythril.mythril_disassembler.MythrilDisassembler" title="mythril.mythril.mythril_disassembler.MythrilDisassembler"><span class="pre">MythrilDisassembler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#load_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.load_code" title="Link to this definition"></a></dt>
 <dd><p>Loads code into disassembly and returns address
 :param disassembler:
 :param args:
@@ -207,13 +282,13 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.main">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.main" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.main" title="Link to this definition"></a></dt>
 <dd><p>The main CLI interface entry point.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.parse_args_and_execute">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">parse_args_and_execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#parse_args_and_execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.parse_args_and_execute" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">parse_args_and_execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#parse_args_and_execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.parse_args_and_execute" title="Link to this definition"></a></dt>
 <dd><p>Parses the arguments
 :param parser: The parser
 :param args: The args</p>
@@ -221,7 +296,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.print_function_report">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">print_function_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">myth_disassembler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.mythril.html#mythril.mythril.mythril_disassembler.MythrilDisassembler" title="mythril.mythril.mythril_disassembler.MythrilDisassembler"><span class="pre">MythrilDisassembler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.analysis.html#mythril.analysis.report.Report" title="mythril.analysis.report.Report"><span class="pre">Report</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#print_function_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.print_function_report" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">print_function_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">myth_disassembler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.mythril.html#mythril.mythril.mythril_disassembler.MythrilDisassembler" title="mythril.mythril.mythril_disassembler.MythrilDisassembler"><span class="pre">MythrilDisassembler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.analysis.html#mythril.analysis.report.Report" title="mythril.analysis.report.Report"><span class="pre">Report</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#print_function_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.print_function_report" title="Link to this definition"></a></dt>
 <dd><p>Prints the function report
 :param report: Mythril’s report
 :return:</p>
@@ -229,7 +304,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.set_config">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">set_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#set_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.set_config" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">set_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#set_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.set_config" title="Link to this definition"></a></dt>
 <dd><p>Set config based on args
 :param args:
 :return: modified config</p>
@@ -237,7 +312,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.cli.validate_args">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">validate_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#validate_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.validate_args" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.cli.</span></span><span class="sig-name descname"><span class="pre">validate_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/cli.html#validate_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.cli.validate_args" title="Link to this definition"></a></dt>
 <dd><p>Validate cli args
 :param args:
 :return:</p>
@@ -245,16 +320,16 @@
 
 </section>
 <section id="module-mythril.interfaces.epic">
-<span id="mythril-interfaces-epic-module"></span><h2>mythril.interfaces.epic module<a class="headerlink" href="#module-mythril.interfaces.epic" title="Link to this heading">¶</a></h2>
+<span id="mythril-interfaces-epic-module"></span><h2>mythril.interfaces.epic module<a class="headerlink" href="#module-mythril.interfaces.epic" title="Link to this heading"></a></h2>
 <p>Don’t ask.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="mythril.interfaces.epic.LolCat">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.interfaces.epic.</span></span><span class="sig-name descname"><span class="pre">LolCat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode=256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output=&lt;_io.TextIOWrapper</span> <span class="pre">name='&lt;stdout&gt;'</span> <span class="pre">mode='w'</span> <span class="pre">encoding='utf-8'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mythril.interfaces.epic.</span></span><span class="sig-name descname"><span class="pre">LolCat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode=256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output=&lt;_io.TextIOWrapper</span> <span class="pre">name='&lt;stdout&gt;'</span> <span class="pre">mode='w'</span> <span class="pre">encoding='utf-8'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Cats lel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mythril.interfaces.epic.LolCat.ansi">
-<span class="sig-name descname"><span class="pre">ansi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat.ansi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat.ansi" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">ansi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat.ansi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat.ansi" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>rgb</strong></p>
@@ -267,7 +342,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mythril.interfaces.epic.LolCat.cat">
-<span class="sig-name descname"><span class="pre">cat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat.cat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat.cat" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">cat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat.cat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat.cat" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -280,7 +355,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mythril.interfaces.epic.LolCat.println">
-<span class="sig-name descname"><span class="pre">println</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat.println"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat.println" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">println</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat.println"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat.println" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -293,7 +368,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mythril.interfaces.epic.LolCat.println_ani">
-<span class="sig-name descname"><span class="pre">println_ani</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat.println_ani"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat.println_ani" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">println_ani</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat.println_ani"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat.println_ani" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -309,7 +384,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mythril.interfaces.epic.LolCat.println_plain">
-<span class="sig-name descname"><span class="pre">println_plain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat.println_plain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat.println_plain" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">println_plain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat.println_plain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat.println_plain" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -322,7 +397,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mythril.interfaces.epic.LolCat.rainbow">
-<span class="sig-name descname"><span class="pre">rainbow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat.rainbow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat.rainbow" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">rainbow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat.rainbow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat.rainbow" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -338,7 +413,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mythril.interfaces.epic.LolCat.wrap">
-<span class="sig-name descname"><span class="pre">wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">codes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat.wrap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat.wrap" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">codes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#LolCat.wrap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.LolCat.wrap" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>codes</strong></p>
@@ -353,102 +428,56 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.epic.detect_mode">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.epic.</span></span><span class="sig-name descname"><span class="pre">detect_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term_hint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'xterm-256color'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#detect_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.detect_mode" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.epic.</span></span><span class="sig-name descname"><span class="pre">detect_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term_hint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'xterm-256color'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#detect_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.detect_mode" title="Link to this definition"></a></dt>
 <dd><p>Poor-mans color mode detection.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.epic.reset">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.epic.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.reset" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.epic.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.reset" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mythril.interfaces.epic.run">
-<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.epic.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.run" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mythril.interfaces.epic.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mythril/interfaces/epic.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mythril.interfaces.epic.run" title="Link to this definition"></a></dt>
 <dd><p>Main entry point.</p>
 </dd></dl>
 
 </section>
 <section id="module-mythril.interfaces">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mythril.interfaces" title="Link to this heading">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mythril.interfaces" title="Link to this heading"></a></h2>
 </section>
 </section>
 
 
+           </div>
           </div>
-          
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mythril.ethereum.interface.rpc.html" class="btn btn-neutral float-left" title="mythril.ethereum.interface.rpc package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mythril.laser.html" class="btn btn-neutral float-right" title="mythril.laser package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="mythril.html">mythril package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fdg.html">fdg package</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="mythril.html">mythril package</a><ul>
-      <li>Previous: <a href="mythril.ethereum.interface.rpc.html" title="previous chapter">mythril.ethereum.interface.rpc package</a></li>
-      <li>Next: <a href="mythril.laser.html" title="next chapter">mythril.laser package</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<search id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</search>
-<script>document.getElementById('searchbox').style.display = "block"</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &#169;2024.
-      
-      |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
-      
-      |
-      <a href="_sources/mythril.interfaces.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>

@@ -1,115 +1,189 @@
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<html lang="en" data-content_root="./">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fdg.preprocessing package &mdash; SmartExecutor v4.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
-    <title>fdg.preprocessing package &#8212; SmartExecutor v4.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
-    <script src="_static/documentation_options.js?v=8c91dc42"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8c91dc42"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="fdg.control package" href="fdg.control.html" />
-   
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
+    <link rel="prev" title="fdg.control package" href="fdg.control.html" /> 
+</head>
 
-  
-  
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
 
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
           
+          
+          <a href="index.html" class="icon icon-home">
+            SmartExecutor
+          </a>
+              <div class="version">
+                v4.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mythril.html">mythril package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="fdg.html">fdg package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="fdg.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="fdg.control.html">fdg.control package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">fdg.preprocessing package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fdg-preprocessing-address-collection-module">fdg.preprocessing.address_collection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fdg-preprocessing-instruction-coverage-module">fdg.preprocessing.instruction_coverage module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-fdg.preprocessing.preprocess">fdg.preprocessing.preprocess module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fdg-preprocessing-read-in-conditions-module">fdg.preprocessing.read_in_conditions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fdg-preprocessing-write-read-info-module">fdg.preprocessing.write_read_info module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-fdg.preprocessing">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.html#module-fdg.fdg_pruner">fdg.fdg_pruner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.html#module-fdg.fwrg_manager">fdg.fwrg_manager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.html#fdg-function-coverage-module">fdg.function_coverage module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.html#fdg-instruction-modification-module">fdg.instruction_modification module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.html#module-fdg.global_config">fdg.global_config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fdg.html#module-fdg">Module contents</a></li>
+</ul>
+</li>
+</ul>
 
-          <div class="body" role="main">
-            
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartExecutor</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="fdg.html">fdg package</a></li>
+      <li class="breadcrumb-item active">fdg.preprocessing package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/fdg.preprocessing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="fdg-preprocessing-package">
-<h1>fdg.preprocessing package<a class="headerlink" href="#fdg-preprocessing-package" title="Link to this heading">¶</a></h1>
+<h1>fdg.preprocessing package<a class="headerlink" href="#fdg-preprocessing-package" title="Link to this heading"></a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
 <section id="fdg-preprocessing-address-collection-module">
-<h2>fdg.preprocessing.address_collection module<a class="headerlink" href="#fdg-preprocessing-address-collection-module" title="Link to this heading">¶</a></h2>
+<h2>fdg.preprocessing.address_collection module<a class="headerlink" href="#fdg-preprocessing-address-collection-module" title="Link to this heading"></a></h2>
 <dl class="py function" id="module-fdg.preprocessing.address_collection">
 <dt class="sig sig-object py" id="fdg.preprocessing.address_collection.collect_addresses_in_constructor">
-<span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.address_collection.</span></span><span class="sig-name descname"><span class="pre">collect_addresses_in_constructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/address_collection.html#collect_addresses_in_constructor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.address_collection.collect_addresses_in_constructor" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.address_collection.</span></span><span class="sig-name descname"><span class="pre">collect_addresses_in_constructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/address_collection.html#collect_addresses_in_constructor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.address_collection.collect_addresses_in_constructor" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="fdg.preprocessing.address_collection.collect_value_for_sender">
-<span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.address_collection.</span></span><span class="sig-name descname"><span class="pre">collect_value_for_sender</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/address_collection.html#collect_value_for_sender"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.address_collection.collect_value_for_sender" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.address_collection.</span></span><span class="sig-name descname"><span class="pre">collect_value_for_sender</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/address_collection.html#collect_value_for_sender"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.address_collection.collect_value_for_sender" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
 <section id="fdg-preprocessing-instruction-coverage-module">
-<h2>fdg.preprocessing.instruction_coverage module<a class="headerlink" href="#fdg-preprocessing-instruction-coverage-module" title="Link to this heading">¶</a></h2>
+<h2>fdg.preprocessing.instruction_coverage module<a class="headerlink" href="#fdg-preprocessing-instruction-coverage-module" title="Link to this heading"></a></h2>
 <dl class="py class" id="module-fdg.preprocessing.instruction_coverage">
 <dt class="sig sig-object py" id="fdg.preprocessing.instruction_coverage.InstructionCoverage">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.instruction_coverage.</span></span><span class="sig-name descname"><span class="pre">InstructionCoverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/instruction_coverage.html#InstructionCoverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.instruction_coverage.InstructionCoverage" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.instruction_coverage.</span></span><span class="sig-name descname"><span class="pre">InstructionCoverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/instruction_coverage.html#InstructionCoverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.instruction_coverage.InstructionCoverage" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.instruction_coverage.InstructionCoverage.call_at_end_of_preprocessing">
-<span class="sig-name descname"><span class="pre">call_at_end_of_preprocessing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/instruction_coverage.html#InstructionCoverage.call_at_end_of_preprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.instruction_coverage.InstructionCoverage.call_at_end_of_preprocessing" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">call_at_end_of_preprocessing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/instruction_coverage.html#InstructionCoverage.call_at_end_of_preprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.instruction_coverage.InstructionCoverage.call_at_end_of_preprocessing" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.instruction_coverage.InstructionCoverage.collect_function_instructions">
-<span class="sig-name descname"><span class="pre">collect_function_instructions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">global_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/instruction_coverage.html#InstructionCoverage.collect_function_instructions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.instruction_coverage.InstructionCoverage.collect_function_instructions" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">collect_function_instructions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">global_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/instruction_coverage.html#InstructionCoverage.collect_function_instructions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.instruction_coverage.InstructionCoverage.collect_function_instructions" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.instruction_coverage.InstructionCoverage.compute_coverage">
-<span class="sig-name descname"><span class="pre">compute_coverage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/instruction_coverage.html#InstructionCoverage.compute_coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.instruction_coverage.InstructionCoverage.compute_coverage" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_coverage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/instruction_coverage.html#InstructionCoverage.compute_coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.instruction_coverage.InstructionCoverage.compute_coverage" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.instruction_coverage.InstructionCoverage.print_state_info">
-<span class="sig-name descname"><span class="pre">print_state_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">global_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">opcode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">given_opcode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/instruction_coverage.html#InstructionCoverage.print_state_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.instruction_coverage.InstructionCoverage.print_state_info" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">print_state_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">global_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">opcode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">given_opcode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/instruction_coverage.html#InstructionCoverage.print_state_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.instruction_coverage.InstructionCoverage.print_state_info" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.instruction_coverage.InstructionCoverage.update_coverage">
-<span class="sig-name descname"><span class="pre">update_coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">global_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">opcode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/instruction_coverage.html#InstructionCoverage.update_coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.instruction_coverage.InstructionCoverage.update_coverage" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">update_coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">global_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">opcode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/instruction_coverage.html#InstructionCoverage.update_coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.instruction_coverage.InstructionCoverage.update_coverage" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="module-fdg.preprocessing.preprocess">
-<span id="fdg-preprocessing-preprocess-module"></span><h2>fdg.preprocessing.preprocess module<a class="headerlink" href="#module-fdg.preprocessing.preprocess" title="Link to this heading">¶</a></h2>
+<span id="fdg-preprocessing-preprocess-module"></span><h2>fdg.preprocessing.preprocess module<a class="headerlink" href="#module-fdg.preprocessing.preprocess" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="fdg.preprocessing.preprocess.Preprocessing">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.preprocess.</span></span><span class="sig-name descname"><span class="pre">Preprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method_identifiers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract_address</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/preprocess.html#Preprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.preprocess.Preprocessing" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.preprocess.</span></span><span class="sig-name descname"><span class="pre">Preprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method_identifiers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract_address</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/preprocess.html#Preprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.preprocess.Preprocessing" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.preprocess.Preprocessing.main_preprocessing_end">
-<span class="sig-name descname"><span class="pre">main_preprocessing_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/preprocess.html#Preprocessing.main_preprocessing_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.preprocess.Preprocessing.main_preprocessing_end" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">main_preprocessing_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/preprocess.html#Preprocessing.main_preprocessing_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.preprocess.Preprocessing.main_preprocessing_end" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.preprocess.Preprocessing.main_preprocessing_start">
-<span class="sig-name descname"><span class="pre">main_preprocessing_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laserEVM</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/preprocess.html#Preprocessing.main_preprocessing_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.preprocess.Preprocessing.main_preprocessing_start" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">main_preprocessing_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laserEVM</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/preprocess.html#Preprocessing.main_preprocessing_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.preprocess.Preprocessing.main_preprocessing_start" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="fdg.preprocessing.preprocess.execute_preprocessing">
-<span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.preprocess.</span></span><span class="sig-name descname"><span class="pre">execute_preprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laserEVM</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/preprocess.html#execute_preprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.preprocess.execute_preprocessing" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.preprocess.</span></span><span class="sig-name descname"><span class="pre">execute_preprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laserEVM</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/preprocess.html#execute_preprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.preprocess.execute_preprocessing" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="fdg.preprocessing.preprocess.log">
-<span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.preprocess.</span></span><span class="sig-name descname"><span class="pre">log</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">fdg.preprocessing.preprocess</span> <span class="pre">(WARNING)&gt;</span></em><a class="reference internal" href="_modules/logging.html#log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.preprocess.log" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.preprocess.</span></span><span class="sig-name descname"><span class="pre">log</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">fdg.preprocessing.preprocess</span> <span class="pre">(WARNING)&gt;</span></em><a class="reference internal" href="_modules/logging.html#log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.preprocess.log" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>For each function:</dt><dd><p>need to collect conditions
 instruction indices
@@ -122,19 +196,19 @@ read/write slots</p>
 
 </section>
 <section id="fdg-preprocessing-read-in-conditions-module">
-<h2>fdg.preprocessing.read_in_conditions module<a class="headerlink" href="#fdg-preprocessing-read-in-conditions-module" title="Link to this heading">¶</a></h2>
+<h2>fdg.preprocessing.read_in_conditions module<a class="headerlink" href="#fdg-preprocessing-read-in-conditions-module" title="Link to this heading"></a></h2>
 <dl class="py class" id="module-fdg.preprocessing.read_in_conditions">
 <dt class="sig sig-object py" id="fdg.preprocessing.read_in_conditions.ReadInCondition">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.read_in_conditions.</span></span><span class="sig-name descname"><span class="pre">ReadInCondition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/read_in_conditions.html#ReadInCondition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.read_in_conditions.ReadInCondition" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.read_in_conditions.</span></span><span class="sig-name descname"><span class="pre">ReadInCondition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/read_in_conditions.html#ReadInCondition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.read_in_conditions.ReadInCondition" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.read_in_conditions.ReadInCondition.add_conditions">
-<span class="sig-name descname"><span class="pre">add_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/read_in_conditions.html#ReadInCondition.add_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.read_in_conditions.ReadInCondition.add_conditions" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.smt.html#mythril.laser.smt.bitvec.BitVec" title="mythril.laser.smt.bitvec.BitVec"><span class="pre">BitVec</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/read_in_conditions.html#ReadInCondition.add_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.read_in_conditions.ReadInCondition.add_conditions" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.read_in_conditions.ReadInCondition.collect_conditions">
-<span class="sig-name descname"><span class="pre">collect_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/read_in_conditions.html#ReadInCondition.collect_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.read_in_conditions.ReadInCondition.collect_conditions" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">collect_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/read_in_conditions.html#ReadInCondition.collect_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.read_in_conditions.ReadInCondition.collect_conditions" title="Link to this definition"></a></dt>
 <dd><p>extract the location(slot) of the storage read in conditions
 :param state:
 :return:</p>
@@ -142,36 +216,36 @@ read/write slots</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.read_in_conditions.ReadInCondition.extract_read_slots_in_conditions">
-<span class="sig-name descname"><span class="pre">extract_read_slots_in_conditions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/read_in_conditions.html#ReadInCondition.extract_read_slots_in_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.read_in_conditions.ReadInCondition.extract_read_slots_in_conditions" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">extract_read_slots_in_conditions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/read_in_conditions.html#ReadInCondition.extract_read_slots_in_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.read_in_conditions.ReadInCondition.extract_read_slots_in_conditions" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.read_in_conditions.ReadInCondition.print_read_slot_info">
-<span class="sig-name descname"><span class="pre">print_read_slot_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/read_in_conditions.html#ReadInCondition.print_read_slot_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.read_in_conditions.ReadInCondition.print_read_slot_info" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">print_read_slot_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/read_in_conditions.html#ReadInCondition.print_read_slot_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.read_in_conditions.ReadInCondition.print_read_slot_info" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="fdg-preprocessing-write-read-info-module">
-<h2>fdg.preprocessing.write_read_info module<a class="headerlink" href="#fdg-preprocessing-write-read-info-module" title="Link to this heading">¶</a></h2>
+<h2>fdg.preprocessing.write_read_info module<a class="headerlink" href="#fdg-preprocessing-write-read-info-module" title="Link to this heading"></a></h2>
 <dl class="py class" id="module-fdg.preprocessing.write_read_info">
 <dt class="sig sig-object py" id="fdg.preprocessing.write_read_info.Function_Write_Read_Info">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.write_read_info.</span></span><span class="sig-name descname"><span class="pre">Function_Write_Read_Info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/write_read_info.html#Function_Write_Read_Info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.write_read_info.Function_Write_Read_Info" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fdg.preprocessing.write_read_info.</span></span><span class="sig-name descname"><span class="pre">Function_Write_Read_Info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/write_read_info.html#Function_Write_Read_Info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.write_read_info.Function_Write_Read_Info" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.write_read_info.Function_Write_Read_Info.print_write_read_info">
-<span class="sig-name descname"><span class="pre">print_write_read_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/write_read_info.html#Function_Write_Read_Info.print_write_read_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.write_read_info.Function_Write_Read_Info.print_write_read_info" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">print_write_read_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/write_read_info.html#Function_Write_Read_Info.print_write_read_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.write_read_info.Function_Write_Read_Info.print_write_read_info" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.write_read_info.Function_Write_Read_Info.refine_read_write_slots">
-<span class="sig-name descname"><span class="pre">refine_read_write_slots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/write_read_info.html#Function_Write_Read_Info.refine_read_write_slots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.write_read_info.Function_Write_Read_Info.refine_read_write_slots" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">refine_read_write_slots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/write_read_info.html#Function_Write_Read_Info.refine_read_write_slots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.write_read_info.Function_Write_Read_Info.refine_read_write_slots" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.write_read_info.Function_Write_Read_Info.update_sload">
-<span class="sig-name descname"><span class="pre">update_sload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/write_read_info.html#Function_Write_Read_Info.update_sload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.write_read_info.Function_Write_Read_Info.update_sload" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">update_sload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/write_read_info.html#Function_Write_Read_Info.update_sload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.write_read_info.Function_Write_Read_Info.update_sload" title="Link to this definition"></a></dt>
 <dd><p>read locations from address
 note: from an address (instruction) different state variables can be read at differnt loops
 :param state:
@@ -180,7 +254,7 @@ note: from an address (instruction) different state variables can be read at dif
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fdg.preprocessing.write_read_info.Function_Write_Read_Info.update_sstore">
-<span class="sig-name descname"><span class="pre">update_sstore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/write_read_info.html#Function_Write_Read_Info.update_sstore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.write_read_info.Function_Write_Read_Info.update_sstore" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">update_sstore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mythril.laser.ethereum.state.html#mythril.laser.ethereum.state.global_state.GlobalState" title="mythril.laser.ethereum.state.global_state.GlobalState"><span class="pre">GlobalState</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdg/preprocessing/write_read_info.html#Function_Write_Read_Info.update_sstore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fdg.preprocessing.write_read_info.Function_Write_Read_Info.update_sstore" title="Link to this definition"></a></dt>
 <dd><p>get write location
 note: from an address (instruction), different state variables can be written in different loops.</p>
 <dl class="field-list simple">
@@ -197,84 +271,38 @@ note: from an address (instruction), different state variables can be written in
 
 </section>
 <section id="module-fdg.preprocessing">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-fdg.preprocessing" title="Link to this heading">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-fdg.preprocessing" title="Link to this heading"></a></h2>
 </section>
 </section>
 
 
+           </div>
           </div>
-          
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fdg.control.html" class="btn btn-neutral float-left" title="fdg.control package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">SmartExecutor</a></h1>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="about.html">SmartExecutor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="security-analysis.html">Security Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mythril.html">mythril package</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="fdg.html">fdg package</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="fdg.html">fdg package</a><ul>
-      <li>Previous: <a href="fdg.control.html" title="previous chapter">fdg.control package</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<search id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</search>
-<script>document.getElementById('searchbox').style.display = "block"</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &#169;2024.
-      
-      |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
-      
-      |
-      <a href="_sources/fdg.preprocessing.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>
