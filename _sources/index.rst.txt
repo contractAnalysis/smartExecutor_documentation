@@ -8,8 +8,9 @@ Welcome to SmartExecutor's documentation!
    about
    installation
    tutorial
-   reference
+   command-line-options
    fdg
+   analysis-modules
 
 
 Indices and Tables

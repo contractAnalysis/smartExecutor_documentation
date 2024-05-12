@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Command Line Options &mdash; SmartExecutor v4.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8c91dc42"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SmartExecutor Modules" href="fdg.html" />
+    <link rel="prev" title="Tutorial" href="tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SmartExecutor
+          </a>
+              <div class="version">
+                v4.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">Overview of SmartExecutor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Command Line Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdg.html">SmartExecutor Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis-modules.html">Analysis Modules</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartExecutor</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Command Line Options</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/command-line-options.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="command-line-options">
+<h1>Command Line Options<a class="headerlink" href="#command-line-options" title="Link to this heading"></a></h1>
+<p>These are the options that can be configured.</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-p1dl">
+<span id="cmdoption-phase1-depth-limit"></span><span class="sig-name descname"><span class="pre">-p1dl</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--phase1-depth-limit</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-p1dl" title="Link to this definition"></a></dt>
+<dd><p>Set the depth limit for Phase 1.</p>
+<p>Default: 1</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-execution-times-limit">
+<span class="sig-name descname"><span class="pre">--execution-times-limit</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-execution-times-limit" title="Link to this definition"></a></dt>
+<dd><p>Set the times a function can be assigned to execute in Phase 2.</p>
+<p>Default: 5</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-seq-len-limit">
+<span class="sig-name descname"><span class="pre">--seq-len-limit</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-seq-len-limit" title="Link to this definition"></a></dt>
+<dd><p>Set the maximum depth length to be considered.</p>
+<p>Default: 4</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-fct">
+<span id="cmdoption-function-coverage-threshold"></span><span class="sig-name descname"><span class="pre">-fct</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;%&gt;</span></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--function-coverage-threshold</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;%&gt;</span></span><a class="headerlink" href="#cmdoption-fct" title="Link to this definition"></a></dt>
+<dd><p>Set the coverage threshold for functions to be considered covered.</p>
+<p>Default: 89%</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-consider-all-reads">
+<span class="sig-name descname"><span class="pre">--consider-all-reads</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-consider-all-reads" title="Link to this definition"></a></dt>
+<dd><p>Consider all the state variables read in a function.</p>
+<p>0: does not consider.</p>
+<p>1: consider.</p>
+<p>Default: 0</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-optimization">
+<span class="sig-name descname"><span class="pre">--optimization</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-optimization" title="Link to this definition"></a></dt>
+<dd><p>About collecting the addresses used in contracts to expand the values of msg.sender.</p>
+<p>0: does not collect.</p>
+<p>1: collect.</p>
+<p>Default: 1</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-create-timeout">
+<span class="sig-name descname"><span class="pre">--create-timeout</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;seconds&gt;</span></span><a class="headerlink" href="#cmdoption-create-timeout" title="Link to this definition"></a></dt>
+<dd><p>Set the amount of seconds to spend on the initial contract creation.</p>
+<p>Default: 10 seconds</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-preprocess-timeout">
+<span class="sig-name descname"><span class="pre">--preprocess-timeout</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;second&gt;</span></span><a class="headerlink" href="#cmdoption-preprocess-timeout" title="Link to this definition"></a></dt>
+<dd><p>Set the time for the special transaction to collect function-level data.</p>
+<p>Default: 100 seconds</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-execution-timeout">
+<span class="sig-name descname"><span class="pre">--execution-timeout</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;second&gt;</span></span><a class="headerlink" href="#cmdoption-execution-timeout" title="Link to this definition"></a></dt>
+<dd><p>Set the amount of seconds to spend on symbolic execution.</p>
+<p>Default: 86400 seconds</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-solver-timeout">
+<span class="sig-name descname"><span class="pre">--solver-timeout</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;milli</span> <span class="pre">seconds&gt;</span></span><a class="headerlink" href="#cmdoption-solver-timeout" title="Link to this definition"></a></dt>
+<dd><p>Set the maximum amount of time(in milli seconds) the solver spends for queries from analysis modules.</p>
+<p>Default: 10000 milli seconds</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-fss">
+<span id="cmdoption-function-search-strategy"></span><span class="sig-name descname"><span class="pre">-fss</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--function-search-strategy</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-fss" title="Link to this definition"></a></dt>
+<dd><p>Select the strategy to select states (world states), at which functions will be assigned to execute. The strategies include BFS, DFS, and mine.</p>
+<p>Default: mine</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-seq">
+<span id="cmdoption-sequences"></span><span class="sig-name descname"><span class="pre">-seq</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--sequences</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-seq" title="Link to this definition"></a></dt>
+<dd><p>Provide the sequences to be executed. When the -fss is set to seq, this option should be set.</p>
+<p>Default: None</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-p">
+<span id="cmdoption-print-function-coverage"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--print-function-coverage</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-p" title="Link to this definition"></a></dt>
+<dd><p>Print function coverage.</p>
+<p>0: does not print</p>
+<p>1: print</p>
+<p>Default: 1</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-no-guidance">
+<span class="sig-name descname"><span class="pre">--no-guidance</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-no-guidance" title="Link to this definition"></a></dt>
+<dd><p>Flag to allow guidance in the symbolic execution process. When it appears, it means the basic symbolic execution without any guidance.</p>
+<p>Default: False</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorial.html" class="btn btn-neutral float-left" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fdg.html" class="btn btn-neutral float-right" title="SmartExecutor Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
