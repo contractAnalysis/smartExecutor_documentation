@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../about.html">Overview of SmartExecutor</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation and Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../use-cases.html">Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../command-line-options.html">Command Line Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../fdg.html">SmartExecutor Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../analysis-modules.html">Analysis Modules</a></li>
@@ -88,6 +89,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">ast</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -566,6 +568,7 @@
     <span class="n">add_fwrg_analysis_args</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="c1">#@wei</span></div>
 
 
+
 <div class="viewcode-block" id="add_fwrg_analysis_args">
 <a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.add_fwrg_analysis_args">[docs]</a>
 <span class="k">def</span> <span class="nf">add_fwrg_analysis_args</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
@@ -606,7 +609,7 @@
     <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-seq&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--sequences&quot;</span><span class="p">,</span>
-        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">parse_list_of_lists</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;sequences that will be executed directly&quot;</span><span class="p">,</span>
 
     <span class="p">)</span>
@@ -652,7 +655,25 @@
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 0 means the baseline is inactive</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot; with values from  0 to 10. indicate the percent of functions to be considered&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+
+        <span class="s2">&quot;--no-guidance&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;use guided exploration&quot;</span><span class="p">,</span>
     <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_list_of_lists">
+<a class="viewcode-back" href="../../../mythril.interfaces.html#mythril.interfaces.cli.parse_list_of_lists">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_list_of_lists</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Parse the string representation of the list of lists into an actual list of lists</span>
+        <span class="k">return</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">SyntaxError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid value for list of lists: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="add_fwrg_arguments">
@@ -673,7 +694,7 @@
     <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">flag_consider_all_reads</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">consider_all_reads</span>
     <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">execution_times_limit</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">execution_times_limit</span>
     <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">seq_len_limit</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">seq_len_limit</span>
-
+    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">function_search_strategy</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">function_search_strategy</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">no_guidance</span><span class="p">:</span>
         <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">flag_fwrg</span><span class="o">=</span><span class="kc">False</span>
     <span class="k">else</span><span class="p">:</span>
@@ -698,13 +719,7 @@
         <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="c1">#</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;use guided exploration&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
 
-        <span class="s2">&quot;--no-guidance&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;use guided exploration&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
 
     <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-m&quot;</span><span class="p">,</span>

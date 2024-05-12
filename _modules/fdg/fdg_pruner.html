@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../about.html">Overview of SmartExecutor</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation and Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use-cases.html">Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../command-line-options.html">Command Line Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fdg.html">SmartExecutor Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../analysis-modules.html">Analysis Modules</a></li>
@@ -150,7 +151,7 @@
         <span class="k">elif</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">function_search_strategy</span><span class="o">==</span><span class="s1">&#39;seq&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span><span class="o">=</span><span class="n">Seq</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span> <span class="o">=</span> <span class="n">Mine</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span> <span class="o">=</span> <span class="n">BFS</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">=</span><span class="n">Guider</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span><span class="p">,</span><span class="nb">list</span><span class="p">(</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">method_identifiers</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
 
@@ -177,22 +178,6 @@
         <span class="nd">@symbolic_vm</span><span class="o">.</span><span class="n">laser_hook</span><span class="p">(</span><span class="s2">&quot;stop_sym_exec&quot;</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">stop_sym_exec_hook</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">random_baseline</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span><span class="k">return</span>
-            <span class="c1"># if not fdg.global_config.flag_preprocess_timeout:</span>
-            <span class="c1">#     if not fdg.global_config.preprocessing_exception:</span>
-            <span class="c1">#         if self.preprocess is not None and self.functionCoverage is not None:</span>
-            <span class="c1">#             if self.preprocess.coverage == self.functionCoverage.coverage:</span>
-            <span class="c1">#                 print(f&#39;Reach the maximum coverage.&#39;)</span>
-            <span class="c1">#</span>
-            <span class="c1"># if fdg.global_config.print_function_coverage==1:</span>
-            <span class="c1">#    deep_functions_1st_time=self.functionCoverage.get_deep_functions_1st_time()</span>
-            <span class="c1">#    if len(deep_functions_1st_time) &gt; 0:</span>
-            <span class="c1">#         self.get_depth_k_functions()</span>
-            <span class="c1">#         deep_function_in_the_end =self.depth_k</span>
-            <span class="c1">#         print(</span>
-            <span class="c1">#             f&#39;depth-k functions: {len(deep_functions_1st_time) - len(deep_function_in_the_end)} out of {len(deep_functions_1st_time)} reaches the threshold {fdg.global_config.function_coverage_threshold}%&#39;)</span>
-            <span class="c1">#</span>
-            <span class="c1">#         print(f&#39;all depth-k function(s): {deep_functions_1st_time}&#39;)</span>
-            <span class="c1">#         print(f&#39;left depth-k function(s): {deep_function_in_the_end}&#39;)</span>
 
 
 
@@ -227,10 +212,20 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">instructionModification</span><span class="o">.</span><span class="n">feed_instructions</span><span class="p">(</span>
                     <span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">contract_address</span><span class="p">)</span>
 
-                <span class="c1"># self.guider.save_genesis_states(laserEVM.open_states) # to-do: think about removing it</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">save_genesis_states</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span> <span class="c1"># to-do: think about removing it</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">get_runtime_bytecode</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">contract_address</span><span class="p">)</span>
 
+            <span class="k">if</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">random_baseline</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">start_iteration</span><span class="p">(</span>
+                    <span class="n">laserEVM</span><span class="o">=</span><span class="n">laserEVM</span><span class="p">,</span> <span class="n">dk_functions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">iteration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="p">)</span>
+                <span class="k">return</span>
 
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;seq&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">start_iteration</span><span class="p">(</span>
+                    <span class="n">laserEVM</span><span class="o">=</span><span class="n">laserEVM</span><span class="p">,</span> <span class="n">dk_functions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">iteration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="p">)</span>
+                <span class="k">return</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># create a Preprocessing instance</span>
@@ -267,6 +262,61 @@
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">----------------------------------------&#39;</span><span class="p">)</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;end: self._iteration_=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="c1"># ++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+            <span class="k">if</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">random_baseline</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># prune unfeasible states</span>
+                <span class="n">old_states_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span>
+                <span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">state</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span> <span class="k">if</span>
+                    <span class="n">state</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">is_possible</span>
+                <span class="p">]</span>
+                <span class="n">prune_count</span> <span class="o">=</span> <span class="n">old_states_count</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">prune_count</span><span class="p">:</span> <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Pruned </span><span class="si">{}</span><span class="s2"> unreachable states&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prune_count</span><span class="p">))</span>
+
+                <span class="c1"># compute coverage</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">functionCoverage</span><span class="o">.</span><span class="n">compute_contract_coverage</span><span class="p">(</span>
+                    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">target_runtime_bytecode</span><span class="p">)</span>
+                <span class="c1"># self.functionCoverage.print_coverage()</span>
+
+                <span class="c1"># check at the end of iteration</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">end_iteration</span><span class="p">(</span><span class="n">laserEVM</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="p">)</span>
+                <span class="n">flag_terminate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">should_terminate</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">flag_terminate</span><span class="p">:</span>
+                    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">transaction_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="c1"># in case that there are one state</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="c1"># termination based on the coverage of the contract</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">functionCoverage</span><span class="o">.</span><span class="n">coverage</span> <span class="o">&gt;=</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">function_coverage_threshold</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span><span class="o">.</span><span class="n">flag_one_start_function</span><span class="p">:</span>
+                        <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">transaction_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span>
+
+                <span class="k">return</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_stragety</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;seq&#39;</span><span class="p">]:</span>
+                <span class="c1"># prune unfeasible states</span>
+                <span class="n">old_states_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span>
+                <span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">state</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span> <span class="k">if</span>
+                    <span class="n">state</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">is_possible</span>
+                <span class="p">]</span>
+                <span class="n">prune_count</span> <span class="o">=</span> <span class="n">old_states_count</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">prune_count</span><span class="p">:</span> <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Pruned </span><span class="si">{}</span><span class="s2"> unreachable states&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prune_count</span><span class="p">))</span>
+
+                <span class="c1"># compute coverage</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">functionCoverage</span><span class="o">.</span><span class="n">compute_contract_coverage</span><span class="p">(</span>
+                    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">target_runtime_bytecode</span><span class="p">)</span>
+                <span class="c1"># self.functionCoverage.print_coverage()</span>
+
+                <span class="c1"># check at the end of iteration</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">end_iteration</span><span class="p">(</span><span class="n">laserEVM</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span><span class="p">)</span>
+                <span class="n">flag_terminate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="o">.</span><span class="n">should_terminate</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">flag_terminate</span><span class="p">:</span>
+                    <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">transaction_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_</span>
 
             <span class="c1">#++++++++++++++++++++++++++++++++++++++++++++++++++</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span>

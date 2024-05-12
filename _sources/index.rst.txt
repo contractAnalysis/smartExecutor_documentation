@@ -8,6 +8,7 @@ Welcome to SmartExecutor's documentation!
    about
    installation
    tutorial
+   use-cases
    command-line-options
    fdg
    analysis-modules

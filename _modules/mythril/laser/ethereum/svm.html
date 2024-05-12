@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../about.html">Overview of SmartExecutor</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation and Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../use-cases.html">Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../command-line-options.html">Command Line Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../fdg.html">SmartExecutor Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../analysis-modules.html">Analysis Modules</a></li>
@@ -409,7 +410,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">transaction_count</span><span class="p">:</span>  <span class="c1"># @wei rewrite loop</span>
-            <span class="k">if</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">random_baseline</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fdg</span><span class="o">.</span><span class="n">global_config</span><span class="o">.</span><span class="n">function_search_strategy</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;mine&#39;</span><span class="p">,</span><span class="s1">&#39;bfs&#39;</span><span class="p">,</span><span class="s1">&#39;dfs&#39;</span><span class="p">]:</span>
+                <span class="c1"># need the special transaction</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">copy_laserEVM</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
                     <span class="n">copy_laserEVM</span><span class="o">.</span><span class="n">requires_statespace</span><span class="o">=</span><span class="kc">False</span>

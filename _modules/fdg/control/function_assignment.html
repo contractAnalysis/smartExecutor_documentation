@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../about.html">Overview of SmartExecutor</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation and Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../use-cases.html">Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../command-line-options.html">Command Line Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../fdg.html">SmartExecutor Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../analysis-modules.html">Analysis Modules</a></li>
@@ -160,6 +161,9 @@
     <span class="k">def</span> <span class="nf">assign_functions_for_baseline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">list</span><span class="p">:</span>
 
         <span class="n">to_consider_functions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">all_functions</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_select_percent</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">random_select_percent</span><span class="o">=</span><span class="mi">10</span>
+
         <span class="n">select_num</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">random_select_percent</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">to_consider_functions</span><span class="p">))</span>
 
         <span class="n">select_indices</span><span class="o">=</span><span class="n">random_indices</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">to_consider_functions</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">select_num</span><span class="p">)</span>

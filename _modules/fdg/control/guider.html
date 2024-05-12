@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../about.html">Overview of SmartExecutor</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation and Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../use-cases.html">Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../command-line-options.html">Command Line Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../fdg.html">SmartExecutor Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../analysis-modules.html">Analysis Modules</a></li>
@@ -147,7 +148,7 @@
 
 <div class="viewcode-block" id="Guider.start_iteration">
 <a class="viewcode-back" href="../../../fdg.control.html#fdg.control.guider.Guider.start_iteration">[docs]</a>
-    <span class="k">def</span> <span class="nf">start_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">laserEVM</span><span class="p">:</span><span class="n">LaserEVM</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">deep_functions</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">iteration</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">start_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">laserEVM</span><span class="p">:</span><span class="n">LaserEVM</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dk_functions</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">iteration</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            prepare for states and functions to be executed on the states</span>
 <span class="sd">        :param laserEVM:</span>
@@ -157,23 +158,27 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#============================================</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;seq&#39;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">iteration</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">iteration</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
 
                 <span class="n">organize_states_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;constructor&#39;</span><span class="p">:</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">}</span>
-                <span class="n">states_functions</span><span class="p">,</span><span class="n">flag_world_state_del</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">assign_states</span><span class="p">(</span><span class="n">deep_functions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fdfg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">states_dict</span><span class="o">=</span><span class="n">organize_states_dict</span><span class="p">)</span>
+                <span class="n">states_functions</span><span class="p">,</span><span class="n">flag_world_state_del</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">assign_states</span><span class="p">(</span>
+                    <span class="n">dk_functions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fdfg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">states_dict</span><span class="o">=</span><span class="n">organize_states_dict</span><span class="p">)</span>
+                <span class="n">print_assigned_functions</span><span class="p">(</span><span class="n">states_functions</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_states</span><span class="p">(</span><span class="n">laserEVM</span><span class="p">,</span> <span class="n">organize_states_dict</span><span class="p">,</span> <span class="n">states_functions</span><span class="p">,</span><span class="n">flag_world_state_del</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">organize_states_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">organize_states</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span>
-                <span class="n">states_functions</span><span class="p">,</span><span class="n">flag_world_state_del</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">assign_states</span><span class="p">(</span><span class="n">deep_functions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fdfg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                                                                          <span class="n">states_dict</span><span class="o">=</span><span class="n">organize_states_dict</span><span class="p">)</span>
+                <span class="n">states_functions</span><span class="p">,</span><span class="n">flag_world_state_del</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">assign_states</span><span class="p">(</span>
+                    <span class="n">dk_functions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fdfg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">states_dict</span><span class="o">=</span><span class="n">organize_states_dict</span><span class="p">)</span>
                 <span class="n">organize_states_dict</span> <span class="o">=</span> <span class="p">{}</span>
-                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">function</span> <span class="ow">in</span> <span class="n">states_functions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">function</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">organize_states_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">world_states</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-
-                <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_states</span><span class="p">(</span><span class="n">laserEVM</span><span class="p">,</span> <span class="n">organize_states_dict</span><span class="p">,</span> <span class="n">states_functions</span><span class="p">,</span><span class="n">flag_world_state_del</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">states_functions</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">function</span> <span class="ow">in</span> <span class="n">states_functions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">function</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">organize_states_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">world_states</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                    <span class="n">print_assigned_functions</span><span class="p">(</span><span class="n">states_functions</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_states</span><span class="p">(</span><span class="n">laserEVM</span><span class="p">,</span> <span class="n">organize_states_dict</span><span class="p">,</span> <span class="n">states_functions</span><span class="p">,</span><span class="n">flag_world_state_del</span><span class="p">)</span>
             <span class="k">return</span>
 
 
@@ -188,7 +193,8 @@
                 <span class="n">organize_states_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">organize_states</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span>
 
 
-                <span class="n">states_functions</span><span class="p">,</span><span class="n">flag_world_state_del</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">assign_states</span><span class="p">(</span><span class="n">deep_functions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">states_dict</span><span class="o">=</span><span class="n">organize_states_dict</span><span class="p">)</span>
+                <span class="n">states_functions</span><span class="p">,</span><span class="n">flag_world_state_del</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">assign_states</span><span class="p">(</span>
+                    <span class="n">dk_functions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">states_dict</span><span class="o">=</span><span class="n">organize_states_dict</span><span class="p">)</span>
                 <span class="n">print_assigned_functions</span><span class="p">(</span><span class="n">states_functions</span><span class="p">)</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;baseline&#39;</span><span class="p">]:</span>
                     <span class="n">organize_states_dict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -208,7 +214,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># when iteration &gt;2</span>
             <span class="n">organize_states_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">organize_states</span><span class="p">(</span><span class="n">laserEVM</span><span class="o">.</span><span class="n">open_states</span><span class="p">)</span>
-            <span class="n">states_functions</span><span class="p">,</span><span class="n">flag_world_state_del</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">assign_states</span><span class="p">(</span><span class="n">dk_functions</span><span class="o">=</span><span class="n">deep_functions</span><span class="p">,</span> <span class="n">states_dict</span><span class="o">=</span><span class="n">organize_states_dict</span><span class="p">,</span><span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
+            <span class="n">states_functions</span><span class="p">,</span><span class="n">flag_world_state_del</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">assign_states</span><span class="p">(</span><span class="n">dk_functions</span><span class="o">=</span><span class="n">dk_functions</span><span class="p">,</span> <span class="n">states_dict</span><span class="o">=</span><span class="n">organize_states_dict</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">states_functions</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># no functions will be executed</span>
@@ -302,17 +308,20 @@
 <a class="viewcode-back" href="../../../fdg.control.html#fdg.control.guider.Guider.should_terminate">[docs]</a>
     <span class="k">def</span> <span class="nf">should_terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">termination</span></div>
+
+
+<div class="viewcode-block" id="Guider.save_genesis_states">
+<a class="viewcode-back" href="../../../fdg.control.html#fdg.control.guider.Guider.save_genesis_states">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_genesis_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">states</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">genesis_states</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;mine&#39;</span><span class="p">]:</span>
+            <span class="n">states_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">organize_states</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+            <span class="c1"># if len(states_dict)&gt;=2:</span>
+            <span class="c1">#     print(&#39;Check when two or more genesis states are generated (guider.py)&#39;)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">update_states</span><span class="p">(</span><span class="n">states_dict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ftn_search_strategy</span><span class="o">.</span><span class="n">state_key_assigned_at_last</span> <span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">states_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span></div>
 </div>
 
-
-    <span class="c1"># def save_genesis_states(self,states:list):</span>
-    <span class="c1">#     self.genesis_states=deepcopy(states)</span>
-    <span class="c1">#     if self.ftn_search_strategy.name in [&#39;mine&#39;]:</span>
-    <span class="c1">#         states_dict=self.organize_states(states)</span>
-    <span class="c1">#         # if len(states_dict)&gt;=2:</span>
-    <span class="c1">#         #     print(&#39;Check when two or more genesis states are generated (guider.py)&#39;)</span>
-    <span class="c1">#         self.ftn_search_strategy.update_states(states_dict)</span>
-    <span class="c1">#         self.ftn_search_strategy.state_key_assigned_at_last =list(states_dict.keys())[0]</span>
 
 
 
