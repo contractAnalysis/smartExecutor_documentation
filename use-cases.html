@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Use Cases &mdash; SmartExecutor v4.0 documentation</title>
+  <title>Use Cases &mdash; SmartExecutor v4.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=8c91dc42"></script>
+        <script src="_static/documentation_options.js?v=28e9585b"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -58,6 +58,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#execute-contract-crowdsale-with-more-intermediate-data">Execute Contract Crowdsale with more intermediate data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#execute-contract-crowdsale-with-the-depth-limit-of-phase-1-is-2">Execute Contract Crowdsale with the depth limit of Phase 1 is 2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#execute-a-list-of-given-function-sequences-on-contract-crowdsale">Execute a list of given function sequences on contract Crowdsale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#execute-contract-crowdsale-with-functions-randomly-selected-to-be-executed-at-states">Execute contract Crowdsale with functions randomly selected to be executed at states.</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#execute-all-possible-sequences-on-contract-crowdsale-with-the-depth-limit-set-to-2">Execute all possible sequences on contract Crowdsale with the depth limit set to 2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#execute-all-possible-sequences-on-contract-crowdsale-with-a-depth-limit-of-3">Execute all possible sequences on contract Crowdsale with a depth limit of 3.</a></li>
 </ul>
@@ -120,6 +121,13 @@
 </pre></div>
 </div>
 </section>
+<section id="execute-contract-crowdsale-with-functions-randomly-selected-to-be-executed-at-states">
+<h2>Execute contract Crowdsale with functions randomly selected to be executed at states.<a class="headerlink" href="#execute-contract-crowdsale-with-functions-randomly-selected-to-be-executed-at-states" title="Link to this heading"></a></h2>
+<p>Use option <a class="reference internal" href="command-line-options.html#cmdoption-random-baseline"><code class="xref std std-option docutils literal notranslate"><span class="pre">--random-baseline</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ semyth analyze */Crowdsale.sol:Crowdsale --random-baseline 7
+</pre></div>
+</div>
+</section>
 <section id="execute-all-possible-sequences-on-contract-crowdsale-with-the-depth-limit-set-to-2">
 <h2>Execute all possible sequences on contract Crowdsale with the depth limit set to 2<a class="headerlink" href="#execute-all-possible-sequences-on-contract-crowdsale-with-the-depth-limit-set-to-2" title="Link to this heading"></a></h2>
 <p>Use option <a class="reference internal" href="command-line-options.html#cmdoption-no-guidance"><code class="xref std std-option docutils literal notranslate"><span class="pre">--no-guidance</span></code></a>:</p>
@@ -129,7 +137,7 @@
 </section>
 <section id="execute-all-possible-sequences-on-contract-crowdsale-with-a-depth-limit-of-3">
 <h2>Execute all possible sequences on contract Crowdsale with a depth limit of 3.<a class="headerlink" href="#execute-all-possible-sequences-on-contract-crowdsale-with-a-depth-limit-of-3" title="Link to this heading"></a></h2>
-<p>Use option <a class="reference internal" href="command-line-options.html#cmdoption-no-guidance"><code class="xref std std-option docutils literal notranslate"><span class="pre">--no-guidance</span></code></a> and -t:</p>
+<p>Use option <a class="reference internal" href="command-line-options.html#cmdoption-no-guidance"><code class="xref std std-option docutils literal notranslate"><span class="pre">--no-guidance</span></code></a> and option <a class="reference internal" href="command-line-options.html#cmdoption-t"><code class="xref std std-option docutils literal notranslate"><span class="pre">-t</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ semyth analyze */Crowdsale.sol:Crowdsale --no-guidance -t 3
 </pre></div>
 </div>
